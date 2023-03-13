@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+
+  # Angular App
+  angular-app:
+    extends:
+      file: docker-compose.base.yml
+      service: nx-app-base
+    command: npm run angular-app:dev:docker
+    ports:
+      - 4203:4200
+
+volumes:
+  mono-node-modules: null

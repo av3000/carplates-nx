@@ -2,7 +2,13 @@
   "name": "carplates",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "angular-app:dev:docker": "nx serve carplates-app --host=0.0.0.0",
+    "start": "nx serve carplates-app",
+    "build": "nx build",
+    "test": "nx test",
+    "postinstall": "ngcc --properties es2015 browser module main"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~15.2.0",
