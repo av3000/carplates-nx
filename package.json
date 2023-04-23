@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "angular-app:dev:docker": "nx serve carplates-app --host=0.0.0.0",
-    "backend-api:dev:docker": "nx serve backend-api --host=0.0.0.0 --port=4311",
+    "backend-api:dev:docker": "nx serve backend-api --host=0.0.0.0 --port=6868",
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
@@ -26,7 +26,9 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "morgan": "^1.10.0",
+    "mysql2": "^3.2.0",
     "rxjs": "~7.8.0",
+    "sequelize": "^6.30.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },

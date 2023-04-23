@@ -4,19 +4,20 @@
  */
 
 require('dotenv').config();
-console.log(process.env); // remove this after you've confirmed it is working
 
 import express from 'express';
 import * as path from 'path';
-
+import * as cookieParser from 'cookie-parser';
 const cookieParser = require('cookie-parser');
+import * as logger from 'morgan';
 const logger = require('morgan');
+
 const indexRouter = require('./app/routes/index');
 const carplatesRouter = require('./app/routes/carplates');
 
 const app = express();
 
-app.use(logger('dev'));
+app.use(logger('tiny'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -32,8 +33,20 @@ app.get('/', (req, res) => {
 app.use('/api', indexRouter);
 app.use('/api/carplates', carplatesRouter);
 
-const port = process.env.PORT || 3333;
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
-});
-server.on('error', console.error);
+const PORT = process.env.NODE_DOCKER_PORT || 3333;
+
+console.log('Connecting to database...');
+
+const db = require('./app/models');
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log('Synced db.');
+    const server = app.listen(PORT, () => {
+      console.log(`Listening at http://localhost:${PORT}`);
+    });
+    server.on('error', console.error);
+  })
+  .catch((err) => {
+    console.log('Failed to sync db: ' + err.message);
+  });

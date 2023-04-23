@@ -10,16 +10,40 @@ services:
     command: npm run angular-app:dev:docker
     ports:
       - 4203:4200
+    depends_on:
+      - backend-api
   
   # Express API
-  api-1:
+  backend-api:
+    depends_on:
+      - mysqldb
+    restart: always
     extends:
       file: docker-compose.base.yml
       service: nx-app-base
     command: npm run backend-api:dev:docker
     ports:
-      - 4310:3333 # API Entry port
-      - 4311:4311 # Server Debugging port
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=$MYSQLDB_USER
+      - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - DB_NAME=$MYSQLDB_DATABASE
+      - DB_PORT=$MYSQLDB_DOCKER_PORT
+    stdin_open: true
+    tty: true
+
+  mysqldb:
+    image: mysql:8.0.17
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/mysql
 
 volumes:
+  db:
   mono-node-modules: null
