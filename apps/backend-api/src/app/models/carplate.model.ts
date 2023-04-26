@@ -1,11 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Carplate = sequelize.define('carplate', {
-    id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
+    plate_name: {
       type: Sequelize.STRING,
     },
     owner: {
