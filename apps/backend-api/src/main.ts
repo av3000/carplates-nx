@@ -6,6 +6,7 @@
 require('dotenv').config();
 
 import express from 'express';
+import { errorMiddleware } from './app/middleware/error-handling';
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -14,6 +15,7 @@ const indexRouter = require('./app/routes/index');
 const carplatesRouter = require('./app/routes/carplates');
 
 const PORT = process.env.NODE_DOCKER_PORT || 3333;
+const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
 const app = express();
 
@@ -41,11 +43,13 @@ app.use('/api/carplates', carplatesRouter);
 
 console.log('Connecting to database...');
 
+app.use(errorMiddleware);
+
 const db = require('./app/models');
 db.sequelize
-  .sync()
+  .sync({ force: FLUSH_DB })
   .then(() => {
-    console.log('Synced db.');
+    console.log('Synched db.');
     const server = app.listen(PORT, () => {
       console.log(`Listening at http://localhost:${PORT}`);
     });

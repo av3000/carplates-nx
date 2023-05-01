@@ -6,24 +6,24 @@ const { asyncErrorHandler } = require('../middleware');
 const {
   create,
   update,
-  deleteOne,
+  decomm,
   findOne,
   findAll,
 } = require('../controllers/carplateController');
 
 // Create a new Tutorial
-router.post('/', create);
+router.post('/', asyncErrorHandler(create));
 
 // Retrieve all Tutorials
 router.get('/', findAll);
 
 // Retrieve a single Tutorial with id
-router.get('/:id', findOne);
+router.get('/:id', asyncErrorHandler(findOne));
 
 // Update a Tutorial with id
-router.put('/:id', update);
+router.put('/:id', asyncErrorHandler(update));
 
 // Delete a Tutorial with id
-router.delete('/:id', deleteOne);
+router.delete('/:id', asyncErrorHandler(decomm));
 
 module.exports = router;
