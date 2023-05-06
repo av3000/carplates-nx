@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { errorResponse } from '../models/carplate.model';
+import { ErrorResponse } from '../types';
 
 export const errorMiddleware = (
   err,
@@ -21,7 +21,7 @@ export const errorMiddleware = (
         message: err || 'Internal Server Error',
       },
       body: req.body,
-    } as errorResponse);
+    } as ErrorResponse);
   } else if (err.message) {
     res.status(err.status || 500).json({
       error: {
@@ -30,8 +30,8 @@ export const errorMiddleware = (
         message: err.message || 'Internal Server Error',
       },
       body: req.body,
-    } as errorResponse);
+    } as ErrorResponse);
   } else {
-    res.status(500).json({ error: err, body: req.body } as errorResponse);
+    res.status(500).json({ error: err, body: req.body } as ErrorResponse);
   }
 };

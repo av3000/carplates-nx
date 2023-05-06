@@ -1,4 +1,4 @@
-import { CarplateParameters } from '../models/carplate.model';
+import { CarplateParameters, ResponseName, StatusCode } from '../types';
 
 const _db = require('../models');
 const Carplate = _db.carplates;
@@ -7,18 +7,8 @@ const Op = _db.Sequelize.Op;
 const PLATE_SYMBOLS_TOTAL = 6;
 const OWNER_NAME_MAX_LENGTH = 30;
 const OWNER_NAME_MIN_LENGTH = 3;
-
-enum ResponseName {
-  MissingFields = 'Missing Fields',
-  Validation = 'Validation Error',
-}
-
-enum StatusCode {
-  HTTP_200_SUCCESS_REQUEST = 200,
-  HTTP_403_FORBIDDEN_REQUEST = 403,
-  HTTP_400_BAD_REQUEST = 400,
-  HTTP_500_INTERNAL_SERVER_ERROR = 500,
-}
+const DEFAULT_PAGE = 0;
+const DEFAULT_ITEMS_PER_PAGE = 3;
 
 const validateCarplateGeneralFields = (plate_name, owner) => {
   const plateFormatError = validatePlateFormat(plate_name);
@@ -117,6 +107,21 @@ const validatePlateFormat = (plate_name) => {
 const isCorrectPlateFormat = (plate_name) =>
   /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
+const getPagination = (page, size) => {
+  const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
+  const offset = page ? page * limit : DEFAULT_PAGE;
+
+  return { limit, offset };
+};
+
+const getPagingData = (data, page, limit) => {
+  const { count: totalItems, rows: carplates } = data;
+  const currentPage = page ? +page : DEFAULT_PAGE;
+  const totalPages = Math.ceil(totalItems / limit);
+
+  return { totalItems, totalPages, currentPage, carplates };
+};
+
 module.exports = {
   async create(req, res, next) {
     try {
@@ -164,16 +169,22 @@ module.exports = {
 
   async findAll(req, res, next) {
     try {
+      const { page, size } = req.query;
       const plate_name = req.query.plate_name;
       const condition = plate_name
         ? { plate_name: { [Op.like]: `%${plate_name}%` } }
         : null;
 
-      const carplatesList = await Carplate.findAll({ where: condition });
+      const { limit, offset } = getPagination(page, size);
 
-      res
-        .status(StatusCode.HTTP_200_SUCCESS_REQUEST)
-        .json({ list: carplatesList });
+      const carplatesList = await Carplate.findAndCountAll({
+        where: condition,
+        limit,
+        offset,
+      }).then((data) => {
+        const response = getPagingData(data, page, limit);
+        res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
+      });
     } catch (err) {
       res
         .status(StatusCode.HTTP_400_BAD_REQUEST)

@@ -1,16 +1,5 @@
 import { DataTypes } from 'sequelize';
 
-export interface Carplate extends CarplateParameters {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CarplateParameters {
-  plate_name?: string;
-  owner?: string;
-}
-
 module.exports = (sequelize, Sequelize) => {
   const Carplate = sequelize.define('carplate', {
     id: {
