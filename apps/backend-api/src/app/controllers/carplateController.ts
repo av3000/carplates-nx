@@ -169,26 +169,31 @@ module.exports = {
 
   async findAll(req, res, next) {
     try {
-      const { page, size } = req.query;
-      const plate_name = req.query.plate_name;
-      const condition = plate_name
-        ? { plate_name: { [Op.like]: `%${plate_name}%` } }
+      const { page, size, plate_name, owner } = req.query;
+      const plate_nameLookup = plate_name
+        ? { [Op.like]: `%${plate_name}%` }
         : null;
+      const ownerLookup = owner ? { [Op.like]: `%${owner}%` } : null;
+
+      let condition = {};
+      if (plate_nameLookup) {
+        condition = { ...condition, plate_name: plate_nameLookup };
+      }
+      if (ownerLookup) {
+        condition = { ...condition, owner: ownerLookup };
+      }
 
       const { limit, offset } = getPagination(page, size);
 
-      const carplatesList = await Carplate.findAndCountAll({
+      const data = await Carplate.findAndCountAll({
         where: condition,
         limit,
         offset,
-      }).then((data) => {
-        const response = getPagingData(data, page, limit);
-        res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
       });
+      const response = getPagingData(data, page, limit);
+      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
     } catch (err) {
-      res
-        .status(StatusCode.HTTP_400_BAD_REQUEST)
-        .json({ error: err.errors || err });
+      res.status(StatusCode.HTTP_400_BAD_REQUEST).json({ err });
     }
   },
 
