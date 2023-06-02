@@ -6,20 +6,28 @@
 require('dotenv').config();
 
 import express from 'express';
-import * as path from 'path';
-import * as cookieParser from 'cookie-parser';
+import { errorMiddleware } from './app/middleware/error-handling';
+const path = require('path');
 const cookieParser = require('cookie-parser');
-import * as logger from 'morgan';
 const logger = require('morgan');
-
+const cors = require('cors');
 const indexRouter = require('./app/routes/index');
 const carplatesRouter = require('./app/routes/carplates');
 
+const PORT = process.env.NODE_DOCKER_PORT || 3333;
+const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
+
 const app = express();
 
-app.use(logger('tiny'));
+const corsOptions = {
+  origin: `http://localhost:${PORT}`,
+};
+
+app.use(cors(corsOptions));
+
+app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -33,15 +41,15 @@ app.get('/', (req, res) => {
 app.use('/api', indexRouter);
 app.use('/api/carplates', carplatesRouter);
 
-const PORT = process.env.NODE_DOCKER_PORT || 3333;
-
 console.log('Connecting to database...');
+
+app.use(errorMiddleware);
 
 const db = require('./app/models');
 db.sequelize
-  .sync()
+  .sync({ force: FLUSH_DB })
   .then(() => {
-    console.log('Synced db.');
+    console.log('Synched db.');
     const server = app.listen(PORT, () => {
       console.log(`Listening at http://localhost:${PORT}`);
     });

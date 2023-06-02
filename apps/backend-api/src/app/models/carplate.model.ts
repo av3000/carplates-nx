@@ -1,15 +1,26 @@
+import { DataTypes } from 'sequelize';
+
 module.exports = (sequelize, Sequelize) => {
   const Carplate = sequelize.define('carplate', {
     id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
       primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4, // Or DataTypes.UUIDV1
     },
-    name: {
-      type: Sequelize.STRING,
+    plate_name: {
+      type: DataTypes.STRING(6),
+      allowNull: false,
+      unique: true,
+      validate: {
+        len: 6,
+      },
     },
     owner: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [3, 30],
+      },
     },
   });
 

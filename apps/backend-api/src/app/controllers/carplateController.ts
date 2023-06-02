@@ -1,163 +1,311 @@
-module.exports = {
-  async getCarplates(req, res, next) {
-    res.send({
-      carplates: carplatesFakeData,
-      page: '1',
-      total: carplatesFakeData.length,
-      items_per_page: '10',
-    });
-  },
+// TODO: move constants and helper functions to their dedicated dir/create shared libs
+
+import {
+  Carplate,
+  CarplateParameters,
+  ErrorResponse,
+  PaginatedData,
+  PaginatedList,
+  PaginationRange,
+  ErrorResponseName,
+  StatusCode,
+} from '../types';
+
+const _db = require('../models');
+const Carplate = _db.carplates;
+const Op = _db.Sequelize.Op;
+
+const PLATE_SYMBOLS_TOTAL = 6;
+const OWNER_NAME_MAX_LENGTH = 30;
+const OWNER_NAME_MIN_LENGTH = 3;
+const DEFAULT_PAGE = 0;
+const DEFAULT_ITEMS_PER_PAGE = 3;
+
+const validateCarplateGeneralFields = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
+  const plateFormatError = validatePlateFormat(plate_name);
+  const plateLengthError = validatePlateLength(plate_name);
+  const ownerError = owner ? validateOwner(owner) : null;
+
+  if (plateLengthError) {
+    return plateLengthError;
+  }
+
+  if (plateFormatError) {
+    return plateFormatError;
+  }
+
+  if (ownerError) {
+    return ownerError;
+  }
+
+  return null;
 };
 
-const carplatesFakeData = [
-  {
-    id: '7648dcdd-c25b-404c-b0fd-dff529b0bcda',
-    name: 'AAA-000',
-    owner: 'John Doe',
+const validateCarplateCreate = (
+  carplateCreateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const fieldsMissingError = validateIfAnyFieldsMissing(
+    carplateCreateParameters
+  );
+
+  if (fieldsMissingError) {
+    return fieldsMissingError;
+  }
+
+  const generalFieldsError = validateCarplateGeneralFields(
+    carplateCreateParameters
+  );
+
+  if (generalFieldsError) {
+    return generalFieldsError;
+  }
+
+  return null;
+};
+
+const validateCarplateUpdate = (
+  carplateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const generalFieldsError = validateCarplateGeneralFields(carplateParameters);
+  const noFieldsError = validateIfNoFieldsProvided(carplateParameters);
+
+  if (noFieldsError) {
+    return noFieldsError;
+  }
+
+  if (generalFieldsError) {
+    return generalFieldsError;
+  }
+
+  return null;
+};
+
+const validateIfAnyFieldsMissing = (
+  carplateCreateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const missingFields = [];
+
+  if (!carplateCreateParameters.plate_name) {
+    missingFields.push('plate_name');
+  }
+
+  if (!carplateCreateParameters.owner) {
+    missingFields.push('owner');
+  }
+
+  return missingFields.length > 0
+    ? {
+        error: {
+          name: ErrorResponseName.MissingFields,
+          message: `[${ErrorResponseName.MissingFields}]: All fields are required.`,
+        },
+        body: { missingFields },
+      }
+    : null;
+};
+
+const validateIfNoFieldsProvided = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
+  return !plate_name && !owner
+    ? {
+        error: {
+          name: ErrorResponseName.MissingFields,
+          message: `[${ErrorResponseName.MissingFields}]: No fields provided`,
+        },
+        body: { plate_name, owner },
+      }
+    : null;
+};
+
+const validateOwner = (owner: string): ErrorResponse | null => {
+  return owner.length > OWNER_NAME_MAX_LENGTH ||
+    owner.length < OWNER_NAME_MIN_LENGTH
+    ? {
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Owner has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} symbols.`,
+        },
+        body: { owner },
+      }
+    : null;
+};
+
+const validatePlateLength = (plate_name: string): ErrorResponse | null => {
+  return plate_name.length !== PLATE_SYMBOLS_TOTAL
+    ? {
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Plate number has to be ${PLATE_SYMBOLS_TOTAL} symbols.`,
+        },
+        body: { plate_name },
+      }
+    : null;
+};
+
+const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
+  return !isCorrectPlateFormat(plate_name)
+    ? {
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Plate number has to be 3 letters and 3 digits format ex: AAA111.`,
+        },
+        body: { plate_name },
+      }
+    : null;
+};
+
+const isCorrectPlateFormat = (plate_name: string): boolean =>
+  /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
+
+// TODO: move pagination functions to dedicated dir
+const getPagination = (page: number, size: number): PaginationRange => {
+  const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
+  const offset = page ? page * limit : DEFAULT_PAGE;
+
+  return { limit, offset };
+};
+
+const getPagingData = (
+  data: PaginatedData<Carplate>,
+  page: number,
+  limit: number
+): PaginatedList<Carplate> => {
+  const { count, rows } = data;
+  const currentPage = page ? +page : DEFAULT_PAGE;
+  const totalPages = Math.ceil(count / limit);
+
+  return { count, totalPages, currentPage, rows };
+};
+
+module.exports = {
+  async create(req, res, next) {
+    try {
+      const isValidationFailed = validateCarplateCreate(req.body);
+      if (isValidationFailed) {
+        res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
+        return;
+      }
+
+      const foundCarplate: Carplate = await Carplate.findOne({
+        where: { plate_name: req.body.plate_name.toUpperCase() },
+      });
+
+      if (foundCarplate) {
+        return next({
+          name: 'Already Exists',
+          message: `Carplate with plate name ${req.body.plate_name} already exists `,
+        });
+      }
+
+      const payload: CarplateParameters = {
+        plate_name: req.body.plate_name.toUpperCase(),
+        owner: req.body.owner,
+      };
+
+      const newCarplate: Carplate = await Carplate.create(payload);
+
+      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
+    } catch (err) {
+      next(err);
+    }
   },
-  {
-    id: 'f7d9b239-0cca-4494-8bb0-d25bc9a6c8d5',
-    name: 'AAA-001',
-    owner: 'John Doe',
+
+  async update(req, res, next) {
+    try {
+      const isValidationFailed = validateCarplateUpdate(req.body);
+      if (isValidationFailed) {
+        res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
+        return;
+      }
+
+      const id = req.params.id;
+
+      const foundCarplate: Carplate = await Carplate.findOne({
+        where: { plate_name: req.body.plate_name.toUpperCase() },
+      });
+
+      if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
+        return next({
+          name: 'Already Exists',
+          message: `Carplate with plate name ${req.body.plate_name} already exists `,
+        });
+      }
+
+      const updatedCarplate: Carplate = await Carplate.update(
+        req.body as CarplateParameters,
+        {
+          where: { id: id },
+        }
+      );
+
+      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(updatedCarplate);
+    } catch (err) {
+      next(err);
+    }
   },
-  {
-    id: '96719518-0c8d-4788-ae80-3f57e56045fe',
-    name: 'AAA-002',
-    owner: 'John Doe',
+
+  async findAll(req, res, next) {
+    try {
+      const page: number = req.query.page;
+      const size: number = req.query.size;
+      const plate_name: string = req.query.plate_name;
+      const owner: string = req.query.owner;
+
+      const plate_nameLookup = plate_name
+        ? { [Op.like]: `%${plate_name}%` }
+        : null;
+
+      const ownerLookup = owner ? { [Op.like]: `%${owner}%` } : null;
+
+      let condition = {};
+      if (plate_nameLookup) {
+        condition = { ...condition, plate_name: plate_nameLookup };
+      }
+      if (ownerLookup) {
+        condition = { ...condition, owner: ownerLookup };
+      }
+
+      const { limit, offset } = getPagination(page, size);
+
+      const data: PaginatedData<Carplate> = await Carplate.findAndCountAll({
+        where: condition,
+        limit,
+        offset,
+      });
+      const response = getPagingData(data, page, limit);
+      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
+    } catch (err) {
+      next(err);
+    }
   },
-  {
-    id: '390dddfd-94bb-411d-ae81-3357fdf8a0bf',
-    name: 'AAA-003',
-    owner: 'John Doe',
+
+  async findOne(req, res, next) {
+    try {
+      const id: string = req.params.id;
+
+      const singleCarplate: Carplate = await Carplate.findByPk(id);
+      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate);
+    } catch (err) {
+      next(err);
+    }
   },
-  {
-    id: '8a95edf9-d4c3-499f-941d-44f5ac0473e6',
-    name: 'AAA-004',
-    owner: 'John Doe',
+
+  async decomm(req, res, next) {
+    try {
+      const id: string = req.params.id;
+
+      const deletedCarplate: Carplate = await Carplate.destroy({
+        where: { id: id },
+      });
+
+      res.send(deletedCarplate);
+    } catch (err) {
+      next(err);
+    }
   },
-  {
-    id: '1ec9d09a-6b3a-4112-99d9-29113120c20e',
-    name: 'AAA-005',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e03a5783-d8ca-4442-9482-55a31a3ab822',
-    name: 'AAA-006',
-    owner: 'John Doe',
-  },
-  {
-    id: '77af7bf5-658f-4ab0-9c14-47eca238e3fd',
-    name: 'AAA-007',
-    owner: 'John Doe',
-  },
-  {
-    id: '227abc46-82d3-438e-8ae8-9d3a2a95340e',
-    name: 'AAA-008',
-    owner: 'John Doe',
-  },
-  {
-    id: '140c02d8-074c-4538-b368-415566086319',
-    name: 'AAA-009',
-    owner: 'John Doe',
-  },
-  {
-    id: '2be0574e-1256-4ea4-b7ef-0aa2fbdb315b',
-    name: 'BBB-010',
-    owner: 'John Doe',
-  },
-  {
-    id: '68889a38-25a3-495e-95a9-3a77c8c4e629',
-    name: 'BBB-011',
-    owner: 'John Doe',
-  },
-  {
-    id: '57c95d79-db53-49e3-82d0-a0823c414654',
-    name: 'BBB-012',
-    owner: 'John Doe',
-  },
-  {
-    id: '3dac3c82-01bf-4da7-8211-9629c1cae8ff',
-    name: 'BBB-013',
-    owner: 'John Doe',
-  },
-  {
-    id: '2c0a4f05-7586-4eef-9172-2a8247c4966c',
-    name: 'BBB-014',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e7643e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'BBB-015',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e9999e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'BBB-016',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e8888e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'BBB-017',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e7777e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'BBB-018',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e6666e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'BBB-019',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e5555e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-020',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e4444e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-100',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e3333e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-101',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e2222e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-102',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e1111e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-103',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e0000e0a-88c5-47e2-8411-ea9f727db26b',
-    name: 'CCC-104',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e0dwe0e0a-88c5-47e2-8411-ea9f727db999',
-    name: 'CCC-999',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e0dwe0e0a-88c5-47e2-8411-ea9f727db888',
-    name: 'CCC-888',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e0dwe0e0a-88c5-47e2-8411-ea9f727db777',
-    name: 'CCC-777',
-    owner: 'John Doe',
-  },
-  {
-    id: 'e0dwe0e0a-88c5-47e2-8411-ea9f727db666',
-    name: 'CCC-666',
-    owner: 'John Doe',
-  },
-];
+};
