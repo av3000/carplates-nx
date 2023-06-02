@@ -1,6 +1,7 @@
-export enum ResponseName {
+export enum ErrorResponseName {
   MissingFields = 'Missing Fields',
   Validation = 'Validation Error',
+  Duplicate = 'Already exists',
 }
 
 export enum StatusCode {
@@ -12,7 +13,6 @@ export enum StatusCode {
 
 export interface ErrorResponse {
   error: {
-    status: number;
     name: string;
     message: string;
   };
@@ -28,4 +28,21 @@ export interface Carplate extends CarplateParameters {
 export interface CarplateParameters {
   plate_name?: string;
   owner?: string;
+}
+
+export interface PaginatedList<T> {
+  count: number;
+  totalPages: number;
+  currentPage: number;
+  rows: T[];
+}
+
+export interface PaginatedData<T> {
+  count: number;
+  rows: T[];
+}
+
+export interface PaginationRange {
+  limit: number;
+  offset: number;
 }

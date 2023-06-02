@@ -1,4 +1,15 @@
-import { CarplateParameters, ResponseName, StatusCode } from '../types';
+// TODO: move constants and helper functions to their dedicated dir/create shared libs
+
+import {
+  Carplate,
+  CarplateParameters,
+  ErrorResponse,
+  PaginatedData,
+  PaginatedList,
+  PaginationRange,
+  ErrorResponseName,
+  StatusCode,
+} from '../types';
 
 const _db = require('../models');
 const Carplate = _db.carplates;
@@ -10,7 +21,10 @@ const OWNER_NAME_MIN_LENGTH = 3;
 const DEFAULT_PAGE = 0;
 const DEFAULT_ITEMS_PER_PAGE = 3;
 
-const validateCarplateGeneralFields = (plate_name, owner) => {
+const validateCarplateGeneralFields = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
   const plateFormatError = validatePlateFormat(plate_name);
   const plateLengthError = validatePlateLength(plate_name);
   const ownerError = owner ? validateOwner(owner) : null;
@@ -26,15 +40,24 @@ const validateCarplateGeneralFields = (plate_name, owner) => {
   if (ownerError) {
     return ownerError;
   }
+
+  return null;
 };
 
-const validateCarplateCreate = ({ plate_name, owner }: CarplateParameters) => {
-  const generalFieldsError = validateCarplateGeneralFields(plate_name, owner);
-  const fieldsMissingError = validateIfAnyFieldsMissing(plate_name, owner);
+const validateCarplateCreate = (
+  carplateCreateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const fieldsMissingError = validateIfAnyFieldsMissing(
+    carplateCreateParameters
+  );
 
   if (fieldsMissingError) {
     return fieldsMissingError;
   }
+
+  const generalFieldsError = validateCarplateGeneralFields(
+    carplateCreateParameters
+  );
 
   if (generalFieldsError) {
     return generalFieldsError;
@@ -43,9 +66,11 @@ const validateCarplateCreate = ({ plate_name, owner }: CarplateParameters) => {
   return null;
 };
 
-const validateCarplateUpdate = ({ plate_name, owner }: CarplateParameters) => {
-  const generalFieldsError = validateCarplateGeneralFields(plate_name, owner);
-  const noFieldsError = validateIfNoFieldsProvided(plate_name, owner);
+const validateCarplateUpdate = (
+  carplateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const generalFieldsError = validateCarplateGeneralFields(carplateParameters);
+  const noFieldsError = validateIfNoFieldsProvided(carplateParameters);
 
   if (noFieldsError) {
     return noFieldsError;
@@ -58,68 +83,103 @@ const validateCarplateUpdate = ({ plate_name, owner }: CarplateParameters) => {
   return null;
 };
 
-const validateIfAnyFieldsMissing = (plate_name, owner) => {
-  return !plate_name || !owner
+const validateIfAnyFieldsMissing = (
+  carplateCreateParameters: CarplateParameters
+): ErrorResponse | null => {
+  const missingFields = [];
+
+  if (!carplateCreateParameters.plate_name) {
+    missingFields.push('plate_name');
+  }
+
+  if (!carplateCreateParameters.owner) {
+    missingFields.push('owner');
+  }
+
+  return missingFields.length > 0
     ? {
-        message: `[${ResponseName.MissingFields}]: All fields are required.`,
-        body: { plate_name, owner },
+        error: {
+          name: ErrorResponseName.MissingFields,
+          message: `[${ErrorResponseName.MissingFields}]: All fields are required.`,
+        },
+        body: { missingFields },
       }
     : null;
 };
 
-const validateIfNoFieldsProvided = (plate_name, owner) => {
+const validateIfNoFieldsProvided = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
   return !plate_name && !owner
     ? {
-        message: `[${ResponseName.MissingFields}]: No fields provided`,
+        error: {
+          name: ErrorResponseName.MissingFields,
+          message: `[${ErrorResponseName.MissingFields}]: No fields provided`,
+        },
         body: { plate_name, owner },
       }
     : null;
 };
 
-const validateOwner = (owner) => {
+const validateOwner = (owner: string): ErrorResponse | null => {
   return owner.length > OWNER_NAME_MAX_LENGTH ||
     owner.length < OWNER_NAME_MIN_LENGTH
     ? {
-        message: `[${ResponseName.Validation}]: Owner has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} symbols.`,
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Owner has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} symbols.`,
+        },
         body: { owner },
       }
     : null;
 };
 
-const validatePlateLength = (plate_name) => {
+const validatePlateLength = (plate_name: string): ErrorResponse | null => {
   return plate_name.length !== PLATE_SYMBOLS_TOTAL
     ? {
-        message: `[${ResponseName.Validation}]: Plate number has to be ${PLATE_SYMBOLS_TOTAL} symbols.`,
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Plate number has to be ${PLATE_SYMBOLS_TOTAL} symbols.`,
+        },
         body: { plate_name },
       }
     : null;
 };
 
-const validatePlateFormat = (plate_name) => {
+const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
   return !isCorrectPlateFormat(plate_name)
     ? {
-        message: `[${ResponseName.Validation}]: Plate number has to be 3 letters and 3 digits format ex: AAA111.`,
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Plate number has to be 3 letters and 3 digits format ex: AAA111.`,
+        },
         body: { plate_name },
       }
     : null;
 };
 
-const isCorrectPlateFormat = (plate_name) =>
+const isCorrectPlateFormat = (plate_name: string): boolean =>
   /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
-const getPagination = (page, size) => {
+// TODO: move pagination functions to dedicated dir
+const getPagination = (page: number, size: number): PaginationRange => {
   const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
   const offset = page ? page * limit : DEFAULT_PAGE;
 
   return { limit, offset };
 };
 
-const getPagingData = (data, page, limit) => {
-  const { count: totalItems, rows: carplates } = data;
+const getPagingData = (
+  data: PaginatedData<Carplate>,
+  page: number,
+  limit: number
+): PaginatedList<Carplate> => {
+  const { count, rows } = data;
   const currentPage = page ? +page : DEFAULT_PAGE;
-  const totalPages = Math.ceil(totalItems / limit);
+  const totalPages = Math.ceil(count / limit);
 
-  return { totalItems, totalPages, currentPage, carplates };
+  return { count, totalPages, currentPage, rows };
 };
 
 module.exports = {
@@ -131,18 +191,27 @@ module.exports = {
         return;
       }
 
-      const payload = {
-        plate_name: req.body.plate_name,
+      const foundCarplate: Carplate = await Carplate.findOne({
+        where: { plate_name: req.body.plate_name.toUpperCase() },
+      });
+
+      if (foundCarplate) {
+        return next({
+          name: 'Already Exists',
+          message: `Carplate with plate name ${req.body.plate_name} already exists `,
+        });
+      }
+
+      const payload: CarplateParameters = {
+        plate_name: req.body.plate_name.toUpperCase(),
         owner: req.body.owner,
       };
 
-      const newCarplate = await Carplate.create(payload);
+      const newCarplate: Carplate = await Carplate.create(payload);
 
       res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
     } catch (err) {
-      res
-        .status(StatusCode.HTTP_400_BAD_REQUEST)
-        .json({ error: err.errors || err });
+      next(err);
     }
   },
 
@@ -155,24 +224,42 @@ module.exports = {
       }
 
       const id = req.params.id;
-      const updatedCarplate = await Carplate.update(req.body, {
-        where: { id: id },
+
+      const foundCarplate: Carplate = await Carplate.findOne({
+        where: { plate_name: req.body.plate_name.toUpperCase() },
       });
+
+      if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
+        return next({
+          name: 'Already Exists',
+          message: `Carplate with plate name ${req.body.plate_name} already exists `,
+        });
+      }
+
+      const updatedCarplate: Carplate = await Carplate.update(
+        req.body as CarplateParameters,
+        {
+          where: { id: id },
+        }
+      );
 
       res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(updatedCarplate);
     } catch (err) {
-      res
-        .status(StatusCode.HTTP_400_BAD_REQUEST)
-        .json({ error: err.errors || err });
+      next(err);
     }
   },
 
   async findAll(req, res, next) {
     try {
-      const { page, size, plate_name, owner } = req.query;
+      const page: number = req.query.page;
+      const size: number = req.query.size;
+      const plate_name: string = req.query.plate_name;
+      const owner: string = req.query.owner;
+
       const plate_nameLookup = plate_name
         ? { [Op.like]: `%${plate_name}%` }
         : null;
+
       const ownerLookup = owner ? { [Op.like]: `%${owner}%` } : null;
 
       let condition = {};
@@ -185,7 +272,7 @@ module.exports = {
 
       const { limit, offset } = getPagination(page, size);
 
-      const data = await Carplate.findAndCountAll({
+      const data: PaginatedData<Carplate> = await Carplate.findAndCountAll({
         where: condition,
         limit,
         offset,
@@ -193,36 +280,32 @@ module.exports = {
       const response = getPagingData(data, page, limit);
       res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
     } catch (err) {
-      res.status(StatusCode.HTTP_400_BAD_REQUEST).json({ err });
+      next(err);
     }
   },
 
   async findOne(req, res, next) {
     try {
-      const id = req.params.id;
+      const id: string = req.params.id;
 
-      const singleCarplate = await Carplate.findByPk(id);
+      const singleCarplate: Carplate = await Carplate.findByPk(id);
       res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate);
     } catch (err) {
-      res
-        .status(StatusCode.HTTP_400_BAD_REQUEST)
-        .json({ error: err.errors || err });
+      next(err);
     }
   },
 
   async decomm(req, res, next) {
     try {
-      const id = req.params.id;
+      const id: string = req.params.id;
 
-      const deletedCarplate = await Carplate.destroy({
+      const deletedCarplate: Carplate = await Carplate.destroy({
         where: { id: id },
       });
 
       res.send(deletedCarplate);
     } catch (err) {
-      res
-        .status(StatusCode.HTTP_400_BAD_REQUEST)
-        .json({ error: err.errors || err });
+      next(err);
     }
   },
 };

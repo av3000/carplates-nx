@@ -9,6 +9,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     plate_name: {
       type: DataTypes.STRING(6),
+      allowNull: false,
       unique: true,
       validate: {
         len: 6,
@@ -16,6 +17,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     owner: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
         len: [3, 30],
       },
