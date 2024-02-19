@@ -1,15 +1,16 @@
-import express from 'express';
-const router = express.Router();
+import { Router } from 'express';
 
 const { asyncErrorHandler } = require('../middleware');
 
-const {
+const router = Router();
+
+import {
   create,
   update,
   decomm,
   findOne,
   findAll,
-} = require('../controllers/carplateController');
+} from '../controllers/carplateController';
 
 router.post('/', asyncErrorHandler(create));
 router.get('/', findAll);
@@ -17,4 +18,4 @@ router.get('/:id', asyncErrorHandler(findOne));
 router.put('/:id', asyncErrorHandler(update));
 router.delete('/:id', asyncErrorHandler(decomm));
 
-module.exports = router;
+export default router;
