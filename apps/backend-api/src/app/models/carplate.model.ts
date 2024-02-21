@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize) => {
   const Carplate = sequelize.define('carplate', {
     id: {
       primaryKey: true,
@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       unique: true,
       validate: {
-        len: 6,
+        len: [6, 6],
       },
     },
     owner: {

@@ -11,28 +11,8 @@ const options: swaggerJsdoc.Options = {
       title: 'REST CarPlates API Docs',
       version: '1.2.4',
     },
-    paths: {
-      '/api/carplates': {
-        get: {
-          description: 'Leggit',
-          responses: {
-            200: {
-              description: 'returns carplates',
-            },
-          },
-        },
-        post: {
-          description: 'Create a new Carplate',
-          responses: {
-            200: {
-              description: 'Returns a Newly created Carplate',
-            },
-          },
-        },
-      },
-    },
   },
-  apis: [],
+  apis: ['./apps/backend-api/src/app/routes/*.ts'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

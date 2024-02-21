@@ -1,13 +1,14 @@
 require('dotenv').config();
 
 import express, { Express } from 'express';
-import { errorMiddleware } from './app/middleware/error-handling';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 
+import { errorMiddleware } from './app/middleware/error-handling';
 import swaggerDocs from './app/utils/swagger';
+import db from './app/models';
 
 import indexRoutes from './app/routes/index';
 import carplateRoutes from './app/routes/carplates';
@@ -46,7 +47,6 @@ console.log('Connecting to database...');
 
 app.use(errorMiddleware);
 
-const db = require('./app/models');
 db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {

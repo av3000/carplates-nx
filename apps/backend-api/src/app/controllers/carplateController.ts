@@ -1,19 +1,20 @@
 // TODO: move constants and helper functions to their dedicated dir/create shared libs
+// TODO: move validation functions to dedicated dir/create shared libs
+// TODO: move pagination functions to dedicated dir
+// TODO: move error handling to dedicated dir(?)
+
+import { Op } from 'sequelize';
 
 import {
-  Carplate,
-  CarplateParameters,
   ErrorResponse,
   PaginatedData,
   PaginatedList,
   PaginationRange,
-  ErrorResponseName,
-  StatusCode,
 } from '../types';
-
-const _db = require('../models');
-const Carplate = _db.carplates;
-const Op = _db.Sequelize.Op;
+import { Carplate, CarplateParameters } from '../types/carplate';
+import { ErrorResponseName, StatusCode } from '../enums';
+import db from '../models';
+const CarplateSchema = db.CarplateSchema;
 
 const PLATE_SYMBOLS_TOTAL = 6;
 const OWNER_NAME_MAX_LENGTH = 30;
@@ -162,7 +163,6 @@ const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
 const isCorrectPlateFormat = (plate_name: string): boolean =>
   /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
-// TODO: move pagination functions to dedicated dir
 const getPagination = (page: number, size: number): PaginationRange => {
   const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
   const offset = page ? page * limit : DEFAULT_PAGE;
@@ -190,7 +190,7 @@ export async function create(req, res, next) {
       return;
     }
 
-    const foundCarplate: Carplate = await Carplate.findOne({
+    const foundCarplate: Carplate = await CarplateSchema.findOne({
       where: { plate_name: req.body.plate_name.toUpperCase() },
     });
 
@@ -206,7 +206,7 @@ export async function create(req, res, next) {
       owner: req.body.owner,
     };
 
-    const newCarplate: Carplate = await Carplate.create(payload);
+    const newCarplate: Carplate = await CarplateSchema.create(payload);
 
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
   } catch (err) {
@@ -222,9 +222,9 @@ export async function update(req, res, next) {
       return;
     }
 
-    const id = req.params.id;
+    const { id } = req.params;
 
-    const foundCarplate: Carplate = await Carplate.findOne({
+    const foundCarplate: Carplate = await CarplateSchema.findOne({
       where: { plate_name: req.body.plate_name.toUpperCase() },
     });
 
@@ -235,14 +235,13 @@ export async function update(req, res, next) {
       });
     }
 
-    const updatedCarplate: Carplate = await Carplate.update(
-      req.body as CarplateParameters,
-      {
-        where: { id: id },
-      }
-    );
+    await CarplateSchema.update(req.body as CarplateParameters, {
+      where: { id: id },
+    });
 
-    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(updatedCarplate);
+    res
+      .status(StatusCode.HTTP_200_SUCCESS_REQUEST)
+      .json({ message: 'Carplate updated successfully', id });
   } catch (err) {
     next(err);
   }
@@ -271,7 +270,7 @@ export async function findAll(req, res, next) {
 
     const { limit, offset } = getPagination(page, size);
 
-    const data: PaginatedData<Carplate> = await Carplate.findAndCountAll({
+    const data: PaginatedData<Carplate> = await CarplateSchema.findAndCountAll({
       where: condition,
       limit,
       offset,
@@ -285,10 +284,10 @@ export async function findAll(req, res, next) {
 
 export async function findOne(req, res, next) {
   try {
-    const id: string = req.params.id;
+    const { id } = req.params;
 
-    const singleCarplate: Carplate = await Carplate.findByPk(id);
-    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate);
+    const singleCarplate: Carplate | null = await CarplateSchema.findByPk(id);
+    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate ?? {});
   } catch (err) {
     next(err);
   }
@@ -298,11 +297,13 @@ export async function decomm(req, res, next) {
   try {
     const id: string = req.params.id;
 
-    const deletedCarplate: Carplate = await Carplate.destroy({
+    await CarplateSchema.destroy({
       where: { id: id },
     });
 
-    res.send(deletedCarplate);
+    res
+      .status(StatusCode.HTTP_200_SUCCESS_REQUEST)
+      .json({ message: 'Carplate deleted successfully', id });
   } catch (err) {
     next(err);
   }

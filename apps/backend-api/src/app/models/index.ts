@@ -1,12 +1,12 @@
-const dbConfig = require('../middleware/mysql.db.ts');
+import { mysqlConfig as dbConfig } from '../middleware/mysql.db';
+import { Sequelize, Dialect } from 'sequelize';
+import CarplateModel from './carplate.model';
 
-const Sequelize = require('sequelize');
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
-  dialect: dbConfig.dialect,
-  port: dbConfig.port,
-  operatorsAliases: 0,
-
+  dialect: dbConfig.dialect as Dialect,
+  port: parseInt(dbConfig.port),
+  operatorsAliases: {},
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
@@ -15,11 +15,12 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
-const db = { Sequelize, sequelize, carplates: {} };
+const CarplateSchema = CarplateModel(sequelize);
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+const db = {
+  Sequelize,
+  sequelize,
+  CarplateSchema,
+};
 
-db.carplates = require('./carplate.model.ts')(sequelize, Sequelize);
-
-module.exports = db;
+export default db;
