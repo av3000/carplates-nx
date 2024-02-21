@@ -2,6 +2,7 @@
 // TODO: move validation functions to dedicated dir/create shared libs
 // TODO: move pagination functions to dedicated dir
 // TODO: move error handling to dedicated dir(?)
+// TODO: fix pagination to show page size starting from 1 (not 0)
 
 import { Op } from 'sequelize';
 
