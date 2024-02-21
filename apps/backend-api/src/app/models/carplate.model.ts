@@ -4,7 +4,7 @@ export default (sequelize) => {
   const Carplate = sequelize.define('carplate', {
     id: {
       primaryKey: true,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       defaultValue: DataTypes.UUIDV4, // Or DataTypes.UUIDV1
     },
     plate_name: {

@@ -163,6 +163,23 @@ const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
 const isCorrectPlateFormat = (plate_name: string): boolean =>
   /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
+const validateIdFormat = (id: string): ErrorResponse | null => {
+  return !isCorrectIdFormat(id)
+    ? {
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Invalid carplate id format.`,
+        },
+        body: { id },
+      }
+    : null;
+};
+
+const isCorrectIdFormat = (id: string): boolean =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    id
+  );
+
 const getPagination = (page: number, size: number): PaginationRange => {
   const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
   const offset = page ? page * limit : DEFAULT_PAGE;
@@ -223,6 +240,11 @@ export async function update(req, res, next) {
     }
 
     const { id } = req.params;
+
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
+    }
 
     const foundCarplate: Carplate = await CarplateSchema.findOne({
       where: { plate_name: req.body.plate_name.toUpperCase() },
@@ -286,6 +308,11 @@ export async function findOne(req, res, next) {
   try {
     const { id } = req.params;
 
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
+    }
+
     const singleCarplate: Carplate | null = await CarplateSchema.findByPk(id);
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate ?? {});
   } catch (err) {
@@ -295,7 +322,19 @@ export async function findOne(req, res, next) {
 
 export async function decomm(req, res, next) {
   try {
-    const id: string = req.params.id;
+    const { id } = req.params.id;
+
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
+    }
+
+    const existingCarplate: Carplate | null = await CarplateSchema.findByPk(id);
+    if (!existingCarplate) {
+      return res
+        .status(StatusCode.HTTP_404_NOT_FOUND)
+        .json({ message: 'Carplate not found' });
+    }
 
     await CarplateSchema.destroy({
       where: { id: id },

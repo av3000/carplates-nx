@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ErrorResponse } from '../types';
+import { StatusCode } from '../enums';
 
 export const errorMiddleware = (
   err: Error,
@@ -14,7 +15,7 @@ export const errorMiddleware = (
   }
 
   if (typeof err === 'string') {
-    res.status(500).json({
+    res.status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR).json({
       error: {
         name: 'Server Error',
         message: err || 'Internal Server Error',
@@ -22,7 +23,7 @@ export const errorMiddleware = (
       body: req.body,
     } as ErrorResponse);
   } else if (err.message) {
-    res.status(500).json({
+    res.status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR).json({
       error: {
         name: err.name || 'Server Error',
         message: err.message || 'Internal Server Error',
@@ -30,6 +31,8 @@ export const errorMiddleware = (
       body: req.body,
     } as ErrorResponse);
   } else {
-    res.status(500).json({ error: err, body: req.body } as ErrorResponse);
+    res
+      .status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR)
+      .json({ error: err, body: req.body } as ErrorResponse);
   }
 };
