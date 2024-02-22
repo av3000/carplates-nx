@@ -1,11 +1,3 @@
-export interface ErrorResponse {
-  error: {
-    name: string;
-    message: string;
-  };
-  body: any;
-}
-
 export interface PaginatedList<T> {
   count: number;
   totalPages: number;

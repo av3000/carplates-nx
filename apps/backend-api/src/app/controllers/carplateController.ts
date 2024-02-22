@@ -11,8 +11,8 @@ import {
   PaginatedData,
   PaginatedList,
   PaginationRange,
-} from '../types';
-import { Carplate, CarplateParameters } from '../types/carplate';
+} from '@shared/common/types';
+
 import { ErrorResponseName, StatusCode } from '../enums';
 import db from '../models';
 const CarplateSchema = db.CarplateSchema;
