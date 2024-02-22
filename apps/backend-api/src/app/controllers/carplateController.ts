@@ -1,19 +1,21 @@
 // TODO: move constants and helper functions to their dedicated dir/create shared libs
+// TODO: move validation functions to dedicated dir/create shared libs
+// TODO: move pagination functions to dedicated dir
+// TODO: move error handling to dedicated dir(?)
+// TODO: fix pagination to show page size starting from 1 (not 0)
+
+import { Op } from 'sequelize';
 
 import {
-  Carplate,
-  CarplateParameters,
   ErrorResponse,
   PaginatedData,
   PaginatedList,
   PaginationRange,
-  ErrorResponseName,
-  StatusCode,
 } from '../types';
-
-const _db = require('../models');
-const Carplate = _db.carplates;
-const Op = _db.Sequelize.Op;
+import { Carplate, CarplateParameters } from '../types/carplate';
+import { ErrorResponseName, StatusCode } from '../enums';
+import db from '../models';
+const CarplateSchema = db.CarplateSchema;
 
 const PLATE_SYMBOLS_TOTAL = 6;
 const OWNER_NAME_MAX_LENGTH = 30;
@@ -66,18 +68,39 @@ const validateCarplateCreate = (
   return null;
 };
 
-const validateCarplateUpdate = (
-  carplateParameters: CarplateParameters
-): ErrorResponse | null => {
-  const generalFieldsError = validateCarplateGeneralFields(carplateParameters);
-  const noFieldsError = validateIfNoFieldsProvided(carplateParameters);
+const validateCarplateUpdate = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
+  const noFieldsError = validateIfNoFieldsProvided({ plate_name, owner });
+  const plateError = plate_name ? validatePlate(plate_name) : null;
+  const ownerError = owner ? validateOwner(owner) : null;
 
   if (noFieldsError) {
     return noFieldsError;
   }
 
-  if (generalFieldsError) {
-    return generalFieldsError;
+  if (plateError) {
+    return plateError;
+  }
+
+  if (ownerError) {
+    return ownerError;
+  }
+
+  return null;
+};
+
+const validatePlate = (plate_name: string): ErrorResponse | null => {
+  const plateFormatError = validatePlateFormat(plate_name);
+  const plateLengthError = validatePlateLength(plate_name);
+
+  if (plateLengthError) {
+    return plateLengthError;
+  }
+
+  if (plateFormatError) {
+    return plateFormatError;
   }
 
   return null;
@@ -162,7 +185,23 @@ const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
 const isCorrectPlateFormat = (plate_name: string): boolean =>
   /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
-// TODO: move pagination functions to dedicated dir
+const validateIdFormat = (id: string): ErrorResponse | null => {
+  return !isCorrectIdFormat(id)
+    ? {
+        error: {
+          name: ErrorResponseName.Validation,
+          message: `[${ErrorResponseName.Validation}]: Invalid carplate id format.`,
+        },
+        body: { id },
+      }
+    : null;
+};
+
+const isCorrectIdFormat = (id: string): boolean =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    id
+  );
+
 const getPagination = (page: number, size: number): PaginationRange => {
   const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
   const offset = page ? page * limit : DEFAULT_PAGE;
@@ -182,130 +221,157 @@ const getPagingData = (
   return { count, totalPages, currentPage, rows };
 };
 
-module.exports = {
-  async create(req, res, next) {
-    try {
-      const isValidationFailed = validateCarplateCreate(req.body);
-      if (isValidationFailed) {
-        res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
-        return;
-      }
+export async function create(req, res, next) {
+  try {
+    const isValidationFailed = validateCarplateCreate(req.body);
+    if (isValidationFailed) {
+      res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
+      return;
+    }
 
-      const foundCarplate: Carplate = await Carplate.findOne({
-        where: { plate_name: req.body.plate_name.toUpperCase() },
+    const foundCarplate: Carplate = await CarplateSchema.findOne({
+      where: { plate_name: req.body.plate_name.toUpperCase() },
+    });
+
+    if (foundCarplate) {
+      return next({
+        name: 'Already Exists',
+        message: `Carplate with plate name ${req.body.plate_name} already exists `,
       });
-
-      if (foundCarplate) {
-        return next({
-          name: 'Already Exists',
-          message: `Carplate with plate name ${req.body.plate_name} already exists `,
-        });
-      }
-
-      const payload: CarplateParameters = {
-        plate_name: req.body.plate_name.toUpperCase(),
-        owner: req.body.owner,
-      };
-
-      const newCarplate: Carplate = await Carplate.create(payload);
-
-      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
-    } catch (err) {
-      next(err);
     }
-  },
 
-  async update(req, res, next) {
-    try {
-      const isValidationFailed = validateCarplateUpdate(req.body);
-      if (isValidationFailed) {
-        res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
-        return;
-      }
+    const payload: CarplateParameters = {
+      plate_name: req.body.plate_name.toUpperCase(),
+      owner: req.body.owner,
+    };
 
-      const id = req.params.id;
+    const newCarplate: Carplate = await CarplateSchema.create(payload);
 
-      const foundCarplate: Carplate = await Carplate.findOne({
-        where: { plate_name: req.body.plate_name.toUpperCase() },
+    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function update(req, res, next) {
+  try {
+    const isValidationFailed = validateCarplateUpdate(req.body);
+    if (isValidationFailed) {
+      res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
+      return;
+    }
+
+    const { id } = req.params;
+
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
+    }
+
+    const payload: CarplateParameters = {
+      plate_name: req.body.plate_name
+        ? req.body.plate_name.toUpperCase()
+        : null,
+      owner: req.body.owner ? req.body.owner : null,
+    };
+
+    const foundCarplate: Carplate = await CarplateSchema.findOne({
+      where: payload,
+    });
+
+    if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
+      return next({
+        name: 'Already Exists',
+        message: `Carplate with plate name ${req.body.plate_name} already exists `,
       });
-
-      if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
-        return next({
-          name: 'Already Exists',
-          message: `Carplate with plate name ${req.body.plate_name} already exists `,
-        });
-      }
-
-      const updatedCarplate: Carplate = await Carplate.update(
-        req.body as CarplateParameters,
-        {
-          where: { id: id },
-        }
-      );
-
-      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(updatedCarplate);
-    } catch (err) {
-      next(err);
     }
-  },
 
-  async findAll(req, res, next) {
-    try {
-      const page: number = req.query.page;
-      const size: number = req.query.size;
-      const plate_name: string = req.query.plate_name;
-      const owner: string = req.query.owner;
+    await CarplateSchema.update(req.body as CarplateParameters, {
+      where: { id: id },
+    });
 
-      const plate_nameLookup = plate_name
-        ? { [Op.like]: `%${plate_name}%` }
-        : null;
+    res
+      .status(StatusCode.HTTP_200_SUCCESS_REQUEST)
+      .json({ message: 'Carplate updated successfully', id });
+  } catch (err) {
+    next(err);
+  }
+}
 
-      const ownerLookup = owner ? { [Op.like]: `%${owner}%` } : null;
+export async function findAll(req, res, next) {
+  try {
+    const page: number = req.query.page;
+    const size: number = req.query.size;
+    const plate_name: string = req.query.plate_name;
+    const owner: string = req.query.owner;
 
-      let condition = {};
-      if (plate_nameLookup) {
-        condition = { ...condition, plate_name: plate_nameLookup };
-      }
-      if (ownerLookup) {
-        condition = { ...condition, owner: ownerLookup };
-      }
+    const plate_nameLookup = plate_name
+      ? { [Op.like]: `%${plate_name}%` }
+      : null;
 
-      const { limit, offset } = getPagination(page, size);
+    const ownerLookup = owner ? { [Op.like]: `%${owner}%` } : null;
 
-      const data: PaginatedData<Carplate> = await Carplate.findAndCountAll({
-        where: condition,
-        limit,
-        offset,
-      });
-      const response = getPagingData(data, page, limit);
-      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
-    } catch (err) {
-      next(err);
+    let condition = {};
+    if (plate_nameLookup) {
+      condition = { ...condition, plate_name: plate_nameLookup };
     }
-  },
-
-  async findOne(req, res, next) {
-    try {
-      const id: string = req.params.id;
-
-      const singleCarplate: Carplate = await Carplate.findByPk(id);
-      res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate);
-    } catch (err) {
-      next(err);
+    if (ownerLookup) {
+      condition = { ...condition, owner: ownerLookup };
     }
-  },
 
-  async decomm(req, res, next) {
-    try {
-      const id: string = req.params.id;
+    const { limit, offset } = getPagination(page, size);
 
-      const deletedCarplate: Carplate = await Carplate.destroy({
-        where: { id: id },
-      });
+    const data: PaginatedData<Carplate> = await CarplateSchema.findAndCountAll({
+      where: condition,
+      limit,
+      offset,
+    });
+    const response = getPagingData(data, page, limit);
+    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
+  } catch (err) {
+    next(err);
+  }
+}
 
-      res.send(deletedCarplate);
-    } catch (err) {
-      next(err);
+export async function findOne(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
-  },
-};
+
+    const singleCarplate: Carplate | null = await CarplateSchema.findByPk(id);
+    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(singleCarplate ?? {});
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function decomm(req, res, next) {
+  try {
+    const { id } = req.params;
+    const idFormatError = validateIdFormat(id);
+    if (idFormatError) {
+      return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
+    }
+
+    const existingCarplate: Carplate | null = await CarplateSchema.findByPk(id);
+    if (!existingCarplate) {
+      return res
+        .status(StatusCode.HTTP_404_NOT_FOUND)
+        .json({ message: 'Carplate not found' });
+    }
+
+    await CarplateSchema.destroy({
+      where: { id: id },
+    });
+
+    res
+      .status(StatusCode.HTTP_200_SUCCESS_REQUEST)
+      .json({ message: 'Carplate deleted successfully', id });
+  } catch (err) {
+    next(err);
+  }
+}

@@ -1,23 +1,22 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 require('dotenv').config();
 
-import express from 'express';
+import express, { Express } from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import cors from 'cors';
+
 import { errorMiddleware } from './app/middleware/error-handling';
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const cors = require('cors');
-const indexRouter = require('./app/routes/index');
-const carplatesRouter = require('./app/routes/carplates');
+import swaggerDocs from './app/utils/swagger';
+import db from './app/models';
+
+import indexRoutes from './app/routes/index';
+import carplateRoutes from './app/routes/carplates';
 
 const PORT = process.env.NODE_DOCKER_PORT || 3333;
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
-const app = express();
+const app: Express = express();
 
 const corsOptions = {
   origin: `http://localhost:${PORT}`,
@@ -37,15 +36,17 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to backend-api root page!' });
 });
 
+// Swagger Init
+swaggerDocs(app, PORT);
+
 // API Routes
-app.use('/api', indexRouter);
-app.use('/api/carplates', carplatesRouter);
+app.use('/api', indexRoutes);
+app.use('/api/carplates', carplateRoutes);
 
 console.log('Connecting to database...');
 
 app.use(errorMiddleware);
 
-const db = require('./app/models');
 db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {

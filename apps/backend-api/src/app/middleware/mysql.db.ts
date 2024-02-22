@@ -1,4 +1,4 @@
-module.exports = {
+export const mysqlConfig = {
   HOST: process.env.DB_HOST,
   USER: process.env.DB_USER,
   PASSWORD: process.env.DB_PASSWORD,

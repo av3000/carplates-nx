@@ -1,6 +1,12 @@
-module.exports = {
-  asyncErrorHandler: (fn) => (req, res, next) =>
-    Promise.resolve(fn(req, res, next)).catch((error) => {
-      next({ status: 500, message: error.message });
-    }),
+import { StatusCode } from '../enums';
+
+export const asyncErrorHandler = (fn) => async (req, res, next) => {
+  try {
+    await fn(req, res, next);
+  } catch (error) {
+    next({
+      status: StatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
+      message: error.message,
+    });
+  }
 };
