@@ -68,18 +68,39 @@ const validateCarplateCreate = (
   return null;
 };
 
-const validateCarplateUpdate = (
-  carplateParameters: CarplateParameters
-): ErrorResponse | null => {
-  const generalFieldsError = validateCarplateGeneralFields(carplateParameters);
-  const noFieldsError = validateIfNoFieldsProvided(carplateParameters);
+const validateCarplateUpdate = ({
+  plate_name,
+  owner,
+}: CarplateParameters): ErrorResponse | null => {
+  const noFieldsError = validateIfNoFieldsProvided({ plate_name, owner });
+  const plateError = plate_name ? validatePlate(plate_name) : null;
+  const ownerError = owner ? validateOwner(owner) : null;
 
   if (noFieldsError) {
     return noFieldsError;
   }
 
-  if (generalFieldsError) {
-    return generalFieldsError;
+  if (plateError) {
+    return plateError;
+  }
+
+  if (ownerError) {
+    return ownerError;
+  }
+
+  return null;
+};
+
+const validatePlate = (plate_name: string): ErrorResponse | null => {
+  const plateFormatError = validatePlateFormat(plate_name);
+  const plateLengthError = validatePlateLength(plate_name);
+
+  if (plateLengthError) {
+    return plateLengthError;
+  }
+
+  if (plateFormatError) {
+    return plateFormatError;
   }
 
   return null;
@@ -247,8 +268,15 @@ export async function update(req, res, next) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
 
+    const payload: CarplateParameters = {
+      plate_name: req.body.plate_name
+        ? req.body.plate_name.toUpperCase()
+        : null,
+      owner: req.body.owner ? req.body.owner : null,
+    };
+
     const foundCarplate: Carplate = await CarplateSchema.findOne({
-      where: { plate_name: req.body.plate_name.toUpperCase() },
+      where: payload,
     });
 
     if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
@@ -323,8 +351,7 @@ export async function findOne(req, res, next) {
 
 export async function decomm(req, res, next) {
   try {
-    const { id } = req.params.id;
-
+    const { id } = req.params;
     const idFormatError = validateIdFormat(id);
     if (idFormatError) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
