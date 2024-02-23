@@ -13,8 +13,8 @@ import {
   PaginationRange,
 } from '@shared/common/types';
 import { Carplate, CarplateParameters } from '@shared/carplate/types';
+import { ErrorResponseName, StatusCode } from '@shared/common/enums';
 
-import { ErrorResponseName, StatusCode } from '../enums';
 import db from '../models';
 const CarplateSchema = db.CarplateSchema;
 
