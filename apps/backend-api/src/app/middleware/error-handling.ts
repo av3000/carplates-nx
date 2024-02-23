@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorResponse } from '../types';
-import { StatusCode } from '../enums';
+
+import { StatusCode } from '@shared/common/enums';
+import { ErrorResponse } from '@shared/common/types';
 
 export const errorMiddleware = (
   err: Error,

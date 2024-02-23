@@ -1,4 +1,4 @@
-import { StatusCode } from '../enums';
+import { StatusCode } from '@shared/common/enums';
 
 export const asyncErrorHandler = (fn) => async (req, res, next) => {
   try {
