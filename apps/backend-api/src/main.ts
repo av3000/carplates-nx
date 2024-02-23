@@ -6,12 +6,9 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 
-import { errorMiddleware } from './app/middleware/error-handling';
-import swaggerDocs from './app/utils/swagger';
-import db from './app/models';
-
+import { db, errorMiddleware, swaggerDocs } from '@backend-express/utils';
+import { carplateRoutes } from '@backend-express/carplate/routes';
 import indexRoutes from './app/routes/index';
-import carplateRoutes from './app/routes/carplates';
 
 const PORT = process.env.NODE_DOCKER_PORT || 3333;
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
