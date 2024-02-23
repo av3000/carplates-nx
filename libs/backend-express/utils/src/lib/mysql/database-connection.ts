@@ -1,6 +1,6 @@
 import { Sequelize, Dialect } from 'sequelize';
-import { mysqlConfig as dbConfig } from '../middleware/mysql.db';
-import CarplateModel from './carplate.model';
+import { mysqlConfig as dbConfig } from './mysql.db';
+import { CarplateModel } from '@backend-express/carplate/schema';
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,

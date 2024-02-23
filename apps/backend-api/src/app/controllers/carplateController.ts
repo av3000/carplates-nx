@@ -1,6 +1,5 @@
 // TODO: move constants and helper functions to their dedicated dir/create shared libs
 // TODO: move validation functions to dedicated dir/create shared libs
-// TODO: move pagination functions to dedicated dir
 // TODO: move error handling to dedicated dir(?)
 // TODO: fix pagination to show page size starting from 1 (not 0)
 
@@ -14,8 +13,8 @@ import {
 } from '@shared/common/types';
 import { Carplate, CarplateParameters } from '@shared/carplate/types';
 import { ErrorResponseName, StatusCode } from '@shared/common/enums';
+import { db } from '@backend-express/utils';
 
-import db from '../models';
 const CarplateSchema = db.CarplateSchema;
 
 const PLATE_SYMBOLS_TOTAL = 6;

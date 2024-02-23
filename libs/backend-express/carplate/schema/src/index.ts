@@ -1,1 +1,1 @@
-export * as CarplateModel from './carplate.model';
+export { default as CarplateModel } from './carplate.model';

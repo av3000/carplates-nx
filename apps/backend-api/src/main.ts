@@ -6,10 +6,9 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 
-import { swaggerDocs } from '@backend-express/utils';
+import { db, swaggerDocs } from '@backend-express/utils';
 
 import { errorMiddleware } from './app/middleware/error-handling';
-import db from './app/models';
 
 import indexRoutes from './app/routes/index';
 import carplateRoutes from './app/routes/carplates';
