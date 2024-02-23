@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@backend-express/carplate/schema": [
+        "libs/backend-express/carplate/schema/src/index.ts"
+      ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
       "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
       "@shared/common/enums": ["libs/shared/common/enums/src/index.ts"],
