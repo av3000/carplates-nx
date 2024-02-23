@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
       "@shared/common/types": ["libs/shared/common/types/src/index.ts"]
     }
   },

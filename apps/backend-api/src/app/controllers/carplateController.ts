@@ -12,6 +12,7 @@ import {
   PaginatedList,
   PaginationRange,
 } from '@shared/common/types';
+import { Carplate, CarplateParameters } from '@shared/carplate/types';
 
 import { ErrorResponseName, StatusCode } from '../enums';
 import db from '../models';
