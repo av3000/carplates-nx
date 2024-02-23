@@ -1,16 +1,16 @@
 import { Router } from 'express';
 
-import { asyncErrorHandler } from '../middleware';
-
-const router = Router();
+import { asyncErrorHandler } from '@backend-express/utils';
 
 import {
   create,
-  update,
   decomm,
-  findOne,
   findAll,
-} from '../controllers/carplateController';
+  findOne,
+  update,
+} from '@backend-express/carplate/controllers';
+
+const router = Router();
 
 /**
  * @openapi

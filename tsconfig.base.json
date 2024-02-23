@@ -15,6 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@backend-express/carplate/controllers": [
+        "libs/backend-express/carplate/controllers/src/index.ts"
+      ],
+      "@backend-express/carplate/routes": [
+        "libs/backend-express/carplate/routes/src/index.ts"
+      ],
       "@backend-express/carplate/schema": [
         "libs/backend-express/carplate/schema/src/index.ts"
       ],

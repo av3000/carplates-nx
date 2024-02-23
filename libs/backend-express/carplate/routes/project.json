@@ -1,21 +1,21 @@
 {
-  "name": "backend-express-carplate-schema",
+  "name": "backend-express-carplate-routes",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/backend-express/carplate/schema/src",
+  "sourceRoot": "libs/backend-express/carplate/routes/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/backend-express/carplate/schema/**/*.ts"]
+        "lintFilePatterns": ["libs/backend-express/carplate/routes/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/backend-express/carplate/schema/jest.config.ts",
+        "jestConfig": "libs/backend-express/carplate/routes/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": ["scope:backend-express, type:schema"]
+  "tags": ["scope:backend-express type:routes"]
 }
