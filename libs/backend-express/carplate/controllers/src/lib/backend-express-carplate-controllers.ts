@@ -1,14 +1,9 @@
-// TODO: fix pagination to show page size starting from 1 (not 0)
-
 import { Op } from 'sequelize';
 
-import {
-  PaginatedData,
-  PaginatedList,
-  PaginationRange,
-} from '@shared/common/types';
+import { PaginatedData } from '@shared/common/types';
 import { Carplate, CarplateParameters } from '@shared/carplate/types';
 import { StatusCode } from '@shared/common/enums';
+import { getPagination, getPagingData } from '@shared/common/utils';
 import { db } from '@backend-express/utils';
 import {
   validateCarplateCreate,
@@ -17,28 +12,6 @@ import {
 } from './helpers';
 
 const CarplateSchema = db.CarplateSchema;
-
-const DEFAULT_PAGE = 0;
-const DEFAULT_ITEMS_PER_PAGE = 3;
-
-const getPagination = (page: number, size: number): PaginationRange => {
-  const limit = size ? +size : DEFAULT_ITEMS_PER_PAGE;
-  const offset = page ? page * limit : DEFAULT_PAGE;
-
-  return { limit, offset };
-};
-
-const getPagingData = (
-  data: PaginatedData<Carplate>,
-  page: number,
-  limit: number
-): PaginatedList<Carplate> => {
-  const { count, rows } = data;
-  const currentPage = page ? +page : DEFAULT_PAGE;
-  const totalPages = Math.ceil(count / limit);
-
-  return { count, totalPages, currentPage, rows };
-};
 
 export async function create(req, res, next) {
   try {

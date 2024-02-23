@@ -11,8 +11,8 @@ const options: swaggerJsdoc.Options = {
     },
   },
   apis: [
-    './apps/backend-api/src/app/routes/*.ts',
-    './apps/backend-api/src/app/models/*.ts',
+    './libs/backend-express/**/*.routes.ts',
+    './libs/backend-express/**/*.models.ts',
   ],
 };
 
