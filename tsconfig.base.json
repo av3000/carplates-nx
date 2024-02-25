@@ -26,6 +26,7 @@
       ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
       "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
+      "@shared/common/constants": ["libs/shared/common/constants/src/index.ts"],
       "@shared/common/enums": ["libs/shared/common/enums/src/index.ts"],
       "@shared/common/types": ["libs/shared/common/types/src/index.ts"],
       "@shared/common/utils": ["libs/shared/common/utils/src/index.ts"]
