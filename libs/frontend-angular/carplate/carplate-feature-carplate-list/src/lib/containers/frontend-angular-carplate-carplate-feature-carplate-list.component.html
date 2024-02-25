@@ -1,0 +1,12 @@
+<h3>Carplates List</h3>
+<ul>
+  <li *ngFor="let carplate of carplates.rows">
+    <ul>
+      <li>{{ carplate.id }}</li>
+      <li>{{ carplate.plate_name }}</li>
+      <li>{{ carplate.owner }}</li>
+      <li>{{ carplate.createdAt }}</li>
+      <li>{{ carplate.updatedAt }}</li>
+    </ul>
+  </li>
+</ul>
