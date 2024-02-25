@@ -25,7 +25,7 @@
         "libs/backend-express/carplate/schema/src/index.ts"
       ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
-      "@frontend-angular/carplate/carplates-feature-carplate-list": [
+      "@frontend-angular/carplate/carplate-feature-carplate-list": [
         "libs/frontend-angular/carplate/carplate-feature-carplate-list/src/index.ts"
       ],
       "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
