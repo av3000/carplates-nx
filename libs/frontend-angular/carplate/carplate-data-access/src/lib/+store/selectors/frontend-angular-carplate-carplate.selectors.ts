@@ -1,6 +1,8 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { CarplateState } from '../reducer/frontend-angular-carplate-carplate.reducer';
+
 import { Carplate } from '@shared/carplate/types';
+
+import { CarplateState } from '../reducer/frontend-angular-carplate-carplate.reducer';
 
 export const selectCarplateState =
   createFeatureSelector<CarplateState>('carplate');

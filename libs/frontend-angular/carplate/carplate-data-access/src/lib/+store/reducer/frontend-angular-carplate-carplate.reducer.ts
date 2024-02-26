@@ -132,11 +132,8 @@ export const carplateReducer = createReducer(
   ),
   on(
     updateCarplateSuccess,
-    (state, { carplate }): CarplateState => ({
+    (state): CarplateState => ({
       ...state,
-      carplates: state.carplates.map((_carplate) =>
-        _carplate.id === carplate.id ? carplate : _carplate
-      ),
       isLoading: false,
       isLoaded: true,
       error: null,

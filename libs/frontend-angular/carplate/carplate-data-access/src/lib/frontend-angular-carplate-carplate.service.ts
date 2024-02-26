@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { Carplate } from '@shared/carplate/types';
+import { Carplate, CarplateParameters } from '@shared/carplate/types';
 import { PaginatedList } from '@shared/common/types';
 import { BASE_API_TOKEN } from '@shared/common/constants'; // import the token
 
@@ -26,8 +26,8 @@ export class CarplateService {
     return this.http.get<Carplate>(`${this.endpointUrl}/${id}`);
   }
 
-  createCarplate(carplate: Carplate): Observable<Carplate> {
-    return this.http.post<Carplate>(`${this.endpointUrl}`, carplate);
+  createCarplate(carplateParams: CarplateParameters): Observable<Carplate> {
+    return this.http.post<Carplate>(`${this.endpointUrl}`, carplateParams);
   }
 
   updateCarplate(id: string, carplate: Carplate): Observable<Carplate> {

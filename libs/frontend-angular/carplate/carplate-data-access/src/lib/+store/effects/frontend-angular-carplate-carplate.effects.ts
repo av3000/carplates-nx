@@ -50,8 +50,8 @@ export class CarplateEffects {
   createCarplate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(createCarplate),
-      mergeMap(({ carplate }) =>
-        this.carplateService.createCarplate(carplate).pipe(
+      mergeMap(({ carplateParams }) =>
+        this.carplateService.createCarplate(carplateParams).pipe(
           map((carplate) => createCarplateSuccess({ carplate })),
           catchError((error) => of(createCarplateFailure({ error })))
         )
@@ -64,7 +64,7 @@ export class CarplateEffects {
       ofType(updateCarplate),
       mergeMap(({ id, carplate }) =>
         this.carplateService.updateCarplate(id, carplate).pipe(
-          map((carplate) => updateCarplateSuccess({ carplate })),
+          map(() => updateCarplateSuccess()),
           catchError((error) => of(updateCarplateFailure({ error })))
         )
       )
