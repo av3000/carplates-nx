@@ -1,36 +1,40 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
+
 import { Carplate } from '@shared/carplate/types';
-import { baseAPI } from '@shared/common/constants';
 import { PaginatedList } from '@shared/common/types';
+import { BASE_API_TOKEN } from '@shared/common/constants'; // import the token
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarplateService {
-  private apiUrl = `${baseAPI}/carplates`;
+  constructor(
+    private http: HttpClient,
+    @Inject(BASE_API_TOKEN) private apiUrl: string
+  ) {}
 
-  constructor(private http: HttpClient) {}
+  private endpointUrl = `${this.apiUrl}/carplates`;
 
   getCarplatesList(): Observable<PaginatedList<Carplate>> {
-    return this.http.get<PaginatedList<Carplate>>(this.apiUrl);
+    return this.http.get<PaginatedList<Carplate>>(`${this.endpointUrl}`);
   }
 
   getCarplate(id: string): Observable<Carplate> {
-    return this.http.get<Carplate>(`${this.apiUrl}/${id}`);
+    return this.http.get<Carplate>(`${this.endpointUrl}/${id}`);
   }
 
   createCarplate(carplate: Carplate): Observable<Carplate> {
-    return this.http.post<Carplate>(this.apiUrl, carplate);
+    return this.http.post<Carplate>(`${this.endpointUrl}`, carplate);
   }
 
   updateCarplate(id: string, carplate: Carplate): Observable<Carplate> {
-    return this.http.put<Carplate>(`${this.apiUrl}/${id}`, carplate);
+    return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplate);
   }
 
   deleteCarplate(id: string): Observable<Carplate> {
-    return this.http.delete<Carplate>(`${this.apiUrl}/${id}`);
+    return this.http.delete<Carplate>(`${this.endpointUrl}/${id}`);
   }
 }
