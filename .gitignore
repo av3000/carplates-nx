@@ -5,6 +5,10 @@ dist
 tmp
 /out-tsc
 
+# nx cache
+.nx/
+.nx-output/
+
 # dependencies
 node_modules
 

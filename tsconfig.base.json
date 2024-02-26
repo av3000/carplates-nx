@@ -25,7 +25,14 @@
         "libs/backend-express/carplate/schema/src/index.ts"
       ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
+      "@frontend-angular/carplate/carplate-data-access": [
+        "libs/frontend-angular/carplate/carplate-data-access/src/index.ts"
+      ],
+      "@frontend-angular/carplate/carplate-feature-carplate-list": [
+        "libs/frontend-angular/carplate/carplate-feature-carplate-list/src/index.ts"
+      ],
       "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
+      "@shared/common/constants": ["libs/shared/common/constants/src/index.ts"],
       "@shared/common/enums": ["libs/shared/common/enums/src/index.ts"],
       "@shared/common/types": ["libs/shared/common/types/src/index.ts"],
       "@shared/common/utils": ["libs/shared/common/utils/src/index.ts"]

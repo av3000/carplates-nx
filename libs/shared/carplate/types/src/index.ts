@@ -1,5 +1,5 @@
 export interface Carplate extends CarplateParameters {
-  id: number;
+  id: string;
   createdAt: string;
   updatedAt: string;
 }

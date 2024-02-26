@@ -1,0 +1,14 @@
+<h3>Carplates List</h3>
+<ul *ngIf="carplatesList$ | async as carplates; else loading">
+  <li *ngFor="let carplate of carplates">
+    <ul>
+      <li>{{ carplate.id }}</li>
+      <li>{{ carplate.plate_name }}</li>
+      <li>{{ carplate.owner }}</li>
+      <li>{{ carplate.createdAt }}</li>
+      <li>{{ carplate.updatedAt }}</li>
+    </ul>
+  </li>
+</ul>
+
+<ng-template #loading>Loading...</ng-template>
