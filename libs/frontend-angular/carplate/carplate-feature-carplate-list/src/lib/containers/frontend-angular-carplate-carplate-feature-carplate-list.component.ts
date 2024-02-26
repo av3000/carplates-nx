@@ -1,10 +1,12 @@
+// TODO: create a separate effect for fetching all carplates before list component load
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { Carplate } from '@shared/carplate/types';
-import { CarplateService } from '@frontend-angular/carplate/carplate-data-access';
-import { PaginatedList } from '@shared/common/types';
+import {
+  CarplateFacade,
+  CarplateService,
+} from '@frontend-angular/carplate/carplate-data-access';
 
 @Component({
   selector:
@@ -16,22 +18,15 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
 {
   private subs$ = new Subscription();
-  carplates$ = new BehaviorSubject<PaginatedList<Carplate>>({
-    count: 0,
-    totalPages: 0,
-    currentPage: 0,
-    rows: [],
-  });
+  carplatesList$ = this.facade.carplates$;
 
-  constructor(private carplateService: CarplateService) {}
+  constructor(
+    private carplateService: CarplateService,
+    private facade: CarplateFacade
+  ) {}
 
   ngOnInit() {
-    this.subs$.add(
-      this.carplateService.getCarplatesList().subscribe((_carplates) => {
-        console.log('carplates', _carplates);
-        this.carplates$.next(_carplates);
-      })
-    );
+    this.subs$.add(this.facade.fetchAllCarplates());
   }
 
   ngOnDestroy() {

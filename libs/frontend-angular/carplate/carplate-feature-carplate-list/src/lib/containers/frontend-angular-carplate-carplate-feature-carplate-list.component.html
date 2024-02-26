@@ -1,6 +1,6 @@
 <h3>Carplates List</h3>
-<ul *ngIf="carplates$ | async as carplates; else loading">
-  <li *ngFor="let carplate of carplates.rows">
+<ul *ngIf="carplatesList$ | async as carplates; else loading">
+  <li *ngFor="let carplate of carplates">
     <ul>
       <li>{{ carplate.id }}</li>
       <li>{{ carplate.plate_name }}</li>
