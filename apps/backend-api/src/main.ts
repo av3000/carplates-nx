@@ -15,11 +15,22 @@ const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
 const app: Express = express();
 
-const corsOptions = {
-  origin: `http://localhost:${PORT}`,
-};
+const allowedOrigins = ['http://localhost:4200', `http://localhost:${PORT}`];
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        const msg =
+          'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+    },
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());

@@ -1,5 +1,5 @@
 <h3>Carplates List</h3>
-<ul>
+<ul *ngIf="carplates$ | async as carplates; else loading">
   <li *ngFor="let carplate of carplates.rows">
     <ul>
       <li>{{ carplate.id }}</li>
@@ -10,3 +10,5 @@
     </ul>
   </li>
 </ul>
+
+<ng-template #loading>Loading...</ng-template>
