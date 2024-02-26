@@ -3,10 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
-import {
-  CarplateFacade,
-  CarplateService,
-} from '@frontend-angular/carplate/carplate-data-access';
+import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 
 @Component({
   selector:
@@ -20,10 +17,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   private subs$ = new Subscription();
   carplatesList$ = this.facade.carplates$;
 
-  constructor(
-    private carplateService: CarplateService,
-    private facade: CarplateFacade
-  ) {}
+  constructor(private facade: CarplateFacade) {}
 
   ngOnInit() {
     this.subs$.add(this.facade.fetchAllCarplates());
