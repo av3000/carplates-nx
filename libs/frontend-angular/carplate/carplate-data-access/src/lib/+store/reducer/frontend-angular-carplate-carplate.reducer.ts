@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Carplate } from '@shared/carplate/types';
 
 import { Action, createReducer, on } from '@ngrx/store';
+
 import {
   clearCarplates,
   clearCarplatesError,
@@ -17,6 +18,9 @@ import {
   fetchOneCarplate,
   fetchOneCarplateFailure,
   fetchOneCarplateSuccess,
+  deleteCarplate,
+  deleteCarplateSuccess,
+  deleteCarplateFailure,
 } from '../actions/frontend-angular-carplate-carplate.actions';
 
 export const carplateFeatureKey = 'carplate';
@@ -141,6 +145,33 @@ export const carplateReducer = createReducer(
   ),
   on(
     updateCarplateFailure,
+    (state, { error }): CarplateState => ({
+      ...state,
+      isLoading: false,
+      isLoaded: false,
+      error,
+    })
+  ),
+  on(
+    deleteCarplate,
+    (state): CarplateState => ({
+      ...state,
+      isLoading: true,
+      isLoaded: false,
+      error: null,
+    })
+  ),
+  on(
+    deleteCarplateSuccess,
+    (state): CarplateState => ({
+      ...state,
+      isLoading: false,
+      isLoaded: true,
+      error: null,
+    })
+  ),
+  on(
+    deleteCarplateFailure,
     (state, { error }): CarplateState => ({
       ...state,
       isLoading: false,

@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
+import { Carplate, CarplateParameters } from '@shared/carplate/types';
+
 import {
   selectAllCarplates,
   selectCarplateById,
@@ -17,8 +19,6 @@ import {
   fetchAllCarplates,
   updateCarplate,
 } from './actions/frontend-angular-carplate-carplate.actions';
-
-import { CarplateParameters } from '@shared/carplate/types';
 
 @Injectable({ providedIn: 'root' })
 export class CarplateFacade {
@@ -39,7 +39,7 @@ export class CarplateFacade {
     this.store.dispatch(createCarplate({ carplateParams }));
   }
 
-  updateCarplate(carplate: any) {
+  updateCarplate(carplate: Carplate) {
     this.store.dispatch(updateCarplate({ id: carplate.id, carplate }));
   }
 

@@ -27,6 +27,7 @@ export class CarplateEffects {
       mergeMap(() =>
         this.carplateService.getCarplatesList().pipe(
           map((carplatesList) =>
+            // TODO: create a pagination logic and provide it from here
             fetchAllCarplatesSuccess({ carplates: carplatesList.rows })
           ),
           catchError((error) => of(fetchAllCarplatesFailure({ error })))

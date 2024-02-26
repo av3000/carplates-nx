@@ -67,8 +67,7 @@ export const deleteCarplate = createAction(
 );
 
 export const deleteCarplateSuccess = createAction(
-  `${api} Delete Carplate Success`,
-  props<{ id: any }>()
+  `${api} Delete Carplate Success`
 );
 
 export const deleteCarplateFailure = createAction(
