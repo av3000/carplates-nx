@@ -1,8 +1,24 @@
 h1 {
   text-align: center;
-  border-bottom: 1px solid black;
+}
+
+.body-wrapper {
+  background-color: #f4f4f4;
 }
 
 .main-wrapper {
   margin: 40px 20px;
+}
+
+header,footer {
+  text-align: center;
+  padding: 20px;
+}
+
+header {
+  border-bottom: 1px solid #808080;
+}
+
+footer {
+  border-top: 1px solid #808080;
 }

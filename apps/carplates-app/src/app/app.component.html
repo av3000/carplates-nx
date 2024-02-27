@@ -1,5 +1,13 @@
-<h1>CarPlates App</h1>
+<div class="body-wrapper flex flex-col h-screen">
+  <header class="flex-none">
+    <h1>CarPlates App</h1>
+  </header>
 
-<div class="main-wrapper">
-  <router-outlet></router-outlet>
+  <div class="main-wrapper flex-grow">
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer class="flex-none">
+    <p>© {{ currentDateYear }}</p>
+  </footer>
 </div>

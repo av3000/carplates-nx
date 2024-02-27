@@ -10,6 +10,9 @@ import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access'
     'carplates-frontend-angular-carplate-carplate-feature-carplate-list',
   templateUrl:
     './frontend-angular-carplate-carplate-feature-carplate-list.component.html',
+  styleUrls: [
+    './frontend-angular-carplate-carplate-feature-carplate-list.component.scss',
+  ],
 })
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy

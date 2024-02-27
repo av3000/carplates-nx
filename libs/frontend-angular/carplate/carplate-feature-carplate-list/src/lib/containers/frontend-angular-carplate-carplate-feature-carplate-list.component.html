@@ -1,14 +1,88 @@
-<h3>Carplates List</h3>
-<ul *ngIf="carplatesList$ | async as carplates; else loading">
-  <li *ngFor="let carplate of carplates">
-    <ul>
-      <li>{{ carplate.id }}</li>
-      <li>{{ carplate.plate_name }}</li>
-      <li>{{ carplate.owner }}</li>
-      <li>{{ carplate.createdAt }}</li>
-      <li>{{ carplate.updatedAt }}</li>
-    </ul>
-  </li>
-</ul>
+<div class="bg-white rounded-md dark:bg-dark py-20 lg:py-[120px]">
+  <div class="container mx-auto">
+    <div class="flex flex-wrap -mx-4">
+      <div class="w-full px-4">
+        <div class="max-w-full overflow-x-auto">
+          <table
+            class="w-full table-auto"
+            *ngIf="carplatesList$ | async as carplates; else loading"
+          >
+            <thead>
+              <tr class="text-center bg-slate-900">
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  ID
+                </th>
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  Plate Name
+                </th>
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  Owner
+                </th>
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  Created At
+                </th>
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  Updated At
+                </th>
+                <th
+                  class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
+                >
+                  View
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let carplate of carplates">
+                <td
+                  class="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <div>{{ carplate.id }}</div>
+                </td>
+                <td
+                  class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <div>{{ carplate.plate_name }}</div>
+                </td>
+                <td
+                  class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <div>{{ carplate.owner }}</div>
+                </td>
+                <td
+                  class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <div>{{ carplate.createdAt }}</div>
+                </td>
+                <td
+                  class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <div>{{ carplate.updatedAt }}</div>
+                </td>
+                <td
+                  class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
+                >
+                  <a
+                    class="inline-block px-6 py-2.5 border rounded-md border-slate-900 bg-slate-900 text-white hover:bg-slate-700 font-medium"
+                    >View</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <ng-template #loading>Loading...</ng-template>
