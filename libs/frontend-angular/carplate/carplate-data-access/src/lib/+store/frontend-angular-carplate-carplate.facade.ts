@@ -4,8 +4,8 @@ import { Store, select } from '@ngrx/store';
 import { Carplate, CarplateParameters } from '@shared/carplate/types';
 
 import {
-  selectAllCarplates,
   selectCarplateById,
+  selectCarplateList,
   selectCarplateState,
   selectError,
   selectIsLoaded,
@@ -17,6 +17,7 @@ import {
   createCarplate,
   deleteCarplate,
   fetchAllCarplates,
+  loadCarplatesPage,
   updateCarplate,
 } from './actions/frontend-angular-carplate-carplate.actions';
 
@@ -24,7 +25,7 @@ import {
 export class CarplateFacade {
   carplateStore$ = this.store.pipe(select(selectCarplateState));
 
-  carplates$ = this.store.pipe(select(selectAllCarplates));
+  carplatesList$ = this.store.pipe(select(selectCarplateList));
   isLoading$ = this.store.pipe(select(selectLoading));
   isLoaded$ = this.store.pipe(select(selectIsLoaded));
   errors$ = this.store.pipe(select(selectError));
@@ -33,6 +34,10 @@ export class CarplateFacade {
 
   fetchAllCarplates() {
     this.store.dispatch(fetchAllCarplates());
+  }
+
+  loadCarplatesPage(page: number) {
+    this.store.dispatch(loadCarplatesPage({ page }));
   }
 
   createCarplate(carplateParams: CarplateParameters) {

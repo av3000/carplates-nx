@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import {
   updateCarplate,
@@ -16,23 +16,33 @@ import {
   fetchOneCarplate,
   fetchOneCarplateFailure,
   fetchOneCarplateSuccess,
+  loadCarplatesPage,
 } from '../actions/frontend-angular-carplate-carplate.actions';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
+import { Action } from '@ngrx/store';
 
 @Injectable()
 export class CarplateEffects {
   loadCarPlates$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(fetchAllCarplates),
-      mergeMap(() =>
-        this.carplateService.getCarplatesList().pipe(
+      ofType(fetchAllCarplates, loadCarplatesPage),
+      mergeMap((action): Observable<Action> => {
+        let page;
+        if ('page' in action) {
+          page = action.page;
+        }
+        return this.carplateService.getCarplatesList(page).pipe(
           map((carplatesList) =>
-            // TODO: create a pagination logic and provide it from here
-            fetchAllCarplatesSuccess({ carplates: carplatesList.rows })
+            fetchAllCarplatesSuccess({
+              carplatesList: {
+                ...carplatesList,
+                carplates: carplatesList.rows,
+              },
+            })
           ),
           catchError((error) => of(fetchAllCarplatesFailure({ error })))
-        )
-      )
+        );
+      })
     )
   );
 

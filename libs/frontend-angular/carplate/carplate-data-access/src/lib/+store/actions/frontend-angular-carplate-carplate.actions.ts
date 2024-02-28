@@ -9,12 +9,24 @@ export const fetchAllCarplates = createAction(`${api} Fetch All Carplates`);
 
 export const fetchAllCarplatesSuccess = createAction(
   `${api} Fetch All Carplates Success`,
-  props<{ carplates: any }>()
+  props<{
+    carplatesList: {
+      count: number;
+      totalPages: number;
+      currentPage: number;
+      carplates: Carplate[];
+    };
+  }>()
 );
 
 export const fetchAllCarplatesFailure = createAction(
   `${api} Fetch All Carplates Failure`,
   props<{ error: HttpErrorResponse }>()
+);
+
+export const loadCarplatesPage = createAction(
+  '[Carplate] Load Carplates Page',
+  props<{ page: number }>()
 );
 
 export const fetchOneCarplate = createAction(
