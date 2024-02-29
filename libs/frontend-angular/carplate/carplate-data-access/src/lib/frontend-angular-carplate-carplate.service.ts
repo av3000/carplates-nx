@@ -5,7 +5,10 @@ import { Observable } from 'rxjs';
 
 import { Carplate, CarplateParameters } from '@shared/carplate/types';
 import { PaginatedList } from '@shared/common/types';
-import { BASE_API_TOKEN } from '@shared/common/constants';
+import {
+  BASE_API_TOKEN,
+  defaultPaginationFilters,
+} from '@shared/common/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +21,13 @@ export class CarplateService {
 
   private endpointUrl = `${this.apiUrl}/carplates`;
 
-  getCarplatesList(page = 0): Observable<PaginatedList<Carplate>> {
-    const params = { page };
+  getCarplatesList(
+    filters = defaultPaginationFilters
+  ): Observable<PaginatedList<Carplate>> {
+    const params = {
+      ...filters,
+    };
+
     return this.http.get<PaginatedList<Carplate>>(`${this.endpointUrl}`, {
       params,
     });

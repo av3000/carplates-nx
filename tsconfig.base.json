@@ -31,6 +31,9 @@
       "@frontend-angular/carplate/carplate-feature-carplate-list": [
         "libs/frontend-angular/carplate/carplate-feature-carplate-list/src/index.ts"
       ],
+      "@frontend-angular/shared/ui/pagination": [
+        "libs/frontend-angular/shared/ui/pagination/src/index.ts"
+      ],
       "@shared/carplate/types": ["libs/shared/carplate/types/src/index.ts"],
       "@shared/common/constants": ["libs/shared/common/constants/src/index.ts"],
       "@shared/common/enums": ["libs/shared/common/enums/src/index.ts"],

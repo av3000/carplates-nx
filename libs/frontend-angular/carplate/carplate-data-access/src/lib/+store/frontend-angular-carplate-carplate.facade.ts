@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
-import { Carplate, CarplateParameters } from '@shared/carplate/types';
+import {
+  Carplate,
+  CarplateFilters,
+  CarplateParameters,
+} from '@shared/carplate/types';
+import { defaultPaginationFilters } from '@shared/common/constants';
 
 import {
   selectCarplateById,
@@ -17,7 +22,6 @@ import {
   createCarplate,
   deleteCarplate,
   fetchAllCarplates,
-  loadCarplatesPage,
   updateCarplate,
 } from './actions/frontend-angular-carplate-carplate.actions';
 
@@ -32,12 +36,8 @@ export class CarplateFacade {
 
   constructor(private store: Store) {}
 
-  fetchAllCarplates() {
-    this.store.dispatch(fetchAllCarplates());
-  }
-
-  loadCarplatesPage(page: number) {
-    this.store.dispatch(loadCarplatesPage({ page }));
+  fetchAllCarplates(filters: CarplateFilters = defaultPaginationFilters) {
+    this.store.dispatch(fetchAllCarplates({ filters }));
   }
 
   createCarplate(carplateParams: CarplateParameters) {

@@ -16,7 +16,6 @@ import {
   fetchOneCarplate,
   fetchOneCarplateFailure,
   fetchOneCarplateSuccess,
-  loadCarplatesPage,
 } from '../actions/frontend-angular-carplate-carplate.actions';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
 import { Action } from '@ngrx/store';
@@ -25,13 +24,9 @@ import { Action } from '@ngrx/store';
 export class CarplateEffects {
   loadCarPlates$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(fetchAllCarplates, loadCarplatesPage),
-      mergeMap((action): Observable<Action> => {
-        let page;
-        if ('page' in action) {
-          page = action.page;
-        }
-        return this.carplateService.getCarplatesList(page).pipe(
+      ofType(fetchAllCarplates),
+      mergeMap(({ filters }: any): Observable<Action> => {
+        return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) =>
             fetchAllCarplatesSuccess({
               carplatesList: {

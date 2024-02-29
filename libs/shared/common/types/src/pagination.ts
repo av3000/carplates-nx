@@ -14,3 +14,8 @@ export interface PaginationRange {
   limit: number;
   offset: number;
 }
+
+export interface PaginationFiltersParams {
+  page: number;
+  size: number;
+}

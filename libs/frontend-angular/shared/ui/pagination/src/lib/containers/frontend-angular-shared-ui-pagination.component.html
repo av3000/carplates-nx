@@ -1,0 +1,26 @@
+<div [formGroup]="formGroup" class="pagination">
+  <div class="flex flex-row mb-1 sm:mb-0">
+    <label class="pr-4 py-2" for="display">Display</label>
+    <div class="relative">
+      <select
+        formControlName="itemsPerPage"
+        class="h-full rounded border block w-full py-2 px-4 pr-8 leading-tight border-slate-900"
+      >
+        <option *ngFor="let size of pageSizes" [value]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+    <label class="px-4 py-2" for="page">Page</label>
+    <div class="relative">
+      <select
+        formControlName="page"
+        class="h-full rounded border block w-full border-slate-900 py-2 px-4 pr-8 leading-tight"
+      >
+        <option *ngFor="let page of generatePages(totalPages)" [value]="page">
+          {{ page + 1 }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
