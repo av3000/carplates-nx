@@ -59,7 +59,7 @@
                 <th
                   class="w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-medium text-white lg:py-7 lg:px-4"
                 >
-                  View
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -93,10 +93,20 @@
                 <td
                   class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <a
-                    class="inline-block px-6 py-2.5 border rounded-md border-slate-900 bg-slate-900 text-white hover:bg-slate-700 font-medium"
-                    >View</a
-                  >
+                  <carplates-menu-dropdown #menuDropdown>
+                    <a
+                      href="#"
+                      (click)="menuDropdown.closeDropdown()"
+                      class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >View Details</a
+                    >
+                    <a
+                      href="#"
+                      (click)="menuDropdown.closeDropdown()"
+                      class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >Delete</a
+                    >
+                  </carplates-menu-dropdown>
                 </td>
               </tr>
             </tbody>

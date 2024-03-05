@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'carplates-menu-dropdown',
@@ -6,15 +6,13 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./frontend-angular-shared-ui-menu-dropdown.component.scss'],
 })
 export class MenuDropdownComponent {
-  @Input() options: { text: string; action: () => void }[] = [];
   isOpen = false;
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;
   }
 
-  selectOption(optionAction: () => void) {
-    optionAction();
+  closeDropdown() {
     this.isOpen = false;
   }
 }

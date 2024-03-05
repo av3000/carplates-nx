@@ -62,18 +62,22 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   ngOnInit() {
     //TODO: refactor to use separate single effect for fetching.
-    this.subs$.add(this.facade.fetchAllCarplates());
-
-    this.subs$.add(
-      this.carplatesList$.subscribe((carplatesList) => {
-        console.log(carplatesList);
-      })
-    );
+    this.facade.fetchAllCarplates();
 
     this.initCurrentPageControlListener();
     this.initItemsPerPageListener();
     this.initPlateNameListener();
     this.initOwnerControlListener();
+  }
+
+  viewDetails() {
+    // Navigate to the details route
+    console.log('View details clicked');
+  }
+
+  deleteCarplate(id: string) {
+    // Code to delete goes here
+    console.log('Delete carplate clicked');
   }
 
   initCurrentPageControlListener() {
