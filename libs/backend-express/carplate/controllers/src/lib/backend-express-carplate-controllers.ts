@@ -92,6 +92,7 @@ export async function update(req, res, next) {
 
 export async function findAll(req, res, next) {
   try {
+    // TODO: validate if filters are valid to query
     const page: number = req.query.page;
     const size: number = req.query.size;
     const plate_name: string = req.query.plate_name;

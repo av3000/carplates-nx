@@ -1,0 +1,16 @@
+<div class="menu-dropdown__relative inline-block text-left">
+  <button
+    (click)="toggleDropdown()"
+    class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+  >
+    Actions
+  </button>
+  <div
+    *ngIf="isOpen"
+    class="menu-dropdown__relative__is-open origin-top-right absolute right-full bottom-0 mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+  >
+    <div class="py-1">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

@@ -1,15 +1,29 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 
-import { Carplate, CarplateParameters } from '@shared/carplate/types';
+import {
+  Carplate,
+  CarplateFilters,
+  CarplateParameters,
+} from '@shared/carplate/types';
 
 const api = '[Carplate API]';
 
-export const fetchAllCarplates = createAction(`${api} Fetch All Carplates`);
+export const fetchAllCarplates = createAction(
+  `${api} Fetch All Carplates`,
+  props<{ filters: CarplateFilters }>()
+);
 
 export const fetchAllCarplatesSuccess = createAction(
   `${api} Fetch All Carplates Success`,
-  props<{ carplates: any }>()
+  props<{
+    carplatesList: {
+      count: number;
+      totalPages: number;
+      currentPage: number;
+      carplates: Carplate[];
+    };
+  }>()
 );
 
 export const fetchAllCarplatesFailure = createAction(

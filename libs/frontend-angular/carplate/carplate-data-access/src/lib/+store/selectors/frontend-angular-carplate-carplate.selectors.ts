@@ -7,9 +7,14 @@ import { CarplateState } from '../reducer/frontend-angular-carplate-carplate.red
 export const selectCarplateState =
   createFeatureSelector<CarplateState>('carplate');
 
+export const selectCarplateList = createSelector(
+  selectCarplateState,
+  (state: CarplateState) => state.carplatesList
+);
+
 export const selectAllCarplates = createSelector(
   selectCarplateState,
-  (state: CarplateState) => state.carplates
+  (state: CarplateState) => state.carplatesList.carplates
 );
 
 export const selectCarplateById = (id: string) =>

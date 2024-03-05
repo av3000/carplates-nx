@@ -26,14 +26,19 @@ import {
 export const carplateFeatureKey = 'carplate';
 
 export interface CarplateState {
-  carplates: Carplate[];
+  carplatesList: {
+    count: number;
+    totalPages: number;
+    currentPage: number;
+    carplates: Carplate[];
+  };
   isLoading: boolean;
   isLoaded: boolean;
   error: HttpErrorResponse | null;
 }
 
 export const initialState: CarplateState = {
-  carplates: [],
+  carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
   isLoading: false,
   isLoaded: false,
   error: null,
@@ -52,9 +57,9 @@ export const carplateReducer = createReducer(
   ),
   on(
     fetchAllCarplatesSuccess,
-    (state, { carplates }): CarplateState => ({
+    (state, { carplatesList }): CarplateState => ({
       ...state,
-      carplates,
+      carplatesList: carplatesList,
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -82,7 +87,10 @@ export const carplateReducer = createReducer(
     fetchOneCarplateSuccess,
     (state, { carplate }): CarplateState => ({
       ...state,
-      carplates: [...state.carplates, carplate],
+      carplatesList: {
+        ...state.carplatesList,
+        carplates: [...state.carplatesList.carplates, carplate],
+      },
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -110,7 +118,10 @@ export const carplateReducer = createReducer(
     createCarplateSuccess,
     (state, { carplate }): CarplateState => ({
       ...state,
-      carplates: [...state.carplates, carplate],
+      carplatesList: {
+        ...state.carplatesList,
+        carplates: [...state.carplatesList.carplates, carplate],
+      },
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -183,7 +194,7 @@ export const carplateReducer = createReducer(
     clearCarplates,
     (state): CarplateState => ({
       ...state,
-      carplates: [],
+      carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
       isLoading: false,
       isLoaded: false,
       error: null,

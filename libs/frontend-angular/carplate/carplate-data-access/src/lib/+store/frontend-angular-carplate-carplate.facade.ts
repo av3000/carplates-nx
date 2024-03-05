@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
-import { Carplate, CarplateParameters } from '@shared/carplate/types';
+import {
+  Carplate,
+  CarplateFilters,
+  CarplateParameters,
+} from '@shared/carplate/types';
+import { defaultPaginationFilters } from '@shared/common/constants';
 
 import {
-  selectAllCarplates,
   selectCarplateById,
+  selectCarplateList,
   selectCarplateState,
   selectError,
   selectIsLoaded,
@@ -24,15 +29,15 @@ import {
 export class CarplateFacade {
   carplateStore$ = this.store.pipe(select(selectCarplateState));
 
-  carplates$ = this.store.pipe(select(selectAllCarplates));
+  carplatesList$ = this.store.pipe(select(selectCarplateList));
   isLoading$ = this.store.pipe(select(selectLoading));
   isLoaded$ = this.store.pipe(select(selectIsLoaded));
   errors$ = this.store.pipe(select(selectError));
 
   constructor(private store: Store) {}
 
-  fetchAllCarplates() {
-    this.store.dispatch(fetchAllCarplates());
+  fetchAllCarplates(filters: CarplateFilters = defaultPaginationFilters) {
+    this.store.dispatch(fetchAllCarplates({ filters }));
   }
 
   createCarplate(carplateParams: CarplateParameters) {

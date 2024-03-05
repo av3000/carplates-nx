@@ -1,0 +1,12 @@
+.menu-dropdown {
+  &__relative {
+    position: relative;
+    &__is-open {
+      z-index: 1;
+    }
+  }
+}
+
+.absolute {
+  position: absolute;
+}
