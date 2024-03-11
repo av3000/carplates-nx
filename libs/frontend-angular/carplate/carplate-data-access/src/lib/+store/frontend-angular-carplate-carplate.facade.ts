@@ -22,6 +22,7 @@ import {
   createCarplate,
   deleteCarplate,
   fetchAllCarplates,
+  fetchOneCarplate,
   updateCarplate,
 } from './actions/frontend-angular-carplate-carplate.actions';
 
@@ -38,6 +39,10 @@ export class CarplateFacade {
 
   fetchAllCarplates(filters: CarplateFilters = defaultPaginationFilters) {
     this.store.dispatch(fetchAllCarplates({ filters }));
+  }
+
+  fetchOneCarplate(id: string) {
+    this.store.dispatch(fetchOneCarplate({ id }));
   }
 
   createCarplate(carplateParams: CarplateParameters) {
