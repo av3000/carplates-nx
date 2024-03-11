@@ -8,19 +8,17 @@ export const CarplateFeatureCarplateListRoutes: Route[] = [
     pathMatch: 'full',
     component: FrontendAngularCarplateCarplateFeatureCarplateListComponent,
   },
-  /* {path: '', pathMatch: 'full', component: InsertYourComponentHere} */
-  // {
-  //   path: 'carplate/:id',
-  //   loadChildren: () =>
-  //     import('@frontend-angular/carplates-feature-carplate-details').then(
-  //       (m) => m.CarplatesFeatureCarplateDetailsModule
-  //     ),
-  // },
-  // {
-  //   path: 'add-carplate',
-  //   loadChildren: () =>
-  //     import('@frontend-angular/carplates-feature-carplate-add').then(
-  //       (m) => m.CarplatesFeatureCarplateAddModule
-  //     ),
-  // }
+  {
+    path: 'carplates',
+    component: FrontendAngularCarplateCarplateFeatureCarplateListComponent,
+    children: [
+      {
+        path: 'details/:id',
+        loadChildren: () =>
+          import('@frontend-angular/carplate/carplate-feature-details').then(
+            (m) => m.FrontendAngularCarplateCarplateFeatureDetailsModule
+          ),
+      },
+    ],
+  },
 ];

@@ -95,7 +95,7 @@
                 >
                   <carplates-menu-dropdown #menuDropdown>
                     <a
-                      href="#"
+                      [routerLink]="'/carplates/details/' + carplate.id"
                       (click)="menuDropdown.closeDropdown()"
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >View Details</a
@@ -126,3 +126,4 @@
 </div>
 
 <ng-template #loading>Loading...</ng-template>
+<router-outlet></router-outlet>
