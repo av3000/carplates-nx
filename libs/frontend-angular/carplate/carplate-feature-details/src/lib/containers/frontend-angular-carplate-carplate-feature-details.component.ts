@@ -5,13 +5,20 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription, filter, of, switchMap } from 'rxjs';
 
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
+import { ownerFormatPattern, plateFormatPattern } from '@shared/common/utils';
+import { defaultSmallModalOptions } from '@shared/common/constants';
 
 @Component({
   selector: 'carplates-frontend-angular-carplate-carplate-feature-details',
@@ -21,6 +28,9 @@ import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   implements OnInit
 {
+  MAX_OWNER_LENGTH = 30;
+  MIN_OWNER_LENGTH = 3;
+
   @ViewChild('view', { static: true }) modalTemplate!: TemplateRef<any>;
   @ViewChild('view', { static: true, read: ViewContainerRef })
   vcr!: ViewContainerRef;
@@ -28,12 +38,21 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   private subs$ = new Subscription();
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
-  // TODO: add validators, reuse from shared validators/regex
-  // TODO: add hints
   // TODO: disable fields where not editable - formChanged observable which will be piped async in template with boolean value
   carplateForm = this.formBuilder.group({
-    plate_name: [''],
-    owner: [''],
+    plate_name: [
+      '',
+      [Validators.required, Validators.pattern(plateFormatPattern)],
+    ],
+    owner: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(this.MIN_OWNER_LENGTH),
+        Validators.maxLength(this.MAX_OWNER_LENGTH),
+        Validators.pattern(ownerFormatPattern),
+      ],
+    ],
     createdAt: [''],
     updatedAt: [''],
   });
@@ -50,6 +69,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   get id(): string {
     return this.route.snapshot.paramMap.get('id') || '';
+  }
+
+  get isNew(): boolean {
+    return !this.id;
   }
 
   get createdAtValue(): string {
@@ -75,18 +98,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   initModal() {
     this.dynamicModalService.open(this.vcr, this.modalTemplate, {
-      animations: {
-        modal: {
-          enter: 'enter-slide-down 0.8s',
-        },
-        overlay: {
-          enter: 'fade-in 0.8s',
-          leave: 'fade-out 0.3s forwards',
-        },
-      },
-      size: {
-        width: '30rem', // create and use standard modal sizes consts
-      },
+      ...defaultSmallModalOptions,
       closeRouteCallback: () => this.router.navigate(['/carplates']),
     });
   }
