@@ -15,6 +15,7 @@ import {
   selectError,
   selectIsLoaded,
   selectLoading,
+  selectSelectedCarplate,
 } from './selectors/frontend-angular-carplate-carplate.selectors';
 import {
   clearCarplates,
@@ -31,6 +32,7 @@ export class CarplateFacade {
   carplateStore$ = this.store.pipe(select(selectCarplateState));
 
   carplatesList$ = this.store.pipe(select(selectCarplateList));
+  selectedCarplate$ = this.store.pipe(select(selectSelectedCarplate));
   isLoading$ = this.store.pipe(select(selectLoading));
   isLoaded$ = this.store.pipe(select(selectIsLoaded));
   errors$ = this.store.pipe(select(selectError));

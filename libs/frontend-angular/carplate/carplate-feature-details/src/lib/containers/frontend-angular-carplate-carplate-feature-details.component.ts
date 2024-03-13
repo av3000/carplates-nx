@@ -1,19 +1,23 @@
 import {
   Component,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription, filter, of, switchMap } from 'rxjs';
+import {
+  Subscription,
+  combineLatest,
+  filter,
+  map,
+  of,
+  startWith,
+  switchMap,
+} from 'rxjs';
 
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
@@ -26,7 +30,7 @@ import { defaultSmallModalOptions } from '@shared/common/constants';
     './frontend-angular-carplate-carplate-feature-details.component.html',
 })
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
-  implements OnInit
+  implements OnInit, OnDestroy
 {
   MAX_OWNER_LENGTH = 30;
   MIN_OWNER_LENGTH = 3;
@@ -38,7 +42,6 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   private subs$ = new Subscription();
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
-  // TODO: disable fields where not editable - formChanged observable which will be piped async in template with boolean value
   carplateForm = this.formBuilder.group({
     plate_name: [
       '',
@@ -57,7 +60,8 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
     updatedAt: [''],
   });
 
-  initialCarplate!: FormGroup;
+  valueChanged = false;
+  initialCarplate!: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,6 +77,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   get isNew(): boolean {
     return !this.id;
+  }
+
+  get isFormSaveable(): boolean {
+    return !this.carplateForm.invalid && this.valueChanged;
   }
 
   get createdAtValue(): string {
@@ -94,6 +102,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   ngOnInit() {
     this.initModal();
     this.getCarplateDetails();
+    this.initFormChangesListener();
   }
 
   initModal() {
@@ -101,6 +110,29 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
       ...defaultSmallModalOptions,
       closeRouteCallback: () => this.router.navigate(['/carplates']),
     });
+  }
+
+  initFormChangesListener() {
+    this.subs$.add(
+      combineLatest([
+        this.plateNameControl.valueChanges.pipe(
+          startWith(this.plateNameControl.value)
+        ),
+        this.ownerControl.valueChanges.pipe(startWith(this.ownerControl.value)),
+      ])
+        .pipe(
+          filter(() => !!this.initialCarplate),
+          map(([plateName, owner]) => {
+            return (
+              plateName !== this.initialCarplate.plate_name ||
+              owner !== this.initialCarplate.owner
+            );
+          })
+        )
+        .subscribe((valueChanged) => {
+          this.valueChanged = valueChanged;
+        })
+    );
   }
 
   getCarplateDetails() {
@@ -111,10 +143,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
           .pipe(
             switchMap((carplate) => {
               if (!carplate) {
-                this.facade.fetchOneCarplate(this.id); // TODO: on reload or direct link it should fetch directy and not add to the carplates state to avoid duplicating
+                this.facade.fetchOneCarplate(this.id);
                 return this.isLoaded$.pipe(
                   filter((isLoaded) => isLoaded),
-                  switchMap(() => this.facade.selectCarplateById(this.id))
+                  switchMap(() => this.facade.selectedCarplate$)
                 );
               } else {
                 return of(carplate);
@@ -129,7 +161,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
               updatedAt: carplate?.updatedAt,
             });
 
-            this.initialCarplate = this.carplateForm;
+            this.initialCarplate = this.carplateForm.value;
           })
       );
     }
@@ -137,5 +169,9 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   close() {
     this.dynamicModalService.close();
+  }
+
+  ngOnDestroy(): void {
+    this.subs$.unsubscribe();
   }
 }

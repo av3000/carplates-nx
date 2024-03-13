@@ -22,6 +22,11 @@ export const selectCarplateById = (id: string) =>
     carplates.find((carplate) => carplate.id === id)
   );
 
+export const selectSelectedCarplate = createSelector(
+  selectCarplateState,
+  (state) => state.selectedCarplate
+);
+
 export const selectLoading = createSelector(
   selectCarplateState,
   (state: CarplateState) => state.isLoading

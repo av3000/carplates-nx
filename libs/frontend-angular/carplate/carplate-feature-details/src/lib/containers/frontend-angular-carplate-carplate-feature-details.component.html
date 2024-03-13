@@ -60,6 +60,7 @@
                 [maxlength]="MAX_OWNER_LENGTH"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type owner name"
+                autocomplete="off"
                 formControlName="owner"
               />
               <div *ngIf="ownerControl?.errors && ownerControl?.dirty">
@@ -96,6 +97,7 @@
                 name="plate_name"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type plate name"
+                autocomplete="off"
                 formControlName="plate_name"
               />
               <div *ngIf="plateNameControl?.errors && plateNameControl?.dirty">
@@ -114,26 +116,24 @@
               </div>
             </div>
 
-            <div *ngIf="!isNew">
-              <div class="col-span-2 sm:col-span-1">
-                <label
-                  for="createdAt"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Created At</label
-                >
-                <div class="dark:text-white">
-                  {{ createdAtValue | date : 'short' }}
-                </div>
+            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
+              <label
+                for="createdAt"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Created At</label
+              >
+              <div class="dark:text-white">
+                {{ createdAtValue | date : 'short' }}
               </div>
-              <div class="col-span-2 sm:col-span-1">
-                <label
-                  for="updatedAt"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >Updated At</label
-                >
-                <div class="dark:text-white">
-                  {{ updatedAtValue | date : 'short' }}
-                </div>
+            </div>
+            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
+              <label
+                for="updatedAt"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Updated At</label
+              >
+              <div class="dark:text-white">
+                {{ updatedAtValue | date : 'short' }}
               </div>
             </div>
           </div>
@@ -150,8 +150,14 @@
               Close
             </button>
             <button
+              [disabled]="!isFormSaveable"
               type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              [ngClass]="{
+                'dark:bg-blue-950': !isFormSaveable,
+                'dark:hover:bg-blue-950': !isFormSaveable,
+                'dark:text-gray-600': !isFormSaveable
+              }"
             >
               Save
             </button>

@@ -26,6 +26,7 @@ import {
 export const carplateFeatureKey = 'carplate';
 
 export interface CarplateState {
+  selectedCarplate: Carplate | null;
   carplatesList: {
     count: number;
     totalPages: number;
@@ -38,6 +39,7 @@ export interface CarplateState {
 }
 
 export const initialState: CarplateState = {
+  selectedCarplate: null,
   carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
   isLoading: false,
   isLoaded: false,
@@ -87,10 +89,7 @@ export const carplateReducer = createReducer(
     fetchOneCarplateSuccess,
     (state, { carplate }): CarplateState => ({
       ...state,
-      carplatesList: {
-        ...state.carplatesList,
-        carplates: [...state.carplatesList.carplates, carplate],
-      },
+      selectedCarplate: carplate,
       isLoading: false,
       isLoaded: true,
       error: null,

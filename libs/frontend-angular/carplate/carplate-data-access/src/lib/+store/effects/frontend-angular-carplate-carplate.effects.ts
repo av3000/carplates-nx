@@ -16,6 +16,9 @@ import {
   fetchOneCarplate,
   fetchOneCarplateFailure,
   fetchOneCarplateSuccess,
+  deleteCarplate,
+  deleteCarplateSuccess,
+  deleteCarplateFailure,
 } from '../actions/frontend-angular-carplate-carplate.actions';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
 import { Action } from '@ngrx/store';
@@ -72,6 +75,18 @@ export class CarplateEffects {
         this.carplateService.updateCarplate(id, carplate).pipe(
           map(() => updateCarplateSuccess()),
           catchError((error) => of(updateCarplateFailure({ error })))
+        )
+      )
+    )
+  );
+
+  deleteCarplate$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteCarplate),
+      mergeMap(({ id }) =>
+        this.carplateService.deleteCarplate(id).pipe(
+          map(() => deleteCarplateSuccess()),
+          catchError((error) => of(deleteCarplateFailure({ error })))
         )
       )
     )
