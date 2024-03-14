@@ -41,8 +41,11 @@ export class CarplateService {
     return this.http.post<Carplate>(`${this.endpointUrl}`, carplateParams);
   }
 
-  updateCarplate(id: string, carplate: Carplate): Observable<Carplate> {
-    return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplate);
+  updateCarplate(
+    id: string,
+    carplateParams: CarplateParameters
+  ): Observable<Carplate> {
+    return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplateParams);
   }
 
   deleteCarplate(id: string): Observable<Carplate> {

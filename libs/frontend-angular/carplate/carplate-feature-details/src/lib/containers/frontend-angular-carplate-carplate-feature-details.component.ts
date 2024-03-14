@@ -1,3 +1,6 @@
+// TODO: Delete a carplate
+// TODO: handle errors and display them to the user
+
 import {
   Component,
   OnDestroy,
@@ -80,7 +83,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   }
 
   get isFormSaveable(): boolean {
-    return !this.carplateForm.invalid && this.valueChanged;
+    return (
+      (!this.carplateForm.invalid && this.valueChanged) ||
+      (this.isNew && !this.carplateForm.invalid)
+    );
   }
 
   get createdAtValue(): string {
@@ -165,6 +171,25 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
           })
       );
     }
+  }
+
+  onSave() {
+    if (this.isFormSaveable) {
+      const { plate_name, owner } = this.carplateForm.value;
+      if (this.isNew) {
+        this.facade.createCarplate({
+          plate_name: plate_name ?? '',
+          owner: owner ?? '',
+        });
+      } else {
+        this.facade.updateCarplate(this.id, {
+          plate_name: plate_name ?? '',
+          owner: owner ?? '',
+        });
+      }
+    }
+
+    this.close();
   }
 
   close() {

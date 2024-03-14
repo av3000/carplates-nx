@@ -27,7 +27,12 @@ import { Action } from '@ngrx/store';
 export class CarplateEffects {
   loadCarPlates$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(fetchAllCarplates),
+      ofType(
+        fetchAllCarplates,
+        updateCarplateSuccess,
+        deleteCarplateSuccess,
+        createCarplateSuccess
+      ),
       mergeMap(({ filters }: any): Observable<Action> => {
         return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) =>
@@ -71,8 +76,8 @@ export class CarplateEffects {
   updateCarplate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateCarplate),
-      mergeMap(({ id, carplate }) =>
-        this.carplateService.updateCarplate(id, carplate).pipe(
+      mergeMap(({ id, carplateParams }) =>
+        this.carplateService.updateCarplate(id, carplateParams).pipe(
           map(() => updateCarplateSuccess()),
           catchError((error) => of(updateCarplateFailure({ error })))
         )

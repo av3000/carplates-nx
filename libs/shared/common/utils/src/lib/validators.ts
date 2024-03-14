@@ -4,4 +4,4 @@ export const plateFormatPattern = /^[a-zA-Z]{3}\d{3}$/;
 
 export const isCorrectOwnerFormat = (owner: string): boolean =>
   ownerFormatPattern.test(owner);
-export const ownerFormatPattern = /^[a-zA-Z]+$/;
+export const ownerFormatPattern = /^[a-zA-Z ]+$/;

@@ -63,7 +63,7 @@ export const createCarplateFailure = createAction(
 
 export const updateCarplate = createAction(
   `${api} Update Carplate`,
-  props<{ id: string; carplate: Carplate }>()
+  props<{ id: string; carplateParams: CarplateParameters }>()
 );
 
 export const updateCarplateSuccess = createAction(

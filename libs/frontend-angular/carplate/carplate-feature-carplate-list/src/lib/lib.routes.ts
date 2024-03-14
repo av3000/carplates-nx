@@ -19,6 +19,13 @@ export const CarplateFeatureCarplateListRoutes: Route[] = [
             (m) => m.FrontendAngularCarplateCarplateFeatureDetailsModule
           ),
       },
+      {
+        path: 'new',
+        loadChildren: () =>
+          import('@frontend-angular/carplate/carplate-feature-details').then(
+            (m) => m.FrontendAngularCarplateCarplateFeatureDetailsModule
+          ),
+      },
     ],
   },
 ];
