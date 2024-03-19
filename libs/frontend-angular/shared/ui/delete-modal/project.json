@@ -1,15 +1,15 @@
 {
-  "name": "frontend-angular-carplate-carplate-data-access",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "name": "frontend-angular-shared-ui-delete-modal",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "libs/frontend-angular/carplate/carplate-data-access/src",
+  "sourceRoot": "libs/frontend-angular/shared/ui/delete-modal/src",
   "prefix": "carplates",
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/frontend-angular/carplate/carplate-data-access/jest.config.ts",
+        "jestConfig": "libs/frontend-angular/shared/ui/delete-modal/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -24,11 +24,11 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/frontend-angular/carplate/carplate-data-access/**/*.ts",
-          "libs/frontend-angular/carplate/carplate-data-access/**/*.html"
+          "libs/frontend-angular/shared/ui/delete-modal/**/*.ts",
+          "libs/frontend-angular/shared/ui/delete-modal/**/*.html"
         ]
       }
     }
   },
-  "tags": ["scope:frontend-angular, type:data-access"]
+  "tags": ["scope:frontend-angular, type:ui"]
 }

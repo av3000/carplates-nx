@@ -34,6 +34,9 @@
       "@frontend-angular/carplate/carplate-feature-details": [
         "libs/frontend-angular/carplate/carplate-feature-details/src/index.ts"
       ],
+      "@frontend-angular/shared/ui/delete-modal": [
+        "libs/frontend-angular/shared/ui/delete-modal/src/index.ts"
+      ],
       "@frontend-angular/shared/ui/menu-dropdown": [
         "libs/frontend-angular/shared/ui/menu-dropdown/src/index.ts"
       ],

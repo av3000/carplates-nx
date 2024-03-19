@@ -1,5 +1,6 @@
 // TODO: Delete a carplate
 // TODO: handle errors and display them to the user
+// TODO: sort carplated by default by updatedAt and add time pipe to display friendly time
 
 import {
   Component,

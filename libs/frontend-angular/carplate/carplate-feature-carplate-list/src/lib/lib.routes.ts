@@ -13,7 +13,7 @@ export const CarplateFeatureCarplateListRoutes: Route[] = [
     component: FrontendAngularCarplateCarplateFeatureCarplateListComponent,
     children: [
       {
-        path: 'details/:id',
+        path: ':id',
         loadChildren: () =>
           import('@frontend-angular/carplate/carplate-feature-details').then(
             (m) => m.FrontendAngularCarplateCarplateFeatureDetailsModule
