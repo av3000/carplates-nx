@@ -7,14 +7,15 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import { Subscription, debounceTime } from 'rxjs';
+import { Subscription, debounceTime, filter, switchMap, take } from 'rxjs';
 
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
-import { Carplate } from '@shared/carplate/types';
+import { Carplate, CarplateFilters } from '@shared/carplate/types';
 import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
+import { PaginatedList } from '@shared/common/types';
 
 @Component({
   selector:
@@ -34,8 +35,10 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
   carplateListFiltersForm = this.formBuilder.group({
-    itemsPerPage: [DEFAULT_ITEMS_PER_PAGE],
-    page: [DEFAULT_PAGE],
+    perPage: [0],
+    currentPage: [0],
+    totalPages: [0],
+    count: [0],
     plate_name: [''],
     owner: [''],
     createdAt: [''],
@@ -45,11 +48,11 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   pageSizes = [3, 6, 10];
 
   get itemsPerPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('itemsPerPage') as FormControl;
+    return this.carplateListFiltersForm.get('perPage') as FormControl;
   }
 
   get currentPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('page') as FormControl;
+    return this.carplateListFiltersForm.get('currentPage') as FormControl;
   }
 
   get plateNameControl(): FormControl {
@@ -69,24 +72,58 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   }
 
   constructor(
+    private router: Router,
     private facade: CarplateFacade,
     private formBuilder: FormBuilder,
     private dynamicModalService: DynamicModalService
   ) {}
 
   ngOnInit() {
-    //TODO: refactor to use separate single effect for fetching.
-    this.facade.fetchAllCarplates();
+    this.facade.fetchAllCarplates({} as CarplateFilters);
+    this.initListeners();
+  }
 
-    this.initCurrentPageControlListener();
-    this.initItemsPerPageListener();
-    this.initPlateNameListener();
-    this.initOwnerControlListener();
+  initListeners() {
+    this.subs$.add(
+      this.isLoaded$
+        .pipe(
+          filter((isLoaded) => isLoaded),
+          take(1),
+          switchMap(() => this.carplatesList$)
+        )
+        .subscribe((carplatesList) => {
+          this.initPaginationFilterValues(carplatesList);
+          this.initCurrentPageControlListener();
+          this.initItemsPerPageListener();
+          this.initPlateNameListener();
+          this.initOwnerControlListener();
+        })
+    );
+  }
+
+  initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
+    this.carplateListFiltersForm = this.formBuilder.group({
+      perPage: [carplatesList.perPage],
+      currentPage: [carplatesList.currentPage],
+      totalPages: [carplatesList.totalPages],
+      count: [carplatesList.count],
+      plate_name: [''],
+      owner: [''],
+      createdAt: [''],
+      updatedAt: [''],
+    });
   }
 
   initCurrentPageControlListener() {
     this.subs$.add(
       this.currentPageControl.valueChanges.subscribe((currentPage) => {
+        this.router.navigate([], {
+          queryParams: {
+            page: currentPage,
+            size: this.itemsPerPageControl.value,
+          },
+          queryParamsHandling: 'merge',
+        });
         this.facade.fetchAllCarplates({
           page: currentPage,
           size: this.itemsPerPageControl.value,
@@ -100,8 +137,16 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   initItemsPerPageListener() {
     this.subs$.add(
       this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
+        this.router.navigate([], {
+          queryParams: {
+            page: 0,
+            size: itemsPerPage,
+          },
+          queryParamsHandling: 'merge',
+        });
+
         this.facade.fetchAllCarplates({
-          page: this.currentPageControl.value,
+          page: 0,
           size: itemsPerPage,
           plate_name: this.plateNameControl.value,
           owner: this.ownerControl.value,

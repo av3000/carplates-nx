@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
 import { CarplateFilters, CarplateParameters } from '@shared/carplate/types';
-import { defaultPaginationFilters } from '@shared/common/constants';
 
 import {
   selectCarplateById,
@@ -35,7 +34,7 @@ export class CarplateFacade {
 
   constructor(private store: Store) {}
 
-  fetchAllCarplates(filters: CarplateFilters = defaultPaginationFilters) {
+  fetchAllCarplates(filters: CarplateFilters) {
     this.store.dispatch(fetchAllCarplates({ filters }));
   }
 

@@ -9,11 +9,12 @@ import { FormGroup } from '@angular/forms';
 export class PaginationComponent {
   @Input() formGroup!: FormGroup;
   @Input() pageSizes!: number[];
-  @Input() count!: number;
-  @Input() totalPages!: number;
-  @Input() currentPage!: number;
 
   totalPagesArray!: number[];
+
+  get totalPages(): number {
+    return this.formGroup?.get('totalPages')?.value;
+  }
 
   generatePages(totalPages: number) {
     return Array.from({ length: totalPages }, (_, i) => i);

@@ -14,7 +14,7 @@ export const selectCarplateList = createSelector(
 
 export const selectAllCarplates = createSelector(
   selectCarplateState,
-  (state: CarplateState) => state.carplatesList.carplates
+  (state: CarplateState) => state.carplatesList.rows
 );
 
 export const selectCarplateById = (id: string) =>

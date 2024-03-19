@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Action } from '@ngrx/store';
+
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
@@ -21,14 +24,31 @@ import {
   deleteCarplateFailure,
 } from '../actions/frontend-angular-carplate-carplate.actions';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
-import { Action } from '@ngrx/store';
 
 @Injectable()
 export class CarplateEffects {
-  loadCarPlates$ = createEffect(() =>
+  loadCarplatesPaginated$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(fetchAllCarplates),
+      mergeMap(({ filters }: any): Observable<Action> => {
+        return this.carplateService.getCarplatesList(filters).pipe(
+          map((carplatesList) =>
+            fetchAllCarplatesSuccess({
+              carplatesList: {
+                ...carplatesList,
+                rows: carplatesList.rows,
+              },
+            })
+          ),
+          catchError((error) => of(fetchAllCarplatesFailure({ error })))
+        );
+      })
+    )
+  );
+
+  loadCarplates$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
-        fetchAllCarplates,
         updateCarplateSuccess,
         deleteCarplateSuccess,
         createCarplateSuccess
@@ -39,7 +59,7 @@ export class CarplateEffects {
             fetchAllCarplatesSuccess({
               carplatesList: {
                 ...carplatesList,
-                carplates: carplatesList.rows,
+                rows: carplatesList.rows,
               },
             })
           ),
@@ -66,7 +86,7 @@ export class CarplateEffects {
       ofType(createCarplate),
       mergeMap(({ carplateParams }) =>
         this.carplateService.createCarplate(carplateParams).pipe(
-          map((carplate) => createCarplateSuccess({ carplate })),
+          map(() => createCarplateSuccess()),
           catchError((error) => of(createCarplateFailure({ error })))
         )
       )

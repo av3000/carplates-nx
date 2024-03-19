@@ -26,8 +26,9 @@ export const getPagingData = (
   limit: number
 ): PaginatedList<Carplate> => {
   const { count, rows } = data;
+  const perPage = limit;
   const currentPage = page ? +page : 0;
   const totalPages = Math.ceil(count / limit);
 
-  return { count, totalPages, currentPage, rows };
+  return { count, perPage, totalPages, currentPage, rows };
 };

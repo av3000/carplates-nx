@@ -1,10 +1,7 @@
-// TODO: Delete a carplate
 // TODO: handle errors and display them to the user
 // TODO: sort carplated by default by updatedAt and add time pipe to display friendly time
 // TODO: after display items per page and current page changes, the url should be updated as well
 // for ex: table display=6 and after create, update or delete, the refresh sets back to 3
-
-// TODO: opening create modal sends get request with carplates/new and tries to validate carplate id
 
 import {
   Component,
@@ -79,8 +76,9 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
     private formBuilder: FormBuilder
   ) {}
 
-  get id(): string {
-    return this.route.snapshot.paramMap.get('id') || '';
+  get id(): string | null {
+    const id = this.route.snapshot.paramMap.get('id');
+    return id && id !== 'new' ? id : null;
   }
 
   get isNew(): boolean {
@@ -154,7 +152,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
           .pipe(
             switchMap((carplate) => {
               if (!carplate) {
-                this.facade.fetchOneCarplate(this.id);
+                this.facade.fetchOneCarplate(this.id ?? '');
                 return this.isLoaded$.pipe(
                   filter((isLoaded) => isLoaded),
                   switchMap(() => this.facade.selectedCarplate$)
@@ -187,7 +185,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
           owner: owner ?? '',
         });
       } else {
-        this.facade.updateCarplate(this.id, {
+        this.facade.updateCarplate(this.id ?? '', {
           plate_name: plate_name ?? '',
           owner: owner ?? '',
         });

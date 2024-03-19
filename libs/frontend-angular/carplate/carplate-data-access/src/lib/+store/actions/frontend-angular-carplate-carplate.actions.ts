@@ -6,6 +6,7 @@ import {
   CarplateFilters,
   CarplateParameters,
 } from '@shared/carplate/types';
+import { PaginatedList } from '@shared/common/types';
 
 const api = '[Carplate API]';
 
@@ -17,12 +18,7 @@ export const fetchAllCarplates = createAction(
 export const fetchAllCarplatesSuccess = createAction(
   `${api} Fetch All Carplates Success`,
   props<{
-    carplatesList: {
-      count: number;
-      totalPages: number;
-      currentPage: number;
-      carplates: Carplate[];
-    };
+    carplatesList: PaginatedList<Carplate>;
   }>()
 );
 
@@ -52,8 +48,7 @@ export const createCarplate = createAction(
 );
 
 export const createCarplateSuccess = createAction(
-  `${api} Create Carplate Success`,
-  props<{ carplate: Carplate }>()
+  `${api} Create Carplate Success`
 );
 
 export const createCarplateFailure = createAction(

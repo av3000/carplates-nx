@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
+
 import { Carplate } from '@shared/carplate/types';
+import { PaginatedList } from '@shared/common/types';
 
 import { Action, createReducer, on } from '@ngrx/store';
 
@@ -27,12 +29,7 @@ export const carplateFeatureKey = 'carplate';
 
 export interface CarplateState {
   selectedCarplate: Carplate | null;
-  carplatesList: {
-    count: number;
-    totalPages: number;
-    currentPage: number;
-    carplates: Carplate[];
-  };
+  carplatesList: PaginatedList<Carplate>;
   isLoading: boolean;
   isLoaded: boolean;
   error: HttpErrorResponse | null;
@@ -40,7 +37,13 @@ export interface CarplateState {
 
 export const initialState: CarplateState = {
   selectedCarplate: null,
-  carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
+  carplatesList: {
+    count: 0,
+    perPage: 0,
+    totalPages: 0,
+    currentPage: 0,
+    rows: [],
+  },
   isLoading: false,
   isLoaded: false,
   error: null,
@@ -115,12 +118,8 @@ export const carplateReducer = createReducer(
   ),
   on(
     createCarplateSuccess,
-    (state, { carplate }): CarplateState => ({
+    (state): CarplateState => ({
       ...state,
-      carplatesList: {
-        ...state.carplatesList,
-        carplates: [...state.carplatesList.carplates, carplate],
-      },
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -193,7 +192,13 @@ export const carplateReducer = createReducer(
     clearCarplates,
     (state): CarplateState => ({
       ...state,
-      carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
+      carplatesList: {
+        count: 0,
+        perPage: 0,
+        totalPages: 0,
+        currentPage: 0,
+        rows: [],
+      },
       isLoading: false,
       isLoaded: false,
       error: null,
