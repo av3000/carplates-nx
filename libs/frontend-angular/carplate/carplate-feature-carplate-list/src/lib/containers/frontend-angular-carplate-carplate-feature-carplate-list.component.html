@@ -103,14 +103,16 @@
                 >
                   <carplates-menu-dropdown #menuDropdown>
                     <a
-                      [routerLink]="'/carplates/details/' + carplate.id"
+                      [routerLink]="'/carplates/' + carplate.id"
                       (click)="menuDropdown.closeDropdown()"
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >View Details</a
                     >
                     <a
-                      href="#"
-                      (click)="menuDropdown.closeDropdown()"
+                      (click)="
+                        menuDropdown.closeDropdown();
+                        openDeleteCarplateModal(carplate)
+                      "
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >Delete</a
                     >
@@ -132,6 +134,18 @@
     ></carplates-pagination>
   </div>
 </div>
+
+<!-- <ng-template #deleteModalTemplate let-carplateId="carplateId">
+  <carplates-frontend-angular-shared-ui-delete-modal
+    [instanceType]="'Carplate'"
+    [instanceId]="carplateId"
+    (deleteInstance)="deleteCarplate(carplateId)"
+  >
+    <p class="text-gray-900 dark:text-white">
+      Are you sure you want to delete this carplate?
+    </p>
+  </carplates-frontend-angular-shared-ui-delete-modal>
+</ng-template> -->
 
 <ng-template #loading>Loading...</ng-template>
 <router-outlet></router-outlet>

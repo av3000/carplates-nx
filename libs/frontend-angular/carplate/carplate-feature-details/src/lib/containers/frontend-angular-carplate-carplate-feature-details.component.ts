@@ -1,6 +1,10 @@
 // TODO: Delete a carplate
 // TODO: handle errors and display them to the user
 // TODO: sort carplated by default by updatedAt and add time pipe to display friendly time
+// TODO: after display items per page and current page changes, the url should be updated as well
+// for ex: table display=6 and after create, update or delete, the refresh sets back to 3
+
+// TODO: opening create modal sends get request with carplates/new and tries to validate carplate id
 
 import {
   Component,

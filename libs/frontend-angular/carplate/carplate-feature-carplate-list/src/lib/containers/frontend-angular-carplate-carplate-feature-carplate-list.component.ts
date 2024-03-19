@@ -1,11 +1,20 @@
-// TODO: create a separate effect for fetching all carplates before list component load
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 
 import { Subscription, debounceTime } from 'rxjs';
 
+import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
+import { Carplate } from '@shared/carplate/types';
+import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
 
 @Component({
   selector:
@@ -16,6 +25,10 @@ import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
 {
+  @ViewChild('modalView') deleteModal!: TemplateRef<any>;
+  @ViewChild('modalView', { static: true, read: ViewContainerRef })
+  vcr!: ViewContainerRef;
+
   private subs$ = new Subscription();
   carplatesList$ = this.facade.carplatesList$;
   isLoading$ = this.facade.isLoading$;
@@ -57,7 +70,8 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   constructor(
     private facade: CarplateFacade,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private dynamicModalService: DynamicModalService
   ) {}
 
   ngOnInit() {
@@ -68,16 +82,6 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
     this.initItemsPerPageListener();
     this.initPlateNameListener();
     this.initOwnerControlListener();
-  }
-
-  viewDetails() {
-    // Navigate to the details route
-    console.log('View details clicked');
-  }
-
-  deleteCarplate(id: string) {
-    // Code to delete goes here
-    console.log('Delete carplate clicked');
   }
 
   initCurrentPageControlListener() {
@@ -134,6 +138,24 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
           });
         })
     );
+  }
+
+  openDeleteCarplateModal(carplate: Carplate) {
+    const configData = {
+      instanceId: carplate.id,
+      instanceName: carplate.plate_name,
+      instanceOwner: carplate.owner,
+      instanceType: 'carplate',
+      onDelete: () => this.deleteCarplate(carplate.id),
+    };
+
+    this.dynamicModalService.open(FrontendAngularSharedUiDeleteModalComponent, {
+      configData,
+    });
+  }
+
+  deleteCarplate(id: string) {
+    this.facade.deleteCarplate(id);
   }
 
   ngOnDestroy() {
