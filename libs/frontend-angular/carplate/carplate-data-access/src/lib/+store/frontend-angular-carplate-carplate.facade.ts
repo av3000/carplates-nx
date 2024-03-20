@@ -16,15 +16,24 @@ import {
   clearCarplates,
   clearCarplatesError,
   createCarplate,
+  createCarplateSuccess,
   deleteCarplate,
   fetchAllCarplates,
   fetchOneCarplate,
   updateCarplate,
+  updateCarplateSuccess,
 } from './actions/frontend-angular-carplate-carplate.actions';
+import { map } from 'rxjs';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Injectable({ providedIn: 'root' })
 export class CarplateFacade {
   carplateStore$ = this.store.pipe(select(selectCarplateState));
+
+  saved$ = this.actions$.pipe(
+    ofType(createCarplateSuccess, updateCarplateSuccess),
+    map(() => true)
+  );
 
   carplatesList$ = this.store.pipe(select(selectCarplateList));
   selectedCarplate$ = this.store.pipe(select(selectSelectedCarplate));
@@ -32,7 +41,7 @@ export class CarplateFacade {
   isLoaded$ = this.store.pipe(select(selectIsLoaded));
   errors$ = this.store.pipe(select(selectError));
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private actions$: Actions) {}
 
   fetchAllCarplates(filters: CarplateFilters) {
     this.store.dispatch(fetchAllCarplates({ filters }));

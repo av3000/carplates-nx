@@ -1,3 +1,9 @@
+// TODO: after display items per page and current page changes, the url should be updated as well
+// And vice versa, if the url is updated, the display items per page and current page should be updated as well
+// for ex: table display=6 and after create, update or delete, the refresh sets back to 3
+// TODO: add timestamp filters
+// TODO: add sort filters
+
 import {
   Component,
   OnDestroy,
@@ -36,7 +42,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   isLoaded$ = this.facade.isLoaded$;
   carplateListFiltersForm = this.formBuilder.group({
     perPage: [0],
-    currentPage: [0],
+    currentPage: [1],
     totalPages: [0],
     count: [0],
     plate_name: [''],
@@ -102,6 +108,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   }
 
   initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
+    console.log('carplatesList', carplatesList);
     this.carplateListFiltersForm = this.formBuilder.group({
       perPage: [carplatesList.perPage],
       currentPage: [carplatesList.currentPage],

@@ -17,6 +17,6 @@ export class PaginationComponent {
   }
 
   generatePages(totalPages: number) {
-    return Array.from({ length: totalPages }, (_, i) => i);
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 }

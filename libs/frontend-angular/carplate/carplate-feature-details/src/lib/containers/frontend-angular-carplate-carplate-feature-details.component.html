@@ -34,6 +34,13 @@
         <form [formGroup]="carplateForm" class="p-4 md:p-5">
           <div class="grid gap-4 mb-4 grid-cols-2">
             <div class="col-span-2">
+              <carplates-frontend-angular-shared-ui-backend-error
+                *ngIf="error$ | async as error"
+                [error]="error"
+              >
+              </carplates-frontend-angular-shared-ui-backend-error>
+            </div>
+            <div class="col-span-2">
               <div class="flex justify-between items-center mb-2">
                 <label
                   for="owner"

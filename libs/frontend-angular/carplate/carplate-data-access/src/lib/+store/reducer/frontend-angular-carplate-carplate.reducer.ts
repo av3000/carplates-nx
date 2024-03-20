@@ -1,7 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
-
 import { Carplate } from '@shared/carplate/types';
-import { PaginatedList } from '@shared/common/types';
+import { ErrorResponse, PaginatedList } from '@shared/common/types';
 
 import { Action, createReducer, on } from '@ngrx/store';
 
@@ -32,7 +30,7 @@ export interface CarplateState {
   carplatesList: PaginatedList<Carplate>;
   isLoading: boolean;
   isLoaded: boolean;
-  error: HttpErrorResponse | null;
+  error: ErrorResponse | null;
 }
 
 export const initialState: CarplateState = {

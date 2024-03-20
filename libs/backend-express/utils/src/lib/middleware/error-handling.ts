@@ -4,7 +4,7 @@ import { StatusCode } from '@shared/common/enums';
 import { ErrorResponse } from '@shared/common/types';
 
 export const errorMiddleware = (
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,8 +15,10 @@ export const errorMiddleware = (
     return next(err);
   }
 
+  const status = err.status || StatusCode.HTTP_500_INTERNAL_SERVER_ERROR;
+
   if (typeof err === 'string') {
-    res.status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR).json({
+    res.status(status).json({
       error: {
         name: 'Server Error',
         message: err || 'Internal Server Error',
@@ -24,7 +26,7 @@ export const errorMiddleware = (
       body: req.body,
     } as ErrorResponse);
   } else if (err.message) {
-    res.status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR).json({
+    res.status(status).json({
       error: {
         name: err.name || 'Server Error',
         message: err.message || 'Internal Server Error',
@@ -32,8 +34,6 @@ export const errorMiddleware = (
       body: req.body,
     } as ErrorResponse);
   } else {
-    res
-      .status(StatusCode.HTTP_500_INTERNAL_SERVER_ERROR)
-      .json({ error: err, body: req.body } as ErrorResponse);
+    res.status(status).json({ error: err, body: req.body } as ErrorResponse);
   }
 };

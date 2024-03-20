@@ -91,12 +91,12 @@
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.createdAt }}</div>
+                  <div>{{ carplate.createdAt | date : 'short' }}</div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.updatedAt }}</div>
+                  <div>{{ carplate.updatedAt | date : 'short' }}</div>
                 </td>
                 <td
                   class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"

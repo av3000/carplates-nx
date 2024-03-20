@@ -1,8 +1,3 @@
-// TODO: handle errors and display them to the user
-// TODO: sort carplated by default by updatedAt and add time pipe to display friendly time
-// TODO: after display items per page and current page changes, the url should be updated as well
-// for ex: table display=6 and after create, update or delete, the refresh sets back to 3
-
 import {
   Component,
   OnDestroy,
@@ -15,6 +10,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import {
+  Subject,
   Subscription,
   combineLatest,
   filter,
@@ -45,8 +41,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   vcr!: ViewContainerRef;
 
   private subs$ = new Subscription();
+  private destroy$ = new Subject<void>();
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
+  error$ = this.facade.errors$;
   carplateForm = this.formBuilder.group({
     plate_name: [
       '',
@@ -178,7 +176,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   onSave() {
     if (this.isFormSaveable) {
+      this.facade.clearErrors();
+
       const { plate_name, owner } = this.carplateForm.value;
+
       if (this.isNew) {
         this.facade.createCarplate({
           plate_name: plate_name ?? '',
@@ -190,9 +191,13 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
           owner: owner ?? '',
         });
       }
-    }
 
-    this.close();
+      this.facade.saved$.subscribe((saved) => {
+        if (saved) {
+          this.close();
+        }
+      });
+    }
   }
 
   close() {
@@ -200,6 +205,9 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   }
 
   ngOnDestroy(): void {
+    this.facade.clearErrors();
+    this.destroy$.next();
+    this.destroy$.complete();
     this.subs$.unsubscribe();
   }
 }

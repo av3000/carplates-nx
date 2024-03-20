@@ -27,6 +27,7 @@ export async function create(req, res, next) {
 
     if (foundCarplate) {
       return next({
+        status: StatusCode.HTTP_400_BAD_REQUEST,
         name: 'Already Exists',
         message: `Carplate with plate name ${req.body.plate_name} already exists `,
       });
@@ -60,19 +61,15 @@ export async function update(req, res, next) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
 
-    const payload: CarplateParameters = {
-      plate_name: req.body.plate_name
-        ? req.body.plate_name.toUpperCase()
-        : null,
-      owner: req.body.owner ? req.body.owner : null,
-    };
+    const upperRequestBodyPlateName = req.body.plate_name.toUpperCase();
 
     const foundCarplate: Carplate = await CarplateSchema.findOne({
-      where: payload,
+      where: { plate_name: upperRequestBodyPlateName },
     });
 
-    if (foundCarplate && foundCarplate.plate_name === req.body.plate_name) {
+    if (foundCarplate.plate_name === upperRequestBodyPlateName) {
       return next({
+        status: StatusCode.HTTP_400_BAD_REQUEST,
         name: 'Already Exists',
         message: `Carplate with plate name ${req.body.plate_name} already exists `,
       });
@@ -118,8 +115,11 @@ export async function findAll(req, res, next) {
       where: condition,
       limit,
       offset,
+      order: [['updatedAt', 'DESC']],
     });
+
     const response = getPagingData(data, page, limit);
+
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
   } catch (err) {
     next(err);

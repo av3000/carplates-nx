@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { FrontendAngularSharedUiModalModule } from '@frontend-angular/shared/ui/modal';
 import { FrontendAngularCarplateCarplateDataAccessModule } from '@frontend-angular/carplate/carplate-data-access';
+import { FrontendAngularSharedUiBackendErrorModule } from '@frontend-angular/shared/ui/backend-error';
 
 import { FrontendAngularCarplateCarplateFeatureDetailsComponent } from './containers/frontend-angular-carplate-carplate-feature-details.component';
 
@@ -20,6 +21,7 @@ const routes: Routes = [
     CommonModule,
     ReactiveFormsModule,
 
+    FrontendAngularSharedUiBackendErrorModule,
     FrontendAngularSharedUiModalModule,
     FrontendAngularCarplateCarplateDataAccessModule,
 
