@@ -28,5 +28,5 @@
       }
     }
   },
-  "tags": ["scope:backend-express type:controllers"]
+  "tags": ["scope:backend-express, type:controllers"]
 }

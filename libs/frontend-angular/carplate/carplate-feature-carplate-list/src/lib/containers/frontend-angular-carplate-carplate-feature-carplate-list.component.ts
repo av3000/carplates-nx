@@ -22,6 +22,7 @@ import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access'
 import { Carplate, CarplateFilters } from '@shared/carplate/types';
 import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
 import { PaginatedList } from '@shared/common/types';
+import { DEFAULT_PAGE } from '@shared/common/constants';
 
 @Component({
   selector:
@@ -36,22 +37,22 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   @ViewChild('modalView', { static: true, read: ViewContainerRef })
   vcr!: ViewContainerRef;
 
+  pageSizes = [3, 6, 10];
+
   private subs$ = new Subscription();
   carplatesList$ = this.facade.carplatesList$;
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
   carplateListFiltersForm = this.formBuilder.group({
-    perPage: [0],
-    currentPage: [1],
-    totalPages: [0],
+    perPage: [this.pageSizes[0]],
+    currentPage: [DEFAULT_PAGE],
+    totalPages: [DEFAULT_PAGE],
     count: [0],
     plate_name: [''],
     owner: [''],
     createdAt: [''],
     updatedAt: [''],
   });
-
-  pageSizes = [3, 6, 10];
 
   get itemsPerPageControl(): FormControl {
     return this.carplateListFiltersForm.get('perPage') as FormControl;
@@ -145,14 +146,14 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
       this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
         this.router.navigate([], {
           queryParams: {
-            page: 0,
+            page: this.currentPageControl.value,
             size: itemsPerPage,
           },
           queryParamsHandling: 'merge',
         });
 
         this.facade.fetchAllCarplates({
-          page: 0,
+          page: this.currentPageControl.value,
           size: itemsPerPage,
           plate_name: this.plateNameControl.value,
           owner: this.ownerControl.value,

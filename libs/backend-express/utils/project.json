@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": ["scope:backend-express type:utils"]
+  "tags": ["scope:backend-express, type:utils"]
 }

@@ -30,5 +30,5 @@
       }
     }
   },
-  "tags": ["scope:frontend-angular type:ui"]
+  "tags": ["scope:frontend-angular, type:ui"]
 }
