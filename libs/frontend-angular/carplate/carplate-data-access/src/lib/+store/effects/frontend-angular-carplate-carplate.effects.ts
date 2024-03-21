@@ -32,7 +32,6 @@ export class CarplateEffects {
       mergeMap(({ filters }: any): Observable<Action> => {
         return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) => {
-            console.log(carplatesList); // Add console.log here
             return fetchAllCarplatesSuccess({
               carplatesList: {
                 ...carplatesList,

@@ -1,5 +1,3 @@
-// TODO: Fix default page to count from 1
-
 import { Carplate } from '@shared/carplate/types';
 import {
   PaginatedData,

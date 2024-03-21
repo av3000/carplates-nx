@@ -108,7 +108,6 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   }
 
   initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
-    console.log('carplatesList', carplatesList);
     this.carplateListFiltersForm = this.formBuilder.group({
       perPage: [carplatesList.perPage],
       currentPage: [carplatesList.currentPage],
