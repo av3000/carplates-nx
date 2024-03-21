@@ -1,8 +1,11 @@
 import { CarplateParameters } from '@shared/carplate/types';
 import { ErrorResponseName } from '@shared/common/enums';
 import { ErrorResponse } from '@shared/common/types';
+import {
+  isCorrectOwnerFormat,
+  isCorrectPlateFormat,
+} from '@shared/common/utils';
 
-const PLATE_SYMBOLS_TOTAL = 6;
 const OWNER_NAME_MAX_LENGTH = 30;
 const OWNER_NAME_MIN_LENGTH = 3;
 
@@ -11,12 +14,7 @@ const validateCarplateGeneralFields = ({
   owner,
 }: CarplateParameters): ErrorResponse | null => {
   const plateFormatError = validatePlateFormat(plate_name);
-  const plateLengthError = validatePlateLength(plate_name);
   const ownerError = owner ? validateOwner(owner) : null;
-
-  if (plateLengthError) {
-    return plateLengthError;
-  }
 
   if (plateFormatError) {
     return plateFormatError;
@@ -76,17 +74,8 @@ export const validateCarplateUpdate = ({
 
 const validatePlate = (plate_name: string): ErrorResponse | null => {
   const plateFormatError = validatePlateFormat(plate_name);
-  const plateLengthError = validatePlateLength(plate_name);
 
-  if (plateLengthError) {
-    return plateLengthError;
-  }
-
-  if (plateFormatError) {
-    return plateFormatError;
-  }
-
-  return null;
+  return plateFormatError ?? null;
 };
 
 const validateIfAnyFieldsMissing = (
@@ -130,25 +119,14 @@ const validateIfNoFieldsProvided = ({
 
 const validateOwner = (owner: string): ErrorResponse | null => {
   return owner.length > OWNER_NAME_MAX_LENGTH ||
-    owner.length < OWNER_NAME_MIN_LENGTH
+    owner.length < OWNER_NAME_MIN_LENGTH ||
+    !isCorrectOwnerFormat(owner)
     ? {
         error: {
           name: ErrorResponseName.Validation,
-          message: `[${ErrorResponseName.Validation}]: Owner has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} symbols.`,
+          message: `[${ErrorResponseName.Validation}]: Owner length has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} and letters only.`,
         },
         body: { owner },
-      }
-    : null;
-};
-
-const validatePlateLength = (plate_name: string): ErrorResponse | null => {
-  return plate_name.length !== PLATE_SYMBOLS_TOTAL
-    ? {
-        error: {
-          name: ErrorResponseName.Validation,
-          message: `[${ErrorResponseName.Validation}]: Plate number has to be ${PLATE_SYMBOLS_TOTAL} symbols.`,
-        },
-        body: { plate_name },
       }
     : null;
 };
@@ -164,9 +142,6 @@ const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
       }
     : null;
 };
-
-const isCorrectPlateFormat = (plate_name: string): boolean =>
-  /^[a-zA-Z]{3}\d{3}$/.test(plate_name);
 
 export const validateIdFormat = (id: string): ErrorResponse | null => {
   return !isCorrectIdFormat(id)

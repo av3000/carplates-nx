@@ -14,13 +14,18 @@ export const selectCarplateList = createSelector(
 
 export const selectAllCarplates = createSelector(
   selectCarplateState,
-  (state: CarplateState) => state.carplatesList.carplates
+  (state: CarplateState) => state.carplatesList.rows
 );
 
 export const selectCarplateById = (id: string) =>
   createSelector(selectAllCarplates, (carplates: Carplate[]) =>
     carplates.find((carplate) => carplate.id === id)
   );
+
+export const selectSelectedCarplate = createSelector(
+  selectCarplateState,
+  (state) => state.selectedCarplate
+);
 
 export const selectLoading = createSelector(
   selectCarplateState,

@@ -1,4 +1,4 @@
-import { PaginationFiltersParams } from 'libs/shared/common/types/src/pagination';
+import { PaginationFiltersParams } from '@shared/common/types';
 
 export interface Carplate extends CarplateParameters {
   id: string;

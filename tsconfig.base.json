@@ -31,8 +31,20 @@
       "@frontend-angular/carplate/carplate-feature-carplate-list": [
         "libs/frontend-angular/carplate/carplate-feature-carplate-list/src/index.ts"
       ],
+      "@frontend-angular/carplate/carplate-feature-details": [
+        "libs/frontend-angular/carplate/carplate-feature-details/src/index.ts"
+      ],
+      "@frontend-angular/shared/ui/backend-error": [
+        "libs/frontend-angular/shared/ui/backend-error/src/index.ts"
+      ],
+      "@frontend-angular/shared/ui/delete-modal": [
+        "libs/frontend-angular/shared/ui/delete-modal/src/index.ts"
+      ],
       "@frontend-angular/shared/ui/menu-dropdown": [
         "libs/frontend-angular/shared/ui/menu-dropdown/src/index.ts"
+      ],
+      "@frontend-angular/shared/ui/modal": [
+        "libs/frontend-angular/shared/ui/modal/src/index.ts"
       ],
       "@frontend-angular/shared/ui/pagination": [
         "libs/frontend-angular/shared/ui/pagination/src/index.ts"

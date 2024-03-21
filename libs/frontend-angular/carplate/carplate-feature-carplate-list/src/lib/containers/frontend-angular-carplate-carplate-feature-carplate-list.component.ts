@@ -1,11 +1,28 @@
-// TODO: create a separate effect for fetching all carplates before list component load
-import { Component, OnDestroy, OnInit } from '@angular/core';
+// TODO: after display items per page and current page changes, the url should be updated as well
+// And vice versa, if the url is updated, the display items per page and current page should be updated as well
+// for ex: table display=6 and after create, update or delete, the refresh sets back to 3
+// TODO: add timestamp filters
+// TODO: add sort filters
+
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
-import { Subscription, debounceTime } from 'rxjs';
+import { Subscription, debounceTime, filter, switchMap, take } from 'rxjs';
 
+import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
+import { Carplate, CarplateFilters } from '@shared/carplate/types';
+import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
+import { PaginatedList } from '@shared/common/types';
+import { DEFAULT_PAGE } from '@shared/common/constants';
 
 @Component({
   selector:
@@ -16,27 +33,33 @@ import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
 {
+  @ViewChild('modalView') deleteModal!: TemplateRef<any>;
+  @ViewChild('modalView', { static: true, read: ViewContainerRef })
+  vcr!: ViewContainerRef;
+
+  pageSizes = [3, 6, 10];
+
   private subs$ = new Subscription();
   carplatesList$ = this.facade.carplatesList$;
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
   carplateListFiltersForm = this.formBuilder.group({
-    itemsPerPage: [DEFAULT_ITEMS_PER_PAGE],
-    page: [DEFAULT_PAGE],
+    perPage: [this.pageSizes[0]],
+    currentPage: [DEFAULT_PAGE],
+    totalPages: [DEFAULT_PAGE],
+    count: [0],
     plate_name: [''],
     owner: [''],
     createdAt: [''],
     updatedAt: [''],
   });
 
-  pageSizes = [3, 6, 10];
-
   get itemsPerPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('itemsPerPage') as FormControl;
+    return this.carplateListFiltersForm.get('perPage') as FormControl;
   }
 
   get currentPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('page') as FormControl;
+    return this.carplateListFiltersForm.get('currentPage') as FormControl;
   }
 
   get plateNameControl(): FormControl {
@@ -56,33 +79,58 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   }
 
   constructor(
+    private router: Router,
     private facade: CarplateFacade,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private dynamicModalService: DynamicModalService
   ) {}
 
   ngOnInit() {
-    //TODO: refactor to use separate single effect for fetching.
-    this.facade.fetchAllCarplates();
-
-    this.initCurrentPageControlListener();
-    this.initItemsPerPageListener();
-    this.initPlateNameListener();
-    this.initOwnerControlListener();
+    this.facade.fetchAllCarplates({} as CarplateFilters);
+    this.initListeners();
   }
 
-  viewDetails() {
-    // Navigate to the details route
-    console.log('View details clicked');
+  initListeners() {
+    this.subs$.add(
+      this.isLoaded$
+        .pipe(
+          filter((isLoaded) => isLoaded),
+          take(1),
+          switchMap(() => this.carplatesList$)
+        )
+        .subscribe((carplatesList) => {
+          this.initPaginationFilterValues(carplatesList);
+          this.initCurrentPageControlListener();
+          this.initItemsPerPageListener();
+          this.initPlateNameListener();
+          this.initOwnerControlListener();
+        })
+    );
   }
 
-  deleteCarplate(id: string) {
-    // Code to delete goes here
-    console.log('Delete carplate clicked');
+  initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
+    this.carplateListFiltersForm = this.formBuilder.group({
+      perPage: [carplatesList.perPage],
+      currentPage: [carplatesList.currentPage],
+      totalPages: [carplatesList.totalPages],
+      count: [carplatesList.count],
+      plate_name: [''],
+      owner: [''],
+      createdAt: [''],
+      updatedAt: [''],
+    });
   }
 
   initCurrentPageControlListener() {
     this.subs$.add(
       this.currentPageControl.valueChanges.subscribe((currentPage) => {
+        this.router.navigate([], {
+          queryParams: {
+            page: currentPage,
+            size: this.itemsPerPageControl.value,
+          },
+          queryParamsHandling: 'merge',
+        });
         this.facade.fetchAllCarplates({
           page: currentPage,
           size: this.itemsPerPageControl.value,
@@ -96,6 +144,14 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   initItemsPerPageListener() {
     this.subs$.add(
       this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
+        this.router.navigate([], {
+          queryParams: {
+            page: this.currentPageControl.value,
+            size: itemsPerPage,
+          },
+          queryParamsHandling: 'merge',
+        });
+
         this.facade.fetchAllCarplates({
           page: this.currentPageControl.value,
           size: itemsPerPage,
@@ -134,6 +190,24 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
           });
         })
     );
+  }
+
+  openDeleteCarplateModal(carplate: Carplate) {
+    const configData = {
+      instanceId: carplate.id,
+      instanceName: carplate.plate_name,
+      instanceOwner: carplate.owner,
+      instanceType: 'carplate',
+      onDelete: () => this.deleteCarplate(carplate.id),
+    };
+
+    this.dynamicModalService.open(FrontendAngularSharedUiDeleteModalComponent, {
+      configData,
+    });
+  }
+
+  deleteCarplate(id: string) {
+    this.facade.deleteCarplate(id);
   }
 
   ngOnDestroy() {

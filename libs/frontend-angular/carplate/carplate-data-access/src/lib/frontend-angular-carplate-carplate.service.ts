@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-import { Carplate, CarplateParameters } from '@shared/carplate/types';
-import { PaginatedList } from '@shared/common/types';
 import {
-  BASE_API_TOKEN,
-  defaultPaginationFilters,
-} from '@shared/common/constants';
+  Carplate,
+  CarplateFilters,
+  CarplateParameters,
+} from '@shared/carplate/types';
+import { PaginatedList } from '@shared/common/types';
+import { BASE_API_TOKEN } from '@shared/common/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class CarplateService {
   private endpointUrl = `${this.apiUrl}/carplates`;
 
   getCarplatesList(
-    filters = defaultPaginationFilters
+    filters: CarplateFilters
   ): Observable<PaginatedList<Carplate>> {
     const params = {
       ...filters,
@@ -41,8 +42,11 @@ export class CarplateService {
     return this.http.post<Carplate>(`${this.endpointUrl}`, carplateParams);
   }
 
-  updateCarplate(id: string, carplate: Carplate): Observable<Carplate> {
-    return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplate);
+  updateCarplate(
+    id: string,
+    carplateParams: CarplateParameters
+  ): Observable<Carplate> {
+    return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplateParams);
   }
 
   deleteCarplate(id: string): Observable<Carplate> {

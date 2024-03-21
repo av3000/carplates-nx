@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { FrontendAngularCarplateCarplateDataAccessModule } from '@frontend-angular/carplate/carplate-data-access';
 import { FrontendAngularSharedUiPaginationModule } from '@frontend-angular/shared/ui/pagination';
+import { FrontendAngularSharedUiDeleteModalModule } from '@frontend-angular/shared/ui/delete-modal';
 import { FrontendAngularSharedUiMenuDropdownModule } from '@frontend-angular/shared/ui/menu-dropdown';
 
 import { CarplateFeatureCarplateListRoutes } from './lib.routes';
@@ -16,6 +17,7 @@ import { FrontendAngularCarplateCarplateFeatureCarplateListComponent } from './c
     CommonModule,
     ReactiveFormsModule,
 
+    FrontendAngularSharedUiDeleteModalModule,
     FrontendAngularSharedUiMenuDropdownModule,
     FrontendAngularSharedUiPaginationModule,
     FrontendAngularCarplateCarplateDataAccessModule,

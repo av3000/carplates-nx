@@ -1,5 +1,5 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Carplate } from '@shared/carplate/types';
+import { ErrorResponse, PaginatedList } from '@shared/common/types';
 
 import { Action, createReducer, on } from '@ngrx/store';
 
@@ -26,19 +26,22 @@ import {
 export const carplateFeatureKey = 'carplate';
 
 export interface CarplateState {
-  carplatesList: {
-    count: number;
-    totalPages: number;
-    currentPage: number;
-    carplates: Carplate[];
-  };
+  selectedCarplate: Carplate | null;
+  carplatesList: PaginatedList<Carplate>;
   isLoading: boolean;
   isLoaded: boolean;
-  error: HttpErrorResponse | null;
+  error: ErrorResponse | null;
 }
 
 export const initialState: CarplateState = {
-  carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
+  selectedCarplate: null,
+  carplatesList: {
+    count: 0,
+    perPage: 0,
+    totalPages: 0,
+    currentPage: 0,
+    rows: [],
+  },
   isLoading: false,
   isLoaded: false,
   error: null,
@@ -87,10 +90,7 @@ export const carplateReducer = createReducer(
     fetchOneCarplateSuccess,
     (state, { carplate }): CarplateState => ({
       ...state,
-      carplatesList: {
-        ...state.carplatesList,
-        carplates: [...state.carplatesList.carplates, carplate],
-      },
+      selectedCarplate: carplate,
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -116,12 +116,8 @@ export const carplateReducer = createReducer(
   ),
   on(
     createCarplateSuccess,
-    (state, { carplate }): CarplateState => ({
+    (state): CarplateState => ({
       ...state,
-      carplatesList: {
-        ...state.carplatesList,
-        carplates: [...state.carplatesList.carplates, carplate],
-      },
       isLoading: false,
       isLoaded: true,
       error: null,
@@ -194,7 +190,13 @@ export const carplateReducer = createReducer(
     clearCarplates,
     (state): CarplateState => ({
       ...state,
-      carplatesList: { count: 0, totalPages: 0, currentPage: 0, carplates: [] },
+      carplatesList: {
+        count: 0,
+        perPage: 0,
+        totalPages: 0,
+        currentPage: 0,
+        rows: [],
+      },
       isLoading: false,
       isLoaded: false,
       error: null,

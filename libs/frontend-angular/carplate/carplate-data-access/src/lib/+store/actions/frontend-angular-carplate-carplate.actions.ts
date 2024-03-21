@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 
 import {
@@ -6,6 +5,7 @@ import {
   CarplateFilters,
   CarplateParameters,
 } from '@shared/carplate/types';
+import { ErrorResponse, PaginatedList } from '@shared/common/types';
 
 const api = '[Carplate API]';
 
@@ -17,18 +17,13 @@ export const fetchAllCarplates = createAction(
 export const fetchAllCarplatesSuccess = createAction(
   `${api} Fetch All Carplates Success`,
   props<{
-    carplatesList: {
-      count: number;
-      totalPages: number;
-      currentPage: number;
-      carplates: Carplate[];
-    };
+    carplatesList: PaginatedList<Carplate>;
   }>()
 );
 
 export const fetchAllCarplatesFailure = createAction(
   `${api} Fetch All Carplates Failure`,
-  props<{ error: HttpErrorResponse }>()
+  props<{ error: ErrorResponse }>()
 );
 
 export const fetchOneCarplate = createAction(
@@ -43,7 +38,7 @@ export const fetchOneCarplateSuccess = createAction(
 
 export const fetchOneCarplateFailure = createAction(
   `${api} Fetch One Carplate Failure`,
-  props<{ error: HttpErrorResponse }>()
+  props<{ error: ErrorResponse }>()
 );
 
 export const createCarplate = createAction(
@@ -52,18 +47,17 @@ export const createCarplate = createAction(
 );
 
 export const createCarplateSuccess = createAction(
-  `${api} Create Carplate Success`,
-  props<{ carplate: Carplate }>()
+  `${api} Create Carplate Success`
 );
 
 export const createCarplateFailure = createAction(
   `${api} Create Carplate Failure`,
-  props<{ error: HttpErrorResponse }>()
+  props<{ error: ErrorResponse }>()
 );
 
 export const updateCarplate = createAction(
   `${api} Update Carplate`,
-  props<{ id: string; carplate: Carplate }>()
+  props<{ id: string; carplateParams: CarplateParameters }>()
 );
 
 export const updateCarplateSuccess = createAction(
@@ -72,7 +66,7 @@ export const updateCarplateSuccess = createAction(
 
 export const updateCarplateFailure = createAction(
   `${api} Update Carplate Failure`,
-  props<{ error: HttpErrorResponse }>()
+  props<{ error: ErrorResponse }>()
 );
 
 export const deleteCarplate = createAction(
@@ -86,7 +80,7 @@ export const deleteCarplateSuccess = createAction(
 
 export const deleteCarplateFailure = createAction(
   `${api} Delete Carplate Failure`,
-  props<{ error: HttpErrorResponse }>()
+  props<{ error: ErrorResponse }>()
 );
 
 export const clearCarplates = createAction(`${api} Clear Carplates`);

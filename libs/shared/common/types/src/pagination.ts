@@ -1,5 +1,6 @@
 export interface PaginatedList<T> {
   count: number;
+  perPage: number;
   totalPages: number;
   currentPage: number;
   rows: T[];

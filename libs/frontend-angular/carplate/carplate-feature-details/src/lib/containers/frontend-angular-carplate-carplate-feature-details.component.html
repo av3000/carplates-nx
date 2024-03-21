@@ -1,0 +1,177 @@
+<div class="container">
+  <ng-template #view>
+    <div class="relative p-1 w-full max-h-full">
+      <div class="relative rounded-lg shadow dark:bg-gray-700">
+        <div
+          class="header flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-600"
+        >
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            View Carplate {{ id }}
+          </h3>
+          <button
+            (click)="close()"
+            type="button"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <form [formGroup]="carplateForm" class="p-4 md:p-5">
+          <div class="grid gap-4 mb-4 grid-cols-2">
+            <div class="col-span-2">
+              <carplates-frontend-angular-shared-ui-backend-error
+                *ngIf="error$ | async as error"
+                [error]="error"
+              >
+              </carplates-frontend-angular-shared-ui-backend-error>
+            </div>
+            <div class="col-span-2">
+              <div class="flex justify-between items-center mb-2">
+                <label
+                  for="owner"
+                  class="text-sm font-medium text-gray-900 dark:text-white"
+                  >Owner*</label
+                >
+                <span
+                  class="text-sm font-medium"
+                  [ngClass]="{
+                    'text-red-500':
+                      ownerControl.value.length >= MAX_OWNER_LENGTH ||
+                      ownerControl.value.length < MIN_OWNER_LENGTH,
+                    'dark:text-white':
+                      ownerControl.value.length < MAX_OWNER_LENGTH &&
+                      ownerControl.value.length >= MIN_OWNER_LENGTH
+                  }"
+                >
+                  {{ ownerControl.value.length || 0 }}/{{ MAX_OWNER_LENGTH }}
+                </span>
+              </div>
+              <input
+                type="text"
+                name="owner"
+                [maxlength]="MAX_OWNER_LENGTH"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Type owner name"
+                autocomplete="off"
+                formControlName="owner"
+              />
+              <div *ngIf="ownerControl?.errors && ownerControl?.dirty">
+                <small
+                  class="text-red-500"
+                  *ngIf="ownerControl?.errors?.['required']"
+                >
+                  Owner field is required
+                </small>
+                <small
+                  class="text-red-500"
+                  *ngIf="ownerControl?.errors?.['minlength']"
+                >
+                  Owner field should contain at least
+                  {{ MIN_OWNER_LENGTH }} characters
+                </small>
+                <small
+                  class="text-red-500"
+                  *ngIf="ownerControl?.errors?.['pattern']"
+                >
+                  Owner name should contain only letters, ex: John Doe
+                </small>
+              </div>
+            </div>
+
+            <div class="col-span-2">
+              <label
+                for="plate_name"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Plate Name*</label
+              >
+              <input
+                type="text"
+                name="plate_name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Type plate name"
+                autocomplete="off"
+                formControlName="plate_name"
+              />
+              <div *ngIf="plateNameControl?.errors && plateNameControl?.dirty">
+                <small
+                  class="text-red-500"
+                  *ngIf="plateNameControl?.errors?.['required']"
+                >
+                  Plate name field is required
+                </small>
+                <small
+                  class="text-red-500"
+                  *ngIf="plateNameControl?.errors?.['pattern']"
+                >
+                  Plate name format should be 3 letters and 3 digits, ex: ABC123
+                </small>
+              </div>
+            </div>
+
+            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
+              <label
+                for="createdAt"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Created At</label
+              >
+              <div class="dark:text-white">
+                {{ createdAtValue | date : 'short' }}
+              </div>
+            </div>
+            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
+              <label
+                for="updatedAt"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Updated At</label
+              >
+              <div class="dark:text-white">
+                {{ updatedAtValue | date : 'short' }}
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="footer">
+          <div
+            class="flex items-center justify-between p-4 md:p-5 border-t dark:border-gray-600"
+          >
+            <button
+              type="button"
+              (click)="close()"
+              class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-500 dark:text-white dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-800"
+            >
+              Close
+            </button>
+            <button
+              [disabled]="!isFormSaveable"
+              type="button"
+              (click)="onSave()"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              [ngClass]="{
+                'dark:bg-blue-950': !isFormSaveable,
+                'dark:hover:bg-blue-950': !isFormSaveable,
+                'dark:text-gray-600': !isFormSaveable
+              }"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
