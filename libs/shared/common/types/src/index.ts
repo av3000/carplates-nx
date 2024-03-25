@@ -3,6 +3,7 @@ import {
   PaginationRange,
   PaginatedList,
   PaginationFiltersParams,
+  Pagination,
 } from './pagination';
 import { ErrorResponse } from './error';
 
@@ -11,5 +12,6 @@ export {
   PaginationRange,
   PaginatedList,
   PaginationFiltersParams,
+  Pagination,
 };
 export { ErrorResponse };

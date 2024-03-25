@@ -1,29 +1,31 @@
-<div [formGroup]="formGroup" class="pagination">
-  <div class="flex flex-row mb-1 sm:mb-0">
+<div [formGroup]="formGroup">
+  <div class="flex justify-between mb-1 sm:mb-0 pt-2">
     <div class="pr-4 py-2">
-      Total Items: {{ formGroup.get('count')?.value }}
+      Total Items: <strong>{{ totalCount }}</strong>
     </div>
-    <label class="pr-4 py-2" for="display">Display</label>
-    <div class="relative">
-      <select
-        formControlName="perPage"
-        class="h-full rounded border block w-full py-2 px-4 pr-8 leading-tight border-slate-900"
-      >
-        <option *ngFor="let size of pageSizes" [value]="size">
-          {{ size }}
-        </option>
-      </select>
-    </div>
-    <label class="px-4 py-2" for="page">Page</label>
-    <div class="relative">
-      <select
-        formControlName="currentPage"
-        class="h-full rounded border block w-full border-slate-900 py-2 px-4 pr-8 leading-tight"
-      >
-        <option *ngFor="let page of generatePages(totalPages)" [value]="page">
-          {{ page }}
-        </option>
-      </select>
+    <div class="flex">
+      <label class="pr-4 py-2" for="display">Display</label>
+      <div class="relative">
+        <select
+          formControlName="perPage"
+          class="h-full rounded border block w-full py-2 px-4 pr-8 leading-tight border-slate-900"
+        >
+          <option *ngFor="let size of pageSizes" [value]="size">
+            {{ size }}
+          </option>
+        </select>
+      </div>
+      <label class="px-4 py-2" for="page">Page</label>
+      <div class="relative">
+        <select
+          formControlName="currentPage"
+          class="h-full rounded border block w-full border-slate-900 py-2 px-4 pr-8 leading-tight"
+        >
+          <option *ngFor="let page of totalPagesArray" [value]="page">
+            {{ page }}
+          </option>
+        </select>
+      </div>
     </div>
   </div>
 </div>

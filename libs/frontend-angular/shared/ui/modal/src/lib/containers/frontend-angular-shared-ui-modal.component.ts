@@ -4,6 +4,7 @@ import {
   ViewChild,
   AfterViewInit,
   HostListener,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { Observable, fromEvent, zip } from 'rxjs';
@@ -15,6 +16,7 @@ import { Options } from '../modal-options';
   selector: 'carplates-frontend-angular-shared-ui-modal',
   templateUrl: './frontend-angular-shared-ui-modal.component.html',
   styleUrls: ['./frontend-angular-shared-ui-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularSharedUiModalComponent implements AfterViewInit {
   @ViewChild('modal') modal!: ElementRef<HTMLDivElement>;

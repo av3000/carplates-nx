@@ -10,6 +10,7 @@ import {
   selectError,
   selectIsLoaded,
   selectLoading,
+  selectPagination,
   selectSelectedCarplate,
 } from './selectors/frontend-angular-carplate-carplate.selectors';
 import {
@@ -35,6 +36,7 @@ export class CarplateFacade {
     map(() => true)
   );
 
+  pagination$ = this.store.pipe(select(selectPagination));
   carplatesList$ = this.store.pipe(select(selectCarplateList));
   selectedCarplate$ = this.store.pipe(select(selectSelectedCarplate));
   isLoading$ = this.store.pipe(select(selectLoading));

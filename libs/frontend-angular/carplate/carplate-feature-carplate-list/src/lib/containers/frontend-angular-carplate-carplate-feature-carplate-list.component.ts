@@ -5,6 +5,7 @@
 // TODO: add sort filters
 
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -15,13 +16,12 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Subscription, debounceTime, filter, switchMap, take } from 'rxjs';
+import { Subscription, debounceTime } from 'rxjs';
 
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { Carplate, CarplateFilters } from '@shared/carplate/types';
 import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
-import { PaginatedList } from '@shared/common/types';
 import { DEFAULT_PAGE } from '@shared/common/constants';
 
 @Component({
@@ -29,6 +29,7 @@ import { DEFAULT_PAGE } from '@shared/common/constants';
     'carplates-frontend-angular-carplate-carplate-feature-carplate-list',
   templateUrl:
     './frontend-angular-carplate-carplate-feature-carplate-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
@@ -40,9 +41,11 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   pageSizes = [3, 6, 10];
 
   private subs$ = new Subscription();
+  pagination$ = this.facade.pagination$;
   carplatesList$ = this.facade.carplatesList$;
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
+
   carplateListFiltersForm = this.formBuilder.group({
     perPage: [this.pageSizes[0]],
     currentPage: [DEFAULT_PAGE],
@@ -87,79 +90,8 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   ngOnInit() {
     this.facade.fetchAllCarplates({} as CarplateFilters);
-    this.initListeners();
-  }
-
-  initListeners() {
-    this.subs$.add(
-      this.isLoaded$
-        .pipe(
-          filter((isLoaded) => isLoaded),
-          take(1),
-          switchMap(() => this.carplatesList$)
-        )
-        .subscribe((carplatesList) => {
-          this.initPaginationFilterValues(carplatesList);
-          this.initCurrentPageControlListener();
-          this.initItemsPerPageListener();
-          this.initPlateNameListener();
-          this.initOwnerControlListener();
-        })
-    );
-  }
-
-  initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
-    this.carplateListFiltersForm = this.formBuilder.group({
-      perPage: [carplatesList.perPage],
-      currentPage: [carplatesList.currentPage],
-      totalPages: [carplatesList.totalPages],
-      count: [carplatesList.count],
-      plate_name: [''],
-      owner: [''],
-      createdAt: [''],
-      updatedAt: [''],
-    });
-  }
-
-  initCurrentPageControlListener() {
-    this.subs$.add(
-      this.currentPageControl.valueChanges.subscribe((currentPage) => {
-        this.router.navigate([], {
-          queryParams: {
-            page: currentPage,
-            size: this.itemsPerPageControl.value,
-          },
-          queryParamsHandling: 'merge',
-        });
-        this.facade.fetchAllCarplates({
-          page: currentPage,
-          size: this.itemsPerPageControl.value,
-          plate_name: this.plateNameControl.value,
-          owner: this.ownerControl.value,
-        });
-      })
-    );
-  }
-
-  initItemsPerPageListener() {
-    this.subs$.add(
-      this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
-        this.router.navigate([], {
-          queryParams: {
-            page: this.currentPageControl.value,
-            size: itemsPerPage,
-          },
-          queryParamsHandling: 'merge',
-        });
-
-        this.facade.fetchAllCarplates({
-          page: this.currentPageControl.value,
-          size: itemsPerPage,
-          plate_name: this.plateNameControl.value,
-          owner: this.ownerControl.value,
-        });
-      })
-    );
+    this.initPlateNameListener();
+    this.initOwnerControlListener();
   }
 
   initPlateNameListener() {
@@ -170,7 +102,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
           this.facade.fetchAllCarplates({
             plate_name: plateName,
             owner: this.ownerControl.value,
-            page: this.currentPageControl.value,
+            page: DEFAULT_PAGE,
             size: this.itemsPerPageControl.value,
           });
         })
@@ -184,7 +116,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
         .subscribe((owner) => {
           this.facade.fetchAllCarplates({
             owner: owner,
-            page: this.currentPageControl.value,
+            page: DEFAULT_PAGE,
             size: this.itemsPerPageControl.value,
             plate_name: this.plateNameControl.value,
           });
@@ -208,6 +140,17 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   deleteCarplate(id: string) {
     this.facade.deleteCarplate(id);
+  }
+
+  fetchInstances(filters: any) {
+    this.facade.fetchAllCarplates(filters);
+  }
+
+  navigate(queryParams: any) {
+    this.router.navigate([], {
+      queryParams: queryParams,
+      queryParamsHandling: 'merge',
+    });
   }
 
   ngOnDestroy() {
