@@ -43,7 +43,6 @@ export class CarplateEffects {
     )
   );
 
-  // TODO: persist display per page variable after successful action
   refreshCarplates$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
