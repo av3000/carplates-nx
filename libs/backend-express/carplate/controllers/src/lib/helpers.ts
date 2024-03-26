@@ -1,4 +1,7 @@
-import { CarplateParameters } from '@shared/carplate/types';
+import {
+  CarplateParameters,
+  CarplateUpdateParameters,
+} from '@shared/carplate/types';
 import { ErrorResponseName } from '@shared/common/enums';
 import { ErrorResponse } from '@shared/common/types';
 import {
@@ -52,14 +55,9 @@ export const validateCarplateCreate = (
 export const validateCarplateUpdate = ({
   plate_name,
   owner,
-}: CarplateParameters): ErrorResponse | null => {
-  const noFieldsError = validateIfNoFieldsProvided({ plate_name, owner });
+}: CarplateUpdateParameters): ErrorResponse | null => {
   const plateError = plate_name ? validatePlate(plate_name) : null;
   const ownerError = owner ? validateOwner(owner) : null;
-
-  if (noFieldsError) {
-    return noFieldsError;
-  }
 
   if (plateError) {
     return plateError;
@@ -98,21 +96,6 @@ const validateIfAnyFieldsMissing = (
           message: `[${ErrorResponseName.MissingFields}]: All fields are required.`,
         },
         body: { missingFields },
-      }
-    : null;
-};
-
-const validateIfNoFieldsProvided = ({
-  plate_name,
-  owner,
-}: CarplateParameters): ErrorResponse | null => {
-  return !plate_name && !owner
-    ? {
-        error: {
-          name: ErrorResponseName.MissingFields,
-          message: `[${ErrorResponseName.MissingFields}]: No fields provided`,
-        },
-        body: { plate_name, owner },
       }
     : null;
 };

@@ -11,6 +11,11 @@ export interface CarplateParameters {
   owner: string;
 }
 
+export interface CarplateUpdateParameters {
+  plate_name?: string;
+  owner?: string;
+}
+
 export interface CarplateFilters extends PaginationFiltersParams {
   plate_name?: string;
   owner?: string;

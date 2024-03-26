@@ -37,6 +37,15 @@ export const selectIsLoaded = createSelector(
   (state: CarplateState) => state.isLoaded
 );
 
+export const selectPagination = createSelector(selectCarplateList, (state) => {
+  return {
+    currentPage: state.currentPage,
+    perPage: state.perPage,
+    totalPages: state.totalPages,
+    count: state.count,
+  };
+});
+
 export const selectError = createSelector(
   selectCarplateState,
   (state: CarplateState) => state.error

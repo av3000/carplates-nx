@@ -1,10 +1,10 @@
-// TODO: after display items per page and current page changes, the url should be updated as well
-// And vice versa, if the url is updated, the display items per page and current page should be updated as well
-// for ex: table display=6 and after create, update or delete, the refresh sets back to 3
-// TODO: add timestamp filters
 // TODO: add sort filters
+// TODO: create (reusable) filters component and move filters logic there
+// TODO: move pagination logic fully to shared/ui/pagination
+// TODO: create (reuseable) table component
 
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -13,15 +13,14 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription, debounceTime, filter, switchMap, take } from 'rxjs';
+import { Subscription, debounceTime } from 'rxjs';
 
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { Carplate, CarplateFilters } from '@shared/carplate/types';
 import { FrontendAngularSharedUiDeleteModalComponent } from '@frontend-angular/shared/ui/delete-modal';
-import { PaginatedList } from '@shared/common/types';
 import { DEFAULT_PAGE } from '@shared/common/constants';
 
 @Component({
@@ -29,6 +28,7 @@ import { DEFAULT_PAGE } from '@shared/common/constants';
     'carplates-frontend-angular-carplate-carplate-feature-carplate-list',
   templateUrl:
     './frontend-angular-carplate-carplate-feature-carplate-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
@@ -39,13 +39,20 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   pageSizes = [3, 6, 10];
 
+  activeFilters: CarplateFilters = {
+    page: DEFAULT_PAGE,
+    size: this.pageSizes[0],
+  };
+
   private subs$ = new Subscription();
+  pagination$ = this.facade.pagination$;
   carplatesList$ = this.facade.carplatesList$;
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
+
   carplateListFiltersForm = this.formBuilder.group({
-    perPage: [this.pageSizes[0]],
-    currentPage: [DEFAULT_PAGE],
+    size: [this.pageSizes[0]],
+    page: [DEFAULT_PAGE],
     totalPages: [DEFAULT_PAGE],
     count: [0],
     plate_name: [''],
@@ -55,11 +62,11 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   });
 
   get itemsPerPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('perPage') as FormControl;
+    return this.carplateListFiltersForm.get('size') as FormControl;
   }
 
   get currentPageControl(): FormControl {
-    return this.carplateListFiltersForm.get('currentPage') as FormControl;
+    return this.carplateListFiltersForm.get('page') as FormControl;
   }
 
   get plateNameControl(): FormControl {
@@ -80,85 +87,50 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private facade: CarplateFacade,
     private formBuilder: FormBuilder,
     private dynamicModalService: DynamicModalService
   ) {}
 
   ngOnInit() {
-    this.facade.fetchAllCarplates({} as CarplateFilters);
-    this.initListeners();
+    this.initPaginationChangedListener();
+    this.initUrlFilters();
+    this.initPlateNameListener();
+    this.initOwnerControlListener();
   }
 
-  initListeners() {
+  initPaginationChangedListener() {
     this.subs$.add(
-      this.isLoaded$
-        .pipe(
-          filter((isLoaded) => isLoaded),
-          take(1),
-          switchMap(() => this.carplatesList$)
-        )
-        .subscribe((carplatesList) => {
-          this.initPaginationFilterValues(carplatesList);
-          this.initCurrentPageControlListener();
-          this.initItemsPerPageListener();
-          this.initPlateNameListener();
-          this.initOwnerControlListener();
-        })
-    );
-  }
-
-  initPaginationFilterValues(carplatesList: PaginatedList<Carplate>) {
-    this.carplateListFiltersForm = this.formBuilder.group({
-      perPage: [carplatesList.perPage],
-      currentPage: [carplatesList.currentPage],
-      totalPages: [carplatesList.totalPages],
-      count: [carplatesList.count],
-      plate_name: [''],
-      owner: [''],
-      createdAt: [''],
-      updatedAt: [''],
-    });
-  }
-
-  initCurrentPageControlListener() {
-    this.subs$.add(
-      this.currentPageControl.valueChanges.subscribe((currentPage) => {
-        this.router.navigate([], {
-          queryParams: {
-            page: currentPage,
-            size: this.itemsPerPageControl.value,
+      this.pagination$.subscribe((pagination) => {
+        this.refreshUrl({
+          page: pagination.currentPage,
+          size: pagination.perPage,
+        });
+        this.carplateListFiltersForm.patchValue(
+          {
+            page: pagination.currentPage,
+            size: pagination.perPage,
           },
-          queryParamsHandling: 'merge',
-        });
-        this.facade.fetchAllCarplates({
-          page: currentPage,
-          size: this.itemsPerPageControl.value,
-          plate_name: this.plateNameControl.value,
-          owner: this.ownerControl.value,
-        });
+          { emitEvent: false }
+        );
       })
     );
   }
 
-  initItemsPerPageListener() {
-    this.subs$.add(
-      this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
-        this.router.navigate([], {
-          queryParams: {
-            page: this.currentPageControl.value,
-            size: itemsPerPage,
-          },
-          queryParamsHandling: 'merge',
-        });
+  initUrlFilters() {
+    this.activeFilters = {
+      ...this.activeFilters,
+      ...this.route.snapshot.queryParams,
+    };
 
-        this.facade.fetchAllCarplates({
-          page: this.currentPageControl.value,
-          size: itemsPerPage,
-          plate_name: this.plateNameControl.value,
-          owner: this.ownerControl.value,
-        });
-      })
+    this.fetchInstances();
+
+    this.carplateListFiltersForm.patchValue(
+      {
+        ...this.route.snapshot.queryParams,
+      },
+      { emitEvent: false }
     );
   }
 
@@ -167,12 +139,11 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
       this.plateNameControl.valueChanges
         .pipe(debounceTime(500))
         .subscribe((plateName) => {
-          this.facade.fetchAllCarplates({
+          this.activeFilters = {
+            ...this.activeFilters,
             plate_name: plateName,
-            owner: this.ownerControl.value,
-            page: this.currentPageControl.value,
-            size: this.itemsPerPageControl.value,
-          });
+          };
+          this.fetchInstances();
         })
     );
   }
@@ -182,12 +153,11 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
       this.ownerControl.valueChanges
         .pipe(debounceTime(500))
         .subscribe((owner) => {
-          this.facade.fetchAllCarplates({
+          this.activeFilters = {
+            ...this.activeFilters,
             owner: owner,
-            page: this.currentPageControl.value,
-            size: this.itemsPerPageControl.value,
-            plate_name: this.plateNameControl.value,
-          });
+          };
+          this.fetchInstances();
         })
     );
   }
@@ -208,6 +178,26 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
 
   deleteCarplate(id: string) {
     this.facade.deleteCarplate(id);
+  }
+
+  applyFilters(filters: any) {
+    this.activeFilters = {
+      ...this.activeFilters,
+      ...filters,
+    };
+    this.fetchInstances();
+  }
+
+  fetchInstances() {
+    this.facade.fetchAllCarplates(this.activeFilters);
+    this.refreshUrl(this.activeFilters);
+  }
+
+  refreshUrl(queryParams: any) {
+    this.router.navigate([], {
+      queryParams: queryParams,
+      queryParamsHandling: 'merge',
+    });
   }
 
   ngOnDestroy() {

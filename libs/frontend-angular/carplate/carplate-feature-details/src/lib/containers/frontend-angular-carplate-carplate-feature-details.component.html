@@ -6,7 +6,7 @@
           class="header flex items-center justify-between p-4 md:p-5 border-b dark:border-gray-600"
         >
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            View Carplate {{ id }}
+            {{ isNew ? 'Create New' : 'View ' + id + ' ' }} Carplate
           </h3>
           <button
             (click)="close()"

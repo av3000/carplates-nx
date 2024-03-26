@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 
 @Component({
   selector: 'carplates-frontend-angular-shared-ui-delete-modal',
   templateUrl: './frontend-angular-shared-ui-delete-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularSharedUiDeleteModalComponent {
   constructor(private dynamicModalService: DynamicModalService) {}

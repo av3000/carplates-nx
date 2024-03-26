@@ -1,8 +1,4 @@
-export interface PaginatedList<T> {
-  count: number;
-  perPage: number;
-  totalPages: number;
-  currentPage: number;
+export interface PaginatedList<T> extends Pagination {
   rows: T[];
 }
 
@@ -19,4 +15,11 @@ export interface PaginationRange {
 export interface PaginationFiltersParams {
   page: number;
   size: number;
+}
+
+export interface Pagination {
+  count: number;
+  perPage: number;
+  totalPages: number;
+  currentPage: number;
 }

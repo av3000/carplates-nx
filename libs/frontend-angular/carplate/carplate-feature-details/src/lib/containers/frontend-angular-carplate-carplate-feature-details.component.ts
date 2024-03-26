@@ -187,8 +187,11 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
         });
       } else {
         this.facade.updateCarplate(this.id ?? '', {
-          plate_name: plate_name ?? '',
-          owner: owner ?? '',
+          plate_name:
+            plate_name !== this.initialCarplate.plate_name
+              ? plate_name ?? ''
+              : '',
+          owner: owner !== this.initialCarplate.owner ? owner ?? '' : '',
         });
       }
 

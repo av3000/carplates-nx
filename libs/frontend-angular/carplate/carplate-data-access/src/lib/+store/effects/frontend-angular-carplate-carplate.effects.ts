@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import {
@@ -22,6 +22,7 @@ import {
   deleteCarplateSuccess,
   deleteCarplateFailure,
 } from '../actions/frontend-angular-carplate-carplate.actions';
+import { selectPagination } from '../selectors/frontend-angular-carplate-carplate.selectors';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
 
 @Injectable()
@@ -33,10 +34,7 @@ export class CarplateEffects {
         return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) => {
             return fetchAllCarplatesSuccess({
-              carplatesList: {
-                ...carplatesList,
-                rows: carplatesList.rows,
-              },
+              carplatesList,
             });
           }),
           catchError((error) => of(fetchAllCarplatesFailure({ error })))
@@ -45,30 +43,25 @@ export class CarplateEffects {
     )
   );
 
-  // TODO: consider to refresh single carplate after create, update or delete
-  // use case 1: user creates a new carplate, the list should refresh and show the new carplate
-  // use case 2: user updates a carplate, need to look into carplates state and if carplate is there, update it and show the updated carplate
-  // use case 3: user deletes a carplate, the list should refresh and show latest list withouth deleted carplate
-  // p.s: consider pagination logic not messing up when not refreshing the whole list
-  loadCarplates$ = createEffect(() =>
+  refreshCarplates$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
         updateCarplateSuccess,
         deleteCarplateSuccess,
         createCarplateSuccess
       ),
-      mergeMap(({ filters }: any): Observable<Action> => {
-        return this.carplateService.getCarplatesList(filters).pipe(
-          map((carplatesList) =>
-            fetchAllCarplatesSuccess({
-              carplatesList: {
-                ...carplatesList,
-                rows: carplatesList.rows,
-              },
-            })
-          ),
-          catchError((error) => of(fetchAllCarplatesFailure({ error })))
-        );
+      withLatestFrom(this.store.select(selectPagination)),
+      mergeMap(([{ filters }, pagination]: any): Observable<Action> => {
+        return this.carplateService
+          .getCarplatesList({ ...filters, size: pagination.perPage })
+          .pipe(
+            map((carplatesList) =>
+              fetchAllCarplatesSuccess({
+                carplatesList,
+              })
+            ),
+            catchError((error) => of(fetchAllCarplatesFailure({ error })))
+          );
       })
     )
   );
@@ -128,6 +121,7 @@ export class CarplateEffects {
   );
 
   constructor(
+    private store: Store,
     private actions$: Actions,
     private carplateService: CarplateService
   ) {}
