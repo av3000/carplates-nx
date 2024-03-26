@@ -62,9 +62,8 @@ export async function update(req, res, next) {
     }
 
     const upperRequestBodyPlateName = req.body.plate_name.toUpperCase();
-
     const foundCarplate: Carplate = await CarplateSchema.findOne({
-      where: { plate_name: upperRequestBodyPlateName },
+      where: { id: id },
     });
 
     if (foundCarplate.plate_name === upperRequestBodyPlateName) {
@@ -75,9 +74,15 @@ export async function update(req, res, next) {
       });
     }
 
-    await CarplateSchema.update(req.body as CarplateParameters, {
-      where: { id: id },
-    });
+    await CarplateSchema.update(
+      {
+        plate_name: upperRequestBodyPlateName,
+        owner: req.body.owner,
+      } as CarplateParameters,
+      {
+        where: { id: id },
+      }
+    );
 
     res
       .status(StatusCode.HTTP_200_SUCCESS_REQUEST)

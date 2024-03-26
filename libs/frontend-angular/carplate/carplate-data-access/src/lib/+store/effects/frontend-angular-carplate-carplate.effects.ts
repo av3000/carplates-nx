@@ -33,10 +33,7 @@ export class CarplateEffects {
         return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) => {
             return fetchAllCarplatesSuccess({
-              carplatesList: {
-                ...carplatesList,
-                rows: carplatesList.rows,
-              },
+              carplatesList,
             });
           }),
           catchError((error) => of(fetchAllCarplatesFailure({ error })))
@@ -45,11 +42,7 @@ export class CarplateEffects {
     )
   );
 
-  // TODO: consider to refresh single carplate after create, update or delete
-  // use case 1: user creates a new carplate, the list should refresh and show the new carplate
-  // use case 2: user updates a carplate, need to look into carplates state and if carplate is there, update it and show the updated carplate
-  // use case 3: user deletes a carplate, the list should refresh and show latest list withouth deleted carplate
-  // p.s: consider pagination logic not messing up when not refreshing the whole list
+  // TODO: persist display per page variable after successful action
   loadCarplates$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
@@ -61,10 +54,7 @@ export class CarplateEffects {
         return this.carplateService.getCarplatesList(filters).pipe(
           map((carplatesList) =>
             fetchAllCarplatesSuccess({
-              carplatesList: {
-                ...carplatesList,
-                rows: carplatesList.rows,
-              },
+              carplatesList,
             })
           ),
           catchError((error) => of(fetchAllCarplatesFailure({ error })))

@@ -12,6 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { Pagination } from '@shared/common/types';
+import { DEFAULT_PAGE } from '@shared/common/constants';
 
 @Component({
   selector: 'carplates-pagination',
@@ -22,8 +23,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   @Input() formGroup!: FormGroup;
   @Input() pagination!: Pagination | null;
   @Input() pageSizes!: number[];
-  @Output() fetchInstances = new EventEmitter<void>();
-  @Output() navigate = new EventEmitter<void>();
+  @Output() upsertPagination = new EventEmitter<void>();
 
   private subs$ = new Subscription();
 
@@ -36,11 +36,11 @@ export class PaginationComponent implements OnInit, OnDestroy {
   }
 
   get itemsPerPageControl(): FormControl {
-    return this.formGroup.get('perPage') as FormControl;
+    return this.formGroup.get('size') as FormControl;
   }
 
   get currentPageControl(): FormControl {
-    return this.formGroup.get('currentPage') as FormControl;
+    return this.formGroup.get('page') as FormControl;
   }
 
   get currentPage(): number {
@@ -48,7 +48,10 @@ export class PaginationComponent implements OnInit, OnDestroy {
   }
 
   get totalPagesArray(): number[] {
-    return Array.from({ length: this.totalPages ?? 1 }, (_, i) => i + 1);
+    return Array.from(
+      { length: this.totalPages ?? DEFAULT_PAGE },
+      (_, i) => i + 1
+    );
   }
 
   ngOnInit() {
@@ -56,23 +59,14 @@ export class PaginationComponent implements OnInit, OnDestroy {
     this.initItemsPerPageListener();
   }
 
-  emmitFetchInstances(filters: any) {
-    this.fetchInstances.emit(filters);
-  }
-
-  emmitNavigate(queryParams: any) {
-    this.navigate.emit(queryParams);
+  emmitUpsertPagination(filters: any) {
+    this.upsertPagination.emit(filters);
   }
 
   initCurrentPageControlListener() {
     this.subs$.add(
       this.currentPageControl.valueChanges.subscribe((currentPage) => {
-        this.emmitNavigate({
-          page: currentPage,
-          size: this.itemsPerPageControl.value,
-        });
-
-        this.emmitFetchInstances({
+        this.emmitUpsertPagination({
           page: currentPage,
           size: this.itemsPerPageControl.value,
         });
@@ -83,15 +77,10 @@ export class PaginationComponent implements OnInit, OnDestroy {
   initItemsPerPageListener() {
     this.subs$.add(
       this.itemsPerPageControl.valueChanges.subscribe((itemsPerPage) => {
-        this.currentPageControl.reset(1, { emitEvent: false });
+        this.currentPageControl.reset(DEFAULT_PAGE, { emitEvent: false });
 
-        this.emmitNavigate({
-          page: 1,
-          size: itemsPerPage,
-        });
-
-        this.emmitFetchInstances({
-          page: 1,
+        this.emmitUpsertPagination({
+          page: DEFAULT_PAGE,
           size: itemsPerPage,
         });
       })
