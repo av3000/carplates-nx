@@ -1,7 +1,11 @@
 import { Op } from 'sequelize';
 
 import { PaginatedData } from '@shared/common/types';
-import { Carplate, CarplateParameters } from '@shared/carplate/types';
+import {
+  Carplate,
+  CarplateParameters,
+  CarplateUpdateParameters,
+} from '@shared/carplate/types';
 import { StatusCode } from '@shared/common/enums';
 import { getPagination, getPagingData } from '@shared/common/utils';
 import { db } from '@backend-express/utils';
@@ -61,12 +65,25 @@ export async function update(req, res, next) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
 
-    const upperRequestBodyPlateName = req.body.plate_name.toUpperCase();
     const foundCarplate: Carplate = await CarplateSchema.findOne({
       where: { id: id },
     });
 
-    if (foundCarplate.plate_name === upperRequestBodyPlateName) {
+    const updatePayload: CarplateUpdateParameters = {};
+
+    if (req.body.owner) {
+      updatePayload.owner = req.body.owner;
+    }
+
+    if (req.body.plate_name) {
+      updatePayload.plate_name = req.body.plate_name.toUpperCase();
+    }
+
+    if (
+      foundCarplate &&
+      updatePayload.plate_name &&
+      foundCarplate.plate_name === updatePayload.plate_name
+    ) {
       return next({
         status: StatusCode.HTTP_400_BAD_REQUEST,
         name: 'Already Exists',
@@ -74,15 +91,9 @@ export async function update(req, res, next) {
       });
     }
 
-    await CarplateSchema.update(
-      {
-        plate_name: upperRequestBodyPlateName,
-        owner: req.body.owner,
-      } as CarplateParameters,
-      {
-        where: { id: id },
-      }
-    );
+    await CarplateSchema.update(updatePayload, {
+      where: { id: id },
+    });
 
     res
       .status(StatusCode.HTTP_200_SUCCESS_REQUEST)

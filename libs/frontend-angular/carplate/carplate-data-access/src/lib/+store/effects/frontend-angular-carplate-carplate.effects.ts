@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import {
@@ -22,6 +22,7 @@ import {
   deleteCarplateSuccess,
   deleteCarplateFailure,
 } from '../actions/frontend-angular-carplate-carplate.actions';
+import { selectPagination } from '../selectors/frontend-angular-carplate-carplate.selectors';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
 
 @Injectable()
@@ -43,22 +44,25 @@ export class CarplateEffects {
   );
 
   // TODO: persist display per page variable after successful action
-  loadCarplates$ = createEffect(() =>
+  refreshCarplates$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
         updateCarplateSuccess,
         deleteCarplateSuccess,
         createCarplateSuccess
       ),
-      mergeMap(({ filters }: any): Observable<Action> => {
-        return this.carplateService.getCarplatesList(filters).pipe(
-          map((carplatesList) =>
-            fetchAllCarplatesSuccess({
-              carplatesList,
-            })
-          ),
-          catchError((error) => of(fetchAllCarplatesFailure({ error })))
-        );
+      withLatestFrom(this.store.select(selectPagination)),
+      mergeMap(([{ filters }, pagination]: any): Observable<Action> => {
+        return this.carplateService
+          .getCarplatesList({ ...filters, size: pagination.perPage })
+          .pipe(
+            map((carplatesList) =>
+              fetchAllCarplatesSuccess({
+                carplatesList,
+              })
+            ),
+            catchError((error) => of(fetchAllCarplatesFailure({ error })))
+          );
       })
     )
   );
@@ -118,6 +122,7 @@ export class CarplateEffects {
   );
 
   constructor(
+    private store: Store,
     private actions$: Actions,
     private carplateService: CarplateService
   ) {}
