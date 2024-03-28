@@ -9,7 +9,7 @@ services:
       service: nx-app-base
     command: npm run angular-app:dev:docker
     ports:
-      - 4203:4200
+      - $ANGULAR_DOCKER_PORT:$ANGULAR_LOCAL_PORT
     depends_on:
       - backend-api
     env_file: .env

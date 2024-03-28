@@ -26,7 +26,6 @@
     "@ngrx/store": "15.2.0",
     "@ngrx/store-devtools": "15.2.0",
     "@nrwl/angular": "15.8.6",
-    "autoprefixer": "^10.4.17",
     "axios": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -34,15 +33,12 @@
     "express": "^4.18.1",
     "morgan": "^1.10.0",
     "mysql2": "^3.2.0",
-    "postcss": "^8.4.35",
     "rxjs": "~7.8.0",
     "sequelize": "^6.30.0",
-    "tailwindcss": "^3.4.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^17.0.1",
     "@angular-devkit/build-angular": "~15.2.0",
     "@angular-devkit/core": "~15.2.0",
     "@angular-devkit/schematics": "~15.2.0",
@@ -70,6 +66,7 @@
     "@types/swagger-ui-express": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
+    "autoprefixer": "^10.4.0",
     "cypress": "^12.2.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
@@ -79,12 +76,20 @@
     "jest-environment-node": "^29.4.1",
     "jest-preset-angular": "~13.0.0",
     "nx": "15.8.6",
-    "postcss-loader": "^8.1.0",
+    "postcss": "^8.4.5",
     "prettier": "^2.6.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
+    "tailwindcss": "^3.0.2",
     "ts-jest": "^29.0.5",
     "ts-node": "10.9.1",
     "typescript": "~4.9.5"
+  },
+  "optionalDependencies": {
+    "@nrwl/nx-darwin-arm64": "15.8.6",
+    "@nrwl/nx-darwin-x64": "15.8.6",
+    "@nrwl/nx-linux-x64-gnu": "15.8.6",
+    "@nnrwl/nx-win32-x64-msvc": "15.8.6",
+    "@nrwl/nx-linux-x64-musl": "15.8.6"
   }
 }
