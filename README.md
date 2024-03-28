@@ -20,10 +20,17 @@ Visit the [Nx Documentation](https://nx.dev) to learn more.
 
 ### Angular Setup
 
-For local environment run `yarn run angular-app:dev` for a dev angular app. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+For the local environment run `yarn run angular-app:dev` for a dev angular app. Navigate to [http://localhost:4200/](http://localhost:4200/). The app will automatically reload if you change any of the source files.
 
 ### Express App
 
-For local environment run `yarn run backend-api:dev` for a dev express app. Navigate to http://localhost:8080. The app will automatically reload if you change any of the source files. For the database [install](https://dev.mysql.com/downloads/mysql/) MySQL server.
+For the local environment run `yarn run backend-api:dev` for a dev express app. Navigate to [http://localhost:8080](http://localhost:8080/). The app will automatically reload if you change any of the source files. For the database [install](https://dev.mysql.com/downloads/mysql/) MySQL server.
 
-For the docker environment run `docker compose up --build`. Add -d for detached mode. Use [Docker desktop](https://www.docker.com/products/docker-desktop/) for easier docker management.
+
+### Docker
+
+For the docker environment run `docker compose up --build`. Add -d for detached mode. Use [Docker desktop](https://www.docker.com/products/docker-desktop/) for easier Docker management.
+
+### Swagger
+
+To access navigate to [http://localhost:8080/docs/](http://localhost:8080/docs/)
