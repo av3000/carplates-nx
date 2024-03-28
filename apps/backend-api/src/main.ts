@@ -10,12 +10,16 @@ import { db, errorMiddleware, swaggerDocs } from '@backend-express/utils';
 import { carplateRoutes } from '@backend-express/carplate/routes';
 import indexRoutes from './app/routes/index';
 
-const PORT = process.env.NODE_DOCKER_PORT || 3333;
+const NODE_PORT = process.env.NODE_DOCKER_PORT;
+const ANGULAR_PORT = process.env.ANGULAR_DOCKER_PORT;
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
 const app: Express = express();
 
-const allowedOrigins = ['http://localhost:4200', `http://localhost:${PORT}`];
+const allowedOrigins = [
+  `http://localhost:${ANGULAR_PORT}`,
+  `http://localhost:${NODE_PORT}`,
+];
 
 app.use(
   cors({
@@ -45,7 +49,7 @@ app.get('/', (req, res) => {
 });
 
 // Swagger Init
-swaggerDocs(app, PORT);
+swaggerDocs(app, NODE_PORT);
 
 // API Routes
 app.use('/api', indexRoutes);
@@ -59,8 +63,8 @@ db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {
     console.log('Synched db.');
-    const server = app.listen(PORT, () => {
-      console.log(`Listening at http://localhost:${PORT}`);
+    const server = app.listen(NODE_PORT, () => {
+      console.log(`Listening at http://localhost:${NODE_PORT}`);
     });
     server.on('error', console.error);
   })
