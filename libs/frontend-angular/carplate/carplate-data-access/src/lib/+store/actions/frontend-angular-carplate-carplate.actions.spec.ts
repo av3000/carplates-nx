@@ -1,44 +1,21 @@
 import * as CarplateActions from './frontend-angular-carplate-carplate.actions';
-import { Carplate, CarplateFilters } from '@shared/carplate/types';
-import { ErrorResponse, PaginatedList } from '@shared/common/types';
-
-const errorMock = {
-  error: {
-    name: 'Error',
-    message: 'An error occurred',
-  },
-  body: 'request body',
-} as ErrorResponse;
-
-const carplateMock: Carplate = {
-  id: '1',
-  plate_name: 'ABC123',
-  owner: 'John Doe',
-  createdAt: new Date().getFullYear().toString(),
-  updatedAt: new Date().getFullYear().toString(),
-};
-
-const carplateCreateParamsMock = {
-  plate_name: 'ABC123',
-  owner: 'John Doe',
-};
-
-const carplatesListMock: PaginatedList<Carplate> = {
-  rows: [] as Carplate[],
-  currentPage: 1,
-  perPage: 10,
-  totalPages: 1,
-  count: 0,
-};
+import {
+  carplateCreateParamsMock,
+  carplateMock,
+  carplatesListMock,
+  errorMock,
+  filtersMock,
+} from '../__mocks__/carplate-fixtures'; // Import the filtersMock variable
 
 describe('CarplateActions', () => {
   describe('fetchAllCarplates', () => {
     it(`should create an ${CarplateActions.actionTypes.fetchAllCarplates} action`, () => {
-      const filters: CarplateFilters = { page: 1, size: 10 };
-      const action = CarplateActions.fetchAllCarplates({ filters });
+      const action = CarplateActions.fetchAllCarplates({
+        filters: filtersMock,
+      });
       expect({ ...action }).toEqual({
         type: `${CarplateActions.actionTypes.fetchAllCarplates}`,
-        filters,
+        filters: filtersMock,
       });
     });
 

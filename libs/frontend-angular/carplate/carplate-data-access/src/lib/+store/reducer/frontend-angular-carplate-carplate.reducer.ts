@@ -50,39 +50,12 @@ export const initialState: CarplateState = {
 export const carplateReducer = createReducer(
   initialState,
   on(
-    fetchAllCarplates,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: true,
-      isLoaded: false,
-      error: null,
-    })
-  ),
-  on(
     fetchAllCarplatesSuccess,
     (state, { carplatesList }): CarplateState => ({
       ...state,
       carplatesList: carplatesList,
       isLoading: false,
       isLoaded: true,
-      error: null,
-    })
-  ),
-  on(
-    fetchAllCarplatesFailure,
-    (state, { error }): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: false,
-      error,
-    })
-  ),
-  on(
-    fetchOneCarplate,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: true,
-      isLoaded: false,
       error: null,
     })
   ),
@@ -97,16 +70,11 @@ export const carplateReducer = createReducer(
     })
   ),
   on(
-    fetchOneCarplateFailure,
-    (state, { error }): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: false,
-      error,
-    })
-  ),
-  on(
     createCarplate,
+    updateCarplate,
+    deleteCarplate,
+    fetchOneCarplate,
+    fetchAllCarplates,
     (state): CarplateState => ({
       ...state,
       isLoading: true,
@@ -116,59 +84,7 @@ export const carplateReducer = createReducer(
   ),
   on(
     createCarplateSuccess,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: true,
-      error: null,
-    })
-  ),
-  on(
-    createCarplateFailure,
-    (state, { error }): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: false,
-      error,
-    })
-  ),
-  on(
-    updateCarplate,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: true,
-      isLoaded: false,
-      error: null,
-    })
-  ),
-  on(
     updateCarplateSuccess,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: true,
-      error: null,
-    })
-  ),
-  on(
-    updateCarplateFailure,
-    (state, { error }): CarplateState => ({
-      ...state,
-      isLoading: false,
-      isLoaded: false,
-      error,
-    })
-  ),
-  on(
-    deleteCarplate,
-    (state): CarplateState => ({
-      ...state,
-      isLoading: true,
-      isLoaded: false,
-      error: null,
-    })
-  ),
-  on(
     deleteCarplateSuccess,
     (state): CarplateState => ({
       ...state,
@@ -178,7 +94,11 @@ export const carplateReducer = createReducer(
     })
   ),
   on(
+    createCarplateFailure,
+    updateCarplateFailure,
     deleteCarplateFailure,
+    fetchOneCarplateFailure,
+    fetchAllCarplatesFailure,
     (state, { error }): CarplateState => ({
       ...state,
       isLoading: false,
