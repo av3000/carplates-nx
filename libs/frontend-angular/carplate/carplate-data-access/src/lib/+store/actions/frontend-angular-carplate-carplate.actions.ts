@@ -8,80 +8,101 @@ import {
 import { ErrorResponse, PaginatedList } from '@shared/common/types';
 
 const api = '[Carplate API]';
+export const actionTypes = {
+  fetchAllCarplates: `${api} Fetch All Carplates`,
+  fetchAllCarplatesSuccess: `${api} Fetch All Carplates Success`,
+  fetchAllCarplatesFailure: `${api} Fetch All Carplates Failure`,
+  fetchOneCarplate: `${api} Fetch One Carplate`,
+  fetchOneCarplateSuccess: `${api} Fetch One Carplate Success`,
+  fetchOneCarplateFailure: `${api} Fetch One Carplate Failure`,
+  createCarplate: `${api} Create Carplate`,
+  createCarplateSuccess: `${api} Create Carplate Success`,
+  createCarplateFailure: `${api} Create Carplate Failure`,
+  updateCarplate: `${api} Update Carplate`,
+  updateCarplateSuccess: `${api} Update Carplate Success`,
+  updateCarplateFailure: `${api} Update Carplate Failure`,
+  deleteCarplate: `${api} Delete Carplate`,
+  deleteCarplateSuccess: `${api} Delete Carplate Success`,
+  deleteCarplateFailure: `${api} Delete Carplate Failure`,
+  clearCarplates: `${api} Clear Carplates`,
+  clearCarplatesError: `${api} Clear Carplates Error`,
+};
 
 export const fetchAllCarplates = createAction(
-  `${api} Fetch All Carplates`,
+  actionTypes.fetchAllCarplates,
   props<{ filters: CarplateFilters }>()
 );
 
 export const fetchAllCarplatesSuccess = createAction(
-  `${api} Fetch All Carplates Success`,
+  actionTypes.fetchAllCarplatesSuccess,
   props<{
     carplatesList: PaginatedList<Carplate>;
   }>()
 );
 
 export const fetchAllCarplatesFailure = createAction(
-  `${api} Fetch All Carplates Failure`,
+  actionTypes.fetchAllCarplatesFailure,
   props<{ error: ErrorResponse }>()
 );
 
 export const fetchOneCarplate = createAction(
-  `${api} Fetch One Carplate`,
+  actionTypes.fetchOneCarplate,
   props<{ id: string }>()
 );
 
 export const fetchOneCarplateSuccess = createAction(
-  `${api} Fetch One Carplate Success`,
+  actionTypes.fetchOneCarplateSuccess,
   props<{ carplate: Carplate }>()
 );
 
 export const fetchOneCarplateFailure = createAction(
-  `${api} Fetch One Carplate Failure`,
+  actionTypes.fetchOneCarplateFailure,
   props<{ error: ErrorResponse }>()
 );
 
 export const createCarplate = createAction(
-  `${api} Create Carplate`,
+  actionTypes.createCarplate,
   props<{ carplateParams: CarplateParameters }>()
 );
 
 export const createCarplateSuccess = createAction(
-  `${api} Create Carplate Success`
+  actionTypes.createCarplateSuccess
 );
 
 export const createCarplateFailure = createAction(
-  `${api} Create Carplate Failure`,
+  actionTypes.createCarplateFailure,
   props<{ error: ErrorResponse }>()
 );
 
 export const updateCarplate = createAction(
-  `${api} Update Carplate`,
+  actionTypes.updateCarplate,
   props<{ id: string; carplateParams: CarplateParameters }>()
 );
 
 export const updateCarplateSuccess = createAction(
-  `${api} Update Carplate Success`
+  actionTypes.updateCarplateSuccess
 );
 
 export const updateCarplateFailure = createAction(
-  `${api} Update Carplate Failure`,
+  actionTypes.updateCarplateFailure,
   props<{ error: ErrorResponse }>()
 );
 
 export const deleteCarplate = createAction(
-  `${api} Delete Carplate`,
+  actionTypes.deleteCarplate,
   props<{ id: string }>()
 );
 
 export const deleteCarplateSuccess = createAction(
-  `${api} Delete Carplate Success`
+  actionTypes.deleteCarplateSuccess
 );
 
 export const deleteCarplateFailure = createAction(
-  `${api} Delete Carplate Failure`,
+  actionTypes.deleteCarplateFailure,
   props<{ error: ErrorResponse }>()
 );
 
-export const clearCarplates = createAction(`${api} Clear Carplates`);
-export const clearCarplatesError = createAction(`${api} Clear Carplates Error`);
+export const clearCarplates = createAction(actionTypes.clearCarplates);
+export const clearCarplatesError = createAction(
+  actionTypes.clearCarplatesError
+);
