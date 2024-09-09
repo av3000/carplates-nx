@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   # Angular App
   angular-app:
     extends:
@@ -35,16 +34,25 @@ services:
     stdin_open: true
     tty: true
 
+  # MySQL Database
   mysqldb:
     image: mysql:8.0.17
     env_file: .env
     environment:
       - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
       - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_USER=$DB_USER
+      - MYSQL_PASSWORD=$DB_PASSWORD
     ports:
       - $DB_DOCKER_PORT:$DB_PORT
     volumes:
       - db:/var/lib/mysql
+      # TODO: fix healthcheck to make sure mysql loads fully until backend api loads
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db:
