@@ -101,10 +101,8 @@ export class CarplateEffects {
       ofType(updateCarplate),
       mergeMap(({ id, carplateParams }) =>
         this.carplateService.updateCarplate(id, carplateParams).pipe(
-          map(() => updateCarplateSuccess()),
-          catchError((httpErrorResponse) =>
-            of(updateCarplateFailure({ error: httpErrorResponse.error }))
-          )
+          map((carplate) => updateCarplateSuccess({ carplate })),
+          catchError((error) => of(updateCarplateFailure({ error })))
         )
       )
     )

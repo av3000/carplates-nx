@@ -6,6 +6,7 @@ import {
 import * as CarplateActions from '../actions/frontend-angular-carplate-carplate.actions';
 import {
   carplateCreateParamsMock,
+  carplateMock,
   carplatesListMock,
   errorMock,
   filtersMock,
@@ -38,10 +39,13 @@ describe('FrontendAngularCarplateCarplate Reducer', () => {
       });
       const state = carplateReducer(initialState, action);
 
-      expect(state.carplatesList).toBe(carplatesList);
-      expect(state.isLoading).toBe(false);
-      expect(state.isLoaded).toBe(true);
-      expect(state.error).toBe(null);
+      expect(state).toEqual({
+        carplatesList,
+        isLoading: false,
+        isLoaded: true,
+        error: null,
+        selectedCarplate: null,
+      });
     });
 
     it('should update state on fetchAllCarplatesFailure action', () => {
@@ -101,7 +105,9 @@ describe('FrontendAngularCarplateCarplate Reducer', () => {
     });
 
     it('should update state on createCarplateSuccess action', () => {
-      const action = CarplateActions.createCarplateSuccess();
+      const action = CarplateActions.createCarplateSuccess({
+        carplate: carplateMock,
+      });
       const state = carplateReducer(initialState, action);
 
       expect(state.isLoading).toBe(false);
@@ -134,7 +140,9 @@ describe('FrontendAngularCarplateCarplate Reducer', () => {
     });
 
     it('should update state on updateCarplateSuccess action', () => {
-      const action = CarplateActions.updateCarplateSuccess();
+      const action = CarplateActions.updateCarplateSuccess({
+        carplate: carplateMock,
+      });
       const state = carplateReducer(initialState, action);
 
       expect(state.isLoading).toBe(false);

@@ -82,9 +82,12 @@ describe('CarplateActions', () => {
       });
 
       it(`should create an ${CarplateActions.actionTypes.createCarplateSuccess} action`, () => {
-        const action = CarplateActions.createCarplateSuccess();
+        const action = CarplateActions.createCarplateSuccess({
+          carplate: carplateMock,
+        });
         expect({ ...action }).toEqual({
           type: `${CarplateActions.actionTypes.createCarplateSuccess}`,
+          carplate: carplateMock,
         });
       });
 
@@ -114,9 +117,12 @@ describe('CarplateActions', () => {
       });
 
       it(`should create an ${CarplateActions.actionTypes.updateCarplateSuccess} action`, () => {
-        const action = CarplateActions.updateCarplateSuccess();
+        const action = CarplateActions.updateCarplateSuccess({
+          carplate: carplateMock,
+        });
         expect({ ...action }).toEqual({
           type: `${CarplateActions.actionTypes.updateCarplateSuccess}`,
+          carplate: carplateMock,
         });
       });
 

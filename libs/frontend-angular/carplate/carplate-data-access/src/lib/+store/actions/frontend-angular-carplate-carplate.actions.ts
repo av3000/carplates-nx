@@ -66,7 +66,8 @@ export const createCarplate = createAction(
 );
 
 export const createCarplateSuccess = createAction(
-  actionTypes.createCarplateSuccess
+  actionTypes.createCarplateSuccess,
+  props<{ carplate: Carplate }>()
 );
 
 export const createCarplateFailure = createAction(
@@ -80,7 +81,8 @@ export const updateCarplate = createAction(
 );
 
 export const updateCarplateSuccess = createAction(
-  actionTypes.updateCarplateSuccess
+  actionTypes.updateCarplateSuccess,
+  props<{ carplate: Carplate }>()
 );
 
 export const updateCarplateFailure = createAction(

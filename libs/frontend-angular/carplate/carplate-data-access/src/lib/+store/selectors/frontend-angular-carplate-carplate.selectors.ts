@@ -10,7 +10,7 @@ export const selectCarplateState =
 export const selectCarplateList = createSelector(
   selectCarplateState,
   (state: CarplateState) => {
-    return state.carplatesList;
+    return state?.carplatesList || [];
   }
 );
 
