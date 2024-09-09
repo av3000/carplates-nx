@@ -10,7 +10,6 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import {
-  Subject,
   Subscription,
   combineLatest,
   filter,
@@ -41,7 +40,6 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   vcr!: ViewContainerRef;
 
   private subs$ = new Subscription();
-  private destroy$ = new Subject<void>();
   isLoading$ = this.facade.isLoading$;
   isLoaded$ = this.facade.isLoaded$;
   error$ = this.facade.errors$;
@@ -209,8 +207,6 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   ngOnDestroy(): void {
     this.facade.clearErrors();
-    this.destroy$.next();
-    this.destroy$.complete();
     this.subs$.unsubscribe();
   }
 }

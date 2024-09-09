@@ -1,13 +1,13 @@
 import { Carplate, CarplateFilters } from '@shared/carplate/types';
 import { ErrorResponse, PaginatedList } from '@shared/common/types';
 
-export const errorMock = {
+export const errorMock: ErrorResponse = {
   error: {
     name: 'Error',
     message: 'An error occurred',
   },
   body: 'request body',
-} as ErrorResponse;
+};
 
 export const carplateMock: Carplate = {
   id: '1',

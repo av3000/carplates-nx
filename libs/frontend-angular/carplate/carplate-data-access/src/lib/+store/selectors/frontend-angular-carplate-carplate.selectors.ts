@@ -9,7 +9,9 @@ export const selectCarplateState =
 
 export const selectCarplateList = createSelector(
   selectCarplateState,
-  (state: CarplateState) => state.carplatesList
+  (state: CarplateState) => {
+    return state.carplatesList;
+  }
 );
 
 export const selectAllCarplates = createSelector(
