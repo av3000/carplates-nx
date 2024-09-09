@@ -6,7 +6,7 @@
 
 ## Features
 
-* REST API endpoints for carplate Creation, Updating, Reading, and Deleting.
+- REST API endpoints for carplate Creation, Updating, Reading, and Deleting.
 
 ## Understand this workspace
 
@@ -26,7 +26,6 @@ For the local environment run `yarn run angular-app:dev` for a dev angular app. 
 
 For the local environment run `yarn run backend-api:dev` for a dev express app. Navigate to [http://localhost:8080](http://localhost:8080/). The app will automatically reload if you change any of the source files. For the database [install](https://dev.mysql.com/downloads/mysql/) MySQL server.
 
-
 ### Docker
 
 For the docker environment run `docker compose up --build`. Add -d for detached mode. Use [Docker desktop](https://www.docker.com/products/docker-desktop/) for easier Docker management.
@@ -34,3 +33,11 @@ For the docker environment run `docker compose up --build`. Add -d for detached 
 ### Swagger
 
 To access navigate to [http://localhost:8080/docs/](http://localhost:8080/docs/)
+
+### Library Unit testing
+
+Run `npx nx test <LIBRARY-NAME>`. Library name can be found in jest.config.ts of each library.
+
+```bash
+npx nx test frontend-angular-carplate-carplate-data-access
+```

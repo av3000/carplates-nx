@@ -49,7 +49,7 @@ export class CarplateService {
     return this.http.put<Carplate>(`${this.endpointUrl}/${id}`, carplateParams);
   }
 
-  deleteCarplate(id: string): Observable<Carplate> {
-    return this.http.delete<Carplate>(`${this.endpointUrl}/${id}`);
+  deleteCarplate(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 }
