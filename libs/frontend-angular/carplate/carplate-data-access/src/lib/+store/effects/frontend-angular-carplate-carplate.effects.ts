@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action, Store } from '@ngrx/store';
+import { fetch } from '@nrwl/angular';
 
 import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -30,15 +31,18 @@ export class CarplateEffects {
   loadCarplatesPaginated$ = createEffect(() =>
     this.actions$.pipe(
       ofType(fetchAllCarplates),
-      mergeMap(({ filters }: any): Observable<Action> => {
-        return this.carplateService.getCarplatesList(filters).pipe(
-          map((carplatesList) => {
-            return fetchAllCarplatesSuccess({
-              carplatesList,
-            });
-          }),
-          catchError((error) => of(fetchAllCarplatesFailure({ error })))
-        );
+      fetch({
+        run: ({ filters }: ReturnType<typeof fetchAllCarplates>) =>
+          this.carplateService.getCarplatesList(filters).pipe(
+            map((carplatesListPaginated) => {
+              const { rows } = carplatesListPaginated;
+
+              return fetchAllCarplatesSuccess({
+                carplatesList: carplatesListPaginated,
+              });
+            })
+          ),
+        onError: (_, error) => fetchAllCarplatesFailure({ error }),
       })
     )
   );
@@ -69,28 +73,26 @@ export class CarplateEffects {
   loadOneCarplate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(fetchOneCarplate),
-      mergeMap(({ id }) =>
-        this.carplateService.getCarplate(id).pipe(
-          map((carplate) => fetchOneCarplateSuccess({ carplate })),
-          catchError((error) => of(fetchOneCarplateFailure({ error })))
-        )
-      )
+      fetch({
+        run: ({ id }: ReturnType<typeof fetchOneCarplate>) =>
+          this.carplateService
+            .getCarplate(id)
+            .pipe(map((carplate) => fetchOneCarplateSuccess({ carplate }))),
+        onError: (_, error) => fetchOneCarplateFailure({ error }),
+      })
     )
   );
 
   createCarplate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(createCarplate),
-      mergeMap(({ carplateParams }) =>
-        this.carplateService.createCarplate(carplateParams).pipe(
-          map(() => createCarplateSuccess()),
-          catchError((httpErrorResponse) => {
-            return of(
-              createCarplateFailure({ error: httpErrorResponse.error })
-            );
-          })
-        )
-      )
+      fetch({
+        run: ({ carplateParams }: ReturnType<typeof createCarplate>) =>
+          this.carplateService
+            .createCarplate(carplateParams)
+            .pipe(map((carplate) => createCarplateSuccess({ carplate }))),
+        onError: (_, error) => createCarplateFailure({ error }),
+      })
     )
   );
 
