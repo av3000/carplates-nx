@@ -23,7 +23,7 @@ import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access'
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { ownerFormatPattern, plateFormatPattern } from '@shared/common/utils';
 import { defaultSmallModalOptions } from '@shared/common/constants';
-import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH } from '../..';
+import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
 
 @Component({
   selector: 'carplates-frontend-angular-carplate-carplate-feature-details',
@@ -39,6 +39,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   MAX_OWNER_LENGTH = MAX_OWNER_LENGTH;
   MIN_OWNER_LENGTH = MIN_OWNER_LENGTH;
+  textFields = textFields;
 
   private subs$ = new Subscription();
   isLoading$ = this.facade.isLoading$;
