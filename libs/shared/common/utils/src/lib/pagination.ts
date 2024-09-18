@@ -5,8 +5,8 @@ import {
   PaginationRange,
 } from '@shared/common/types';
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_ITEMS_PER_PAGE = 3;
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_ITEMS_PER_PAGE = 3;
 
 export const getPagination = (
   page: number = DEFAULT_PAGE,

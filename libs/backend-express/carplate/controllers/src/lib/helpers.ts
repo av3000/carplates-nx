@@ -4,13 +4,33 @@ import {
 } from '@shared/carplate/types';
 import { ErrorResponseName } from '@shared/common/enums';
 import { ErrorResponse } from '@shared/common/types';
-import {
-  isCorrectOwnerFormat,
-  isCorrectPlateFormat,
-} from '@shared/common/utils';
+import { Validators } from '@shared/common/utils';
 
 const OWNER_NAME_MAX_LENGTH = 30;
 const OWNER_NAME_MIN_LENGTH = 3;
+
+export const errorResponses = {
+  missingFields: {
+    name: ErrorResponseName.MissingFields,
+    message: `[${ErrorResponseName.MissingFields}]: All fields are required.`,
+  },
+  ownerLength: {
+    name: ErrorResponseName.Validation,
+    message: `[${ErrorResponseName.Validation}]: Owner length has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} and letters only.`,
+  },
+  plateFormat: {
+    name: ErrorResponseName.Validation,
+    message: `[${ErrorResponseName.Validation}]: Plate number has to be 3 letters and 3 digits format ex: AAA111.`,
+  },
+  carplateIdFormat: {
+    name: ErrorResponseName.Validation,
+    message: `[${ErrorResponseName.Validation}]: Invalid carplate id format.`,
+  },
+  carplateIdNotFound: {
+    name: ErrorResponseName.Validation,
+    message: `[${ErrorResponseName.Validation}]: Carplate id not found.`,
+  },
+};
 
 const validateCarplateGeneralFields = ({
   plate_name,
@@ -91,10 +111,7 @@ const validateIfAnyFieldsMissing = (
 
   return missingFields.length > 0
     ? {
-        error: {
-          name: ErrorResponseName.MissingFields,
-          message: `[${ErrorResponseName.MissingFields}]: All fields are required.`,
-        },
+        error: errorResponses.missingFields,
         body: { missingFields },
       }
     : null;
@@ -103,24 +120,18 @@ const validateIfAnyFieldsMissing = (
 const validateOwner = (owner: string): ErrorResponse | null => {
   return owner.length > OWNER_NAME_MAX_LENGTH ||
     owner.length < OWNER_NAME_MIN_LENGTH ||
-    !isCorrectOwnerFormat(owner)
+    !Validators.isCorrectOwnerFormat(owner)
     ? {
-        error: {
-          name: ErrorResponseName.Validation,
-          message: `[${ErrorResponseName.Validation}]: Owner length has to be from ${OWNER_NAME_MIN_LENGTH} - ${OWNER_NAME_MAX_LENGTH} and letters only.`,
-        },
+        error: errorResponses.ownerLength,
         body: { owner },
       }
     : null;
 };
 
 const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
-  return !isCorrectPlateFormat(plate_name)
+  return !Validators.isCorrectPlateFormat(plate_name)
     ? {
-        error: {
-          name: ErrorResponseName.Validation,
-          message: `[${ErrorResponseName.Validation}]: Plate number has to be 3 letters and 3 digits format ex: AAA111.`,
-        },
+        error: errorResponses.plateFormat,
         body: { plate_name },
       }
     : null;
@@ -129,10 +140,7 @@ const validatePlateFormat = (plate_name: string): ErrorResponse | null => {
 export const validateIdFormat = (id: string): ErrorResponse | null => {
   return !isCorrectIdFormat(id)
     ? {
-        error: {
-          name: ErrorResponseName.Validation,
-          message: `[${ErrorResponseName.Validation}]: Invalid carplate id format.`,
-        },
+        error: errorResponses.carplateIdFormat,
         body: { id },
       }
     : null;
