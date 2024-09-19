@@ -7,19 +7,15 @@ import {
   CarplateUpdateParameters,
 } from '@shared/carplate/types';
 import { StatusCode } from '@shared/common/enums';
-import { getPagination, getPagingData } from '@shared/common/utils';
+import { Pagination } from '@shared/common/utils';
 import { db } from '@backend-express/utils';
-import {
-  validateCarplateCreate,
-  validateCarplateUpdate,
-  validateIdFormat,
-} from './helpers';
+import * as Helpers from './helpers';
 
 const CarplateSchema = db.CarplateSchema;
 
 export async function create(req, res, next) {
   try {
-    const isValidationFailed = validateCarplateCreate(req.body);
+    const isValidationFailed = Helpers.validateCarplateCreate(req.body);
     if (isValidationFailed) {
       res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
       return;
@@ -52,7 +48,7 @@ export async function create(req, res, next) {
 
 export async function update(req, res, next) {
   try {
-    const isValidationFailed = validateCarplateUpdate(req.body);
+    const isValidationFailed = Helpers.validateCarplateUpdate(req.body);
     if (isValidationFailed) {
       res.status(StatusCode.HTTP_400_BAD_REQUEST).json(isValidationFailed);
       return;
@@ -60,7 +56,7 @@ export async function update(req, res, next) {
 
     const { id } = req.params;
 
-    const idFormatError = validateIdFormat(id);
+    const idFormatError = Helpers.validateIdFormat(id);
     if (idFormatError) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
@@ -125,7 +121,7 @@ export async function findAll(req, res, next) {
       condition = { ...condition, owner: ownerLookup };
     }
 
-    const { limit, offset } = getPagination(page, size);
+    const { limit, offset } = Pagination.getPagination(page, size);
 
     const data: PaginatedData<Carplate> = await CarplateSchema.findAndCountAll({
       where: condition,
@@ -134,7 +130,7 @@ export async function findAll(req, res, next) {
       order: [['updatedAt', 'DESC']],
     });
 
-    const response = getPagingData(data, page, limit);
+    const response = Pagination.getPagingData(data, page, limit);
 
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
   } catch (err) {
@@ -146,7 +142,7 @@ export async function findOne(req, res, next) {
   try {
     const { id } = req.params;
 
-    const idFormatError = validateIdFormat(id);
+    const idFormatError = Helpers.validateIdFormat(id);
     if (idFormatError) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
@@ -161,7 +157,7 @@ export async function findOne(req, res, next) {
 export async function decomm(req, res, next) {
   try {
     const { id } = req.params;
-    const idFormatError = validateIdFormat(id);
+    const idFormatError = Helpers.validateIdFormat(id);
     if (idFormatError) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }

@@ -45,7 +45,7 @@
                 <label
                   for="owner"
                   class="text-sm font-medium text-gray-900 dark:text-white"
-                  >Owner*</label
+                  >{{ textFields.owner.label }}</label
                 >
                 <span
                   class="text-sm font-medium"
@@ -70,25 +70,36 @@
                 autocomplete="off"
                 formControlName="owner"
               />
-              <div *ngIf="ownerControl?.errors && ownerControl?.dirty">
+              <div
+                *ngIf="ownerControl?.errors && ownerControl?.dirty"
+                [attr.data-testid-wrapper]="textFields.owner.errors_wrapper"
+              >
                 <small
                   class="text-red-500"
+                  [attr.data-testid]="
+                    textFields.owner.errors.required.errorTestId
+                  "
                   *ngIf="ownerControl?.errors?.['required']"
                 >
-                  Owner field is required
+                  {{ textFields.owner.errors.required.errorMessage }}
                 </small>
                 <small
                   class="text-red-500"
+                  [attr.data-testid]="
+                    textFields.owner.errors.minLength.errorTestId
+                  "
                   *ngIf="ownerControl?.errors?.['minlength']"
                 >
-                  Owner field should contain at least
-                  {{ MIN_OWNER_LENGTH }} characters
+                  {{ textFields.owner.errors.minLength.errorMessage }}
                 </small>
                 <small
                   class="text-red-500"
+                  [attr.data-testid]="
+                    textFields.owner.errors.pattern.errorTestId
+                  "
                   *ngIf="ownerControl?.errors?.['pattern']"
                 >
-                  Owner name should contain only letters, ex: John Doe
+                  {{ textFields.owner.errors.pattern.errorMessage }}
                 </small>
               </div>
             </div>
@@ -97,7 +108,7 @@
               <label
                 for="plate_name"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Plate Name*</label
+                >{{ textFields.plateName.label }}</label
               >
               <input
                 type="text"
@@ -107,18 +118,27 @@
                 autocomplete="off"
                 formControlName="plate_name"
               />
-              <div *ngIf="plateNameControl?.errors && plateNameControl?.dirty">
+              <div
+                *ngIf="plateNameControl?.errors && plateNameControl?.dirty"
+                [attr.data-testid-wrapper]="textFields.plateName.errors_wrapper"
+              >
                 <small
                   class="text-red-500"
+                  [attr.data-testid]="
+                    textFields.plateName.errors.required.errorTestId
+                  "
                   *ngIf="plateNameControl?.errors?.['required']"
                 >
-                  Plate name field is required
+                  {{ textFields.plateName.errors.required.errorMessage }}
                 </small>
                 <small
                   class="text-red-500"
+                  [attr.data-testid]="
+                    textFields.plateName.errors.pattern.errorTestId
+                  "
                   *ngIf="plateNameControl?.errors?.['pattern']"
                 >
-                  Plate name format should be 3 letters and 3 digits, ex: ABC123
+                  {{ textFields.plateName.errors.pattern.errorMessage }}
                 </small>
               </div>
             </div>

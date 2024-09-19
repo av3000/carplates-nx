@@ -1,2 +1,2 @@
-export * from './lib/pagination';
-export * from './lib/validators';
+export * as Pagination from './lib/pagination';
+export * as Validators from './lib/validators';

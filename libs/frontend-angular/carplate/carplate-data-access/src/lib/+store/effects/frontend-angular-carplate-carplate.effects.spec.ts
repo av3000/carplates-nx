@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { EffectsModule } from '@ngrx/effects';
 import { provideMockStore } from '@ngrx/store/testing';
+import { Action } from '@ngrx/store';
 
 import { hot, cold } from 'jest-marbles';
 import { Observable, of, throwError } from 'rxjs';
@@ -38,7 +39,6 @@ import {
   filtersMock,
 } from '../__mocks__/carplate-fixtures';
 import { initialState } from '../reducer/frontend-angular-carplate-carplate.reducer';
-import { Action } from '@ngrx/store';
 
 describe('CarplateEffects', () => {
   let actions$ = new Observable<Action>();

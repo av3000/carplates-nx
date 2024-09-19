@@ -23,6 +23,7 @@ import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access'
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { ownerFormatPattern, plateFormatPattern } from '@shared/common/utils';
 import { defaultSmallModalOptions } from '@shared/common/constants';
+import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
 
 @Component({
   selector: 'carplates-frontend-angular-carplate-carplate-feature-details',
@@ -32,12 +33,13 @@ import { defaultSmallModalOptions } from '@shared/common/constants';
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   implements OnInit, OnDestroy
 {
-  MAX_OWNER_LENGTH = 30;
-  MIN_OWNER_LENGTH = 3;
-
   @ViewChild('view', { static: true }) modalTemplate!: TemplateRef<any>;
   @ViewChild('view', { static: true, read: ViewContainerRef })
   vcr!: ViewContainerRef;
+
+  MAX_OWNER_LENGTH = MAX_OWNER_LENGTH;
+  MIN_OWNER_LENGTH = MIN_OWNER_LENGTH;
+  textFields = textFields;
 
   private subs$ = new Subscription();
   isLoading$ = this.facade.isLoading$;
@@ -52,8 +54,8 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
       '',
       [
         Validators.required,
-        Validators.minLength(this.MIN_OWNER_LENGTH),
-        Validators.maxLength(this.MAX_OWNER_LENGTH),
+        Validators.minLength(MIN_OWNER_LENGTH),
+        Validators.maxLength(MAX_OWNER_LENGTH),
         Validators.pattern(ownerFormatPattern),
       ],
     ],
