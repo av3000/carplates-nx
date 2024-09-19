@@ -97,16 +97,14 @@ describe('/api/carplates/', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      // Mock an error thrown by findAndCountAll
+      // GIVEN
       const mockError = new Error('Database error');
       jest
         .spyOn(db.CarplateSchema, 'findAndCountAll')
         .mockRejectedValue(mockError);
-
-      // Call the controller method
+      // WHEN
       await findAll(mockRequestWithFilters, mockResponse, next);
-
-      // Assertions
+      // THEN
       expect(next).toHaveBeenCalledWith(mockError);
     });
   });
@@ -230,7 +228,7 @@ describe('/api/carplates/', () => {
       };
 
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
-      jest.spyOn(db.CarplateSchema, 'findByPk').mockResolvedValue(mockCarplate); // Carplate exists
+      jest.spyOn(db.CarplateSchema, 'findByPk').mockResolvedValue(mockCarplate);
       jest.spyOn(db.CarplateSchema, 'destroy').mockResolvedValue(1);
 
       // WHEN
@@ -258,7 +256,7 @@ describe('/api/carplates/', () => {
       const error = new Error('Something went wrong');
 
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
-      jest.spyOn(db.CarplateSchema, 'findByPk').mockRejectedValue(error); // Simulate error
+      jest.spyOn(db.CarplateSchema, 'findByPk').mockRejectedValue(error);
 
       // WHEN
       await decomm(mockRequest, mockResponse, next);
@@ -271,7 +269,7 @@ describe('/api/carplates/', () => {
   describe('create', () => {
     it('should return 400 if validation fails', async () => {
       // GIVEN
-      const invalidPayload = { plate_name: '', owner: 'John Doe' }; // Invalid because plate_name is empty
+      const invalidPayload = { plate_name: '', owner: 'John Doe' };
       const mockRequest = {
         body: invalidPayload,
       };
@@ -369,8 +367,8 @@ describe('/api/carplates/', () => {
 
       jest
         .spyOn(ValidationHelpers, 'validateCarplateCreate')
-        .mockReturnValue(null); // No validation error
-      jest.spyOn(db.CarplateSchema, 'findOne').mockRejectedValue(error); // Simulate error
+        .mockReturnValue(null);
+      jest.spyOn(db.CarplateSchema, 'findOne').mockRejectedValue(error);
 
       // WHEN
       await create(mockRequest, mockResponse, next);

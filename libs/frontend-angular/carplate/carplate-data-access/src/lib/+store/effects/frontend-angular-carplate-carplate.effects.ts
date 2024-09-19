@@ -109,12 +109,6 @@ export class CarplateEffects {
         onError: (_: ReturnType<typeof updateCarplate>, error: ErrorResponse) =>
           updateCarplateFailure({ error }),
       })
-      // mergeMap(({ id, carplateParams }) =>
-      //   this.carplateService.updateCarplate(id, carplateParams).pipe(
-      //     map((carplate) => updateCarplateSuccess({ carplate })),
-      //     catchError((error) => of(updateCarplateFailure({ error })))
-      //   )
-      // )
     )
   );
 
@@ -129,12 +123,6 @@ export class CarplateEffects {
         onError: (_: ReturnType<typeof updateCarplate>, error: ErrorResponse) =>
           deleteCarplateFailure({ error }),
       })
-      // mergeMap(({ id }) =>
-      //   this.carplateService.deleteCarplate(id).pipe(
-      //     map(() => deleteCarplateSuccess()),
-      //     catchError((error) => of(deleteCarplateFailure({ error })))
-      //   )
-      // )
     )
   );
 
