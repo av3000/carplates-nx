@@ -21,7 +21,7 @@ import {
 
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
-import { ownerFormatPattern, plateFormatPattern } from '@shared/common/utils';
+import { Validators as CarplateValidators } from '@shared/common/utils';
 import { defaultSmallModalOptions } from '@shared/common/constants';
 import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
 
@@ -48,7 +48,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   carplateForm = this.formBuilder.group({
     plate_name: [
       '',
-      [Validators.required, Validators.pattern(plateFormatPattern)],
+      [
+        Validators.required,
+        Validators.pattern(CarplateValidators.plateFormatPattern),
+      ],
     ],
     owner: [
       '',
@@ -56,7 +59,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
         Validators.required,
         Validators.minLength(MIN_OWNER_LENGTH),
         Validators.maxLength(MAX_OWNER_LENGTH),
-        Validators.pattern(ownerFormatPattern),
+        Validators.pattern(CarplateValidators.ownerFormatPattern),
       ],
     ],
     createdAt: [''],
