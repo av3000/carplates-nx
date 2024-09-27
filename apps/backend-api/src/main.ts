@@ -1,6 +1,7 @@
 require('dotenv').config();
-
+import './instrument';
 import express, { Express } from 'express';
+import * as Sentry from '@sentry/node';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -48,6 +49,10 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to backend-api root page!' });
 });
 
+app.get('/debug-sentry', function mainHandler(req, res) {
+  throw new Error('My first Sentry error!');
+});
+
 // Swagger Init
 swaggerDocs(app, NODE_PORT);
 
@@ -57,7 +62,13 @@ app.use('/api/carplates', carplateRoutes);
 
 console.log('Connecting to database...');
 
+Sentry.setupExpressErrorHandler(app);
 app.use(errorMiddleware);
+
+// Request handler to capture all requests
+// app.use(Sentry.Handlers.requestHandler());
+// Error handler to capture any errors
+// app.use(Sentry.Handlers.errorHandler());
 
 db.sequelize
   .sync({ force: FLUSH_DB })

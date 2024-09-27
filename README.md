@@ -28,6 +28,8 @@ For the local environment run `yarn run backend-api:dev` for a dev express app. 
 
 ### Docker
 
+Add [sentry](https://sentry.io/) DSN to .env `SENTRY_DSN` variable if available.
+
 For the docker environment run `docker compose up --build`. Add -d for detached mode. Use [Docker desktop](https://www.docker.com/products/docker-desktop/) for easier Docker management.
 
 ### Swagger
