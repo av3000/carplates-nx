@@ -1,10 +1,12 @@
+import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import * as Sentry from '@sentry/angular';
 
 import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
 
 Sentry.init({
-  dsn: 'https://c72a4ce4455fdea17c2ba32f43fdc1b9@o4508021947891712.ingest.de.sentry.io/4508022156296272',
+  dsn: environment.sentryDsn,
   integrations: [
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
@@ -17,6 +19,10 @@ Sentry.init({
   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
+
+if (environment.production) {
+  enableProdMode();
+}
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule)

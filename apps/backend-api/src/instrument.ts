@@ -4,7 +4,7 @@ require('dotenv').config();
 
 // Ensure to call this before importing any other modules!
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: process.env.SENTRY_EXPRESS_DSN,
   integrations: [
     // Add our Profiling integration
     nodeProfilingIntegration(),

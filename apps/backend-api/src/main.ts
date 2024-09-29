@@ -10,16 +10,15 @@ import cors from 'cors';
 import { db, errorMiddleware, swaggerDocs } from '@backend-express/utils';
 import { carplateRoutes } from '@backend-express/carplate/routes';
 import indexRoutes from './app/routes/index';
+import { environment } from './environments/environment';
 
-const NODE_PORT = process.env.NODE_DOCKER_PORT;
-const ANGULAR_PORT = process.env.ANGULAR_DOCKER_PORT;
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
 const app: Express = express();
 
 const allowedOrigins = [
-  `http://localhost:${ANGULAR_PORT}`,
-  `http://localhost:${NODE_PORT}`,
+  `${environment.apiUrl}:${process.env.ANGULAR_PORT}`,
+  `${environment.apiUrl}:${process.env.NODE_PORT}`,
 ];
 
 app.use(
@@ -54,7 +53,7 @@ app.get('/debug-sentry', function mainHandler(req, res) {
 });
 
 // Swagger Init
-swaggerDocs(app, NODE_PORT);
+swaggerDocs(app, process.env.NODE_PORT);
 
 // API Routes
 app.use('/api', indexRoutes);
@@ -74,8 +73,10 @@ db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {
     console.log('Synched db.');
-    const server = app.listen(NODE_PORT, () => {
-      console.log(`Listening at http://localhost:${NODE_PORT}`);
+    const server = app.listen(process.env.NODE_PORT, () => {
+      console.log(
+        `Listening at ${process.env.API_URL}:${process.env.NODE_PORT}`
+      );
     });
     server.on('error', console.error);
   })
