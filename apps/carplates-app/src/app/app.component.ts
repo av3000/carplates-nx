@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   currentDateYear: number = new Date().getFullYear();
+
+  public throwTestError(): void {
+    throw new Error('Sentry Test Error');
+  }
 }

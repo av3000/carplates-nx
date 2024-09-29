@@ -1,6 +1,9 @@
+import { Op } from 'sequelize';
+
 import { StatusCode } from '@shared/common/enums';
-import * as ValidationHelpers from './helpers';
+import { Pagination } from '@shared/common/utils';
 import { db } from '@backend-express/utils';
+
 import {
   create,
   decomm,
@@ -8,8 +11,8 @@ import {
   findOne,
   update,
 } from './backend-express-carplate-controllers';
-import { Pagination } from '@shared/common/utils';
 
+import * as ValidationHelpers from './helpers';
 import * as Helpers from './helpers';
 
 const mockCarplates = [
@@ -55,7 +58,10 @@ describe('/api/carplates/', () => {
     next = jest.fn();
 
     mockRequestWithFilters = {
-      query: {},
+      query: {
+        page: Pagination.DEFAULT_PAGE,
+        size: Pagination.DEFAULT_ITEMS_PER_PAGE,
+      },
     };
   });
 
@@ -63,26 +69,17 @@ describe('/api/carplates/', () => {
     jest.clearAllMocks();
   });
 
-  describe('should', () => {
-    it('get paginated carplate list', async () => {
+  describe('list', () => {
+    it('get paginated carplate list with no optional filters', async () => {
       // GIVEN
-      mockRequestWithFilters.query = {
-        page: Pagination.DEFAULT_PAGE,
-        size: Pagination.DEFAULT_ITEMS_PER_PAGE,
-      };
-
       jest.spyOn(db.CarplateSchema, 'findAndCountAll').mockResolvedValue({
-        count: 1,
+        count: mockCarplates.length,
         rows: mockCarplates,
       });
-      jest
-        .spyOn(Pagination, 'getPagination')
-        .mockReturnValue({ limit: 3, offset: 0 });
-      jest
-        .spyOn(Pagination, 'getPagingData')
-        .mockReturnValue(mockCarplatesPaginated);
+
       // WHEN
       await findAll(mockRequestWithFilters, mockResponse, next);
+
       // THEN
       expect(db.CarplateSchema.findAndCountAll).toHaveBeenCalledWith({
         where: {},
@@ -94,6 +91,56 @@ describe('/api/carplates/', () => {
         StatusCode.HTTP_200_SUCCESS_REQUEST
       );
       expect(mockResponse.json).toHaveBeenCalledWith(mockCarplatesPaginated);
+    });
+
+    const getCarplatesListByFiltersCases = [
+      {
+        filterName: 'owner',
+        filterValue: 'John Doe',
+        dbQueryCondition: {
+          owner: { [Op.like]: '%John Doe%' },
+        },
+      },
+      {
+        filterName: 'plate_name',
+        filterValue: 'ABC123',
+        dbQueryCondition: { plate_name: { [Op.like]: '%ABC123%' } },
+      },
+    ];
+
+    getCarplatesListByFiltersCases.forEach((test) => {
+      it(`should get paginated carplate list with ${test.filterName} filtered`, async () => {
+        // GIVEN
+        mockRequestWithFilters.query[test.filterName] = test.filterValue;
+        const mockDBResponse = {
+          count: [mockCarplates[0]].length,
+          rows: [mockCarplates[0]],
+        };
+
+        jest
+          .spyOn(db.CarplateSchema, 'findAndCountAll')
+          .mockResolvedValue(mockDBResponse);
+
+        // WHEN
+        await findAll(mockRequestWithFilters, mockResponse, next);
+
+        // THEN
+        expect(db.CarplateSchema.findAndCountAll).toHaveBeenCalledWith({
+          where: test.dbQueryCondition,
+          limit: 3,
+          offset: 0,
+          order: [['updatedAt', 'DESC']],
+        });
+
+        expect(mockResponse.status).toHaveBeenCalledWith(200);
+        expect(mockResponse.json).toHaveBeenCalledWith({
+          count: mockDBResponse.rows.length,
+          perPage: Pagination.DEFAULT_ITEMS_PER_PAGE,
+          totalPages: 1,
+          currentPage: 1,
+          rows: mockDBResponse.rows,
+        });
+      });
     });
 
     it('should handle errors gracefully', async () => {
@@ -139,8 +186,10 @@ describe('/api/carplates/', () => {
       jest
         .spyOn(ValidationHelpers, 'validateIdFormat')
         .mockReturnValue(errResp);
+
       // WHEN
       await findOne(mockRequest, mockResponse, next);
+
       // THEN
       expect(ValidationHelpers.validateIdFormat).toHaveBeenCalledWith(
         invalidId
@@ -159,8 +208,10 @@ describe('/api/carplates/', () => {
       };
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
       jest.spyOn(db.CarplateSchema, 'findByPk').mockResolvedValue(null);
+
       // WHEN
       await findOne(mockRequest, mockResponse, next);
+
       // THEN
       expect(mockResponse.status).toHaveBeenCalledWith(
         StatusCode.HTTP_200_SUCCESS_REQUEST
@@ -168,29 +219,22 @@ describe('/api/carplates/', () => {
       expect(mockResponse.json).toHaveBeenCalledWith({});
     });
 
-    it('should return 400 when deleting carplate by id if format is invalid', async () => {
+    it('should call next with an error if something goes wrong', async () => {
       // GIVEN
-      const invalidId = 'invalid-id';
       const mockRequest = {
-        params: { id: 'invalid-id' },
+        params: { id: mockCarplate.id },
       };
-      const errResp = {
-        error: ValidationHelpers.errorResponses.carplateIdFormat,
-        body: { id: invalidId },
-      };
-      jest
-        .spyOn(ValidationHelpers, 'validateIdFormat')
-        .mockReturnValue(errResp);
-      jest
-        .spyOn(db.CarplateSchema, 'findByPk')
-        .mockResolvedValue(ValidationHelpers.errorResponses.carplateIdFormat);
+
+      const error = new Error('Something went wrong');
+
+      jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
+      jest.spyOn(db.CarplateSchema, 'findByPk').mockRejectedValue(error);
+
       // WHEN
-      await decomm(mockRequest, mockResponse, next);
+      await findOne(mockRequest, mockResponse, next);
+
       // THEN
-      expect(mockResponse.status).toHaveBeenCalledWith(
-        StatusCode.HTTP_400_BAD_REQUEST
-      );
-      expect(mockResponse.json).toHaveBeenCalledWith(errResp);
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 
@@ -309,6 +353,7 @@ describe('/api/carplates/', () => {
         .spyOn(ValidationHelpers, 'validateCarplateCreate')
         .mockReturnValue(null);
       jest.spyOn(db.CarplateSchema, 'findOne').mockResolvedValue(foundCarplate);
+
       // WHEN
       await create(mockRequest, mockResponse, next);
 
@@ -464,6 +509,33 @@ describe('/api/carplates/', () => {
       });
     });
 
+    it('should return 400 if format is invalid', async () => {
+      // GIVEN
+      const invalidId = 'invalid-id';
+      const mockRequest = {
+        params: { id: 'invalid-id' },
+      };
+      const errResp = {
+        error: ValidationHelpers.errorResponses.carplateIdFormat,
+        body: { id: invalidId },
+      };
+      jest
+        .spyOn(ValidationHelpers, 'validateIdFormat')
+        .mockReturnValue(errResp);
+      jest
+        .spyOn(db.CarplateSchema, 'findByPk')
+        .mockResolvedValue(ValidationHelpers.errorResponses.carplateIdFormat);
+
+      // WHEN
+      await update(mockRequest, mockResponse, next);
+
+      // THEN
+      expect(mockResponse.status).toHaveBeenCalledWith(
+        StatusCode.HTTP_400_BAD_REQUEST
+      );
+      expect(mockResponse.json).toHaveBeenCalledWith(errResp);
+    });
+
     it('should call next with an error if something goes wrong', async () => {
       // GIVEN
       const mockRequest = {
@@ -476,6 +548,7 @@ describe('/api/carplates/', () => {
       jest.spyOn(Helpers, 'validateCarplateUpdate').mockReturnValue(null);
       jest.spyOn(Helpers, 'validateIdFormat').mockReturnValue(null);
       jest.spyOn(db.CarplateSchema, 'findOne').mockRejectedValue(error);
+
       // WHEN
       await update(mockRequest, mockResponse, next);
 

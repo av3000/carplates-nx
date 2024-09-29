@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 
-import { PaginatedData } from '@shared/common/types';
+import { PaginatedData, PaginatedList } from '@shared/common/types';
 import {
   Carplate,
   CarplateParameters,
@@ -130,7 +130,11 @@ export async function findAll(req, res, next) {
       order: [['updatedAt', 'DESC']],
     });
 
-    const response = Pagination.getPagingData(data, page, limit);
+    const response: PaginatedList<Carplate> = Pagination.getPagingData(
+      data,
+      page,
+      limit
+    );
 
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(response);
   } catch (err) {

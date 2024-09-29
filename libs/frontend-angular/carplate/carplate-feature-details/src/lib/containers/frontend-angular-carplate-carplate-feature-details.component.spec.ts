@@ -101,6 +101,8 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
     );
     component = fixture.componentInstance;
     de = fixture.debugElement;
+
+    fixture.detectChanges();
   });
 
   describe('should', () => {
@@ -111,6 +113,7 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
     it('should open the modal on initialization', () => {
       // GIVEN
       const containerDiv = de.query(By.css('.container'));
+      console.log('');
       const header = de.query(By.css('.header')).nativeElement.innerHTML;
       // WHEN
       fixture.detectChanges();

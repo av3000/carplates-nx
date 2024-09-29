@@ -1,20 +1,20 @@
-version: '3'
-
 services:
   # Angular App
   angular-app:
+    container_name: angular-app
     extends:
       file: docker-compose.base.yml
       service: nx-app-base
     command: npm run angular-app:dev:docker
     ports:
-      - $ANGULAR_DOCKER_PORT:$ANGULAR_LOCAL_PORT
+      - $ANGULAR_PORT:$ANGULAR_PORT
     depends_on:
       - backend-api
     env_file: .env
 
   # Express API
   backend-api:
+    container_name: backend-api
     depends_on:
       - mysqldb
     env_file: .env
@@ -24,7 +24,7 @@ services:
       service: nx-app-base
     command: npm run backend-api:dev:docker
     ports:
-      - $NODE_DOCKER_PORT:$NODE_LOCAL_PORT
+      - $NODE_PORT:$NODE_PORT
     environment:
       - DB_HOST=mysqldb
       - DB_USER=$DB_USER
@@ -36,6 +36,7 @@ services:
 
   # MySQL Database
   mysqldb:
+    container_name: mysql
     image: mysql:8.0.17
     env_file: .env
     environment:
@@ -46,7 +47,7 @@ services:
     ports:
       - $DB_DOCKER_PORT:$DB_PORT
     volumes:
-      - db:/var/lib/mysql
+      - mysql-db:/var/lib/mysql
       # TODO: fix healthcheck to make sure mysql loads fully until backend api loads
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -55,5 +56,5 @@ services:
       retries: 5
 
 volumes:
-  db:
+  mysql-db:
   mono-node-modules: null

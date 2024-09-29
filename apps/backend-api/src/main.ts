@@ -1,6 +1,7 @@
 require('dotenv').config();
-
+import './instrument';
 import express, { Express } from 'express';
+import * as Sentry from '@sentry/node';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -9,16 +10,15 @@ import cors from 'cors';
 import { db, errorMiddleware, swaggerDocs } from '@backend-express/utils';
 import { carplateRoutes } from '@backend-express/carplate/routes';
 import indexRoutes from './app/routes/index';
+import { environment } from './environments/environment';
 
-const NODE_PORT = process.env.NODE_DOCKER_PORT;
-const ANGULAR_PORT = process.env.ANGULAR_DOCKER_PORT;
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
 const app: Express = express();
 
 const allowedOrigins = [
-  `http://localhost:${ANGULAR_PORT}`,
-  `http://localhost:${NODE_PORT}`,
+  `${environment.apiUrl}:${process.env.ANGULAR_PORT}`,
+  `${environment.apiUrl}:${process.env.NODE_PORT}`,
 ];
 
 app.use(
@@ -48,8 +48,12 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to backend-api root page!' });
 });
 
+app.get('/debug-sentry', function mainHandler(req, res) {
+  throw new Error('My first Sentry error!');
+});
+
 // Swagger Init
-swaggerDocs(app, NODE_PORT);
+swaggerDocs(app, process.env.NODE_PORT);
 
 // API Routes
 app.use('/api', indexRoutes);
@@ -57,14 +61,22 @@ app.use('/api/carplates', carplateRoutes);
 
 console.log('Connecting to database...');
 
+Sentry.setupExpressErrorHandler(app);
 app.use(errorMiddleware);
+
+// Request handler to capture all requests
+// app.use(Sentry.Handlers.requestHandler());
+// Error handler to capture any errors
+// app.use(Sentry.Handlers.errorHandler());
 
 db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {
     console.log('Synched db.');
-    const server = app.listen(NODE_PORT, () => {
-      console.log(`Listening at http://localhost:${NODE_PORT}`);
+    const server = app.listen(process.env.NODE_PORT, () => {
+      console.log(
+        `Listening at ${process.env.API_URL}:${process.env.NODE_PORT}`
+      );
     });
     server.on('error', console.error);
   })
