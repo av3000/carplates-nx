@@ -12,7 +12,7 @@
             "prefix": "carplates",
             "style": "camelCase"
           }
-        ],
+        ]
       },
       "extends": [
         "plugin:@nrwl/nx/angular",

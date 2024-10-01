@@ -1,3 +1,5 @@
+import { Action } from '@ngrx/store';
+
 import {
   CarplateState,
   carplateReducer,
@@ -14,7 +16,7 @@ import {
 
 describe('FrontendAngularCarplateCarplate Reducer', () => {
   it('should return the initial state', () => {
-    const action = {} as any;
+    const action = {} as Action;
     const state = carplateReducer(undefined, action);
 
     expect(state).toBe(initialState);

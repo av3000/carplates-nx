@@ -28,28 +28,27 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
 
   beforeEach(() => {
     mockModalService = {
-      open: jest
-        .fn()
-        .mockImplementation(
-          (
-            vcrOrComponent: ViewContainerRef | Type<any>,
-            param2?: TemplateRef<Element> | Options,
-            options?: Options
-          ) => {
-            if (
-              vcrOrComponent instanceof ViewContainerRef &&
-              param2 instanceof TemplateRef
-            ) {
-              // ViewContainerRef and TemplateRef are passed
-              vcrOrComponent.createEmbeddedView(param2); // Mock creation template view
-            } else if (typeof vcrOrComponent === 'function') {
-              // Component is passed
-              // No need to mock, just know it was called
-            }
-            // Save options to mock the options handling behavior
-            mockModalService.options = options || (param2 as Options);
+      open: jest.fn().mockImplementation(
+        (
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          vcrOrComponent: ViewContainerRef | Type<any>,
+          param2?: TemplateRef<Element> | Options,
+          options?: Options
+        ) => {
+          if (
+            vcrOrComponent instanceof ViewContainerRef &&
+            param2 instanceof TemplateRef
+          ) {
+            // ViewContainerRef and TemplateRef are passed
+            vcrOrComponent.createEmbeddedView(param2); // Mock creation template view
+          } else if (typeof vcrOrComponent === 'function') {
+            // Component is passed
+            // No need to mock, just know it was called
           }
-        ),
+          // Save options to mock the options handling behavior
+          mockModalService.options = options || (param2 as Options);
+        }
+      ),
       close: jest.fn(),
     } as Partial<jest.Mocked<DynamicModalService>>;
 
@@ -81,7 +80,7 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
             saved$: of(false),
             errors$: of(null),
             selectedCarplate: of(null),
-            selectCarplateById: (id: string) => of(null),
+            selectCarplateById: () => of(null),
             createCarplate: () => jest.fn(),
             updateCarplate: () => jest.fn(),
             fetchOneCarplate: () => jest.fn(),

@@ -59,6 +59,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
     this.initItemsPerPageListener();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emmitUpsertPagination(filters: any) {
     this.upsertPagination.emit(filters);
   }

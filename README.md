@@ -43,3 +43,13 @@ Run `npx nx test <LIBRARY-NAME>`. Library name can be found in jest.config.ts of
 ```bash
 npx nx test frontend-angular-carplate-carplate-data-access
 ```
+
+## Developemnt Experience
+
+### Husky git hooks with Commitlint conventions
+
+[Husky](https://typicode.github.io/husky/) for git hooks to standartize good practices and code documenting.
+
+Read more on [Commitlint conventions](https://www.npmjs.com/package/@commitlint/config-conventional) or [conventions configuration](https://commitlint.js.org). If any of scripts seem to fail without a reason, try adjusting encoding to UTF8.
+
+There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type: message`

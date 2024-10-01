@@ -18,5 +18,5 @@ export interface Options {
     maxHeight?: string;
   };
   closeRouteCallback?: () => void;
-  configData?: any;
+  configData?: unknown;
 }
