@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 
 import { Pagination } from '@shared/common/types';
 import { DEFAULT_PAGE } from '@shared/common/constants';
+import { CarplateFilters } from '@shared/carplate/types';
 
 @Component({
   selector: 'carplates-pagination',
@@ -23,7 +24,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
   @Input() formGroup!: FormGroup;
   @Input() pagination!: Pagination | null;
   @Input() pageSizes!: number[];
-  @Output() upsertPagination = new EventEmitter<void>();
+  @Output() upsertPagination = new EventEmitter<CarplateFilters>();
 
   private subs$ = new Subscription();
 
