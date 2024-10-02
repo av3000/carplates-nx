@@ -52,4 +52,15 @@ npx nx test frontend-angular-carplate-carplate-data-access
 
 Read more on [Commitlint conventions](https://www.npmjs.com/package/@commitlint/config-conventional) or [conventions configuration](https://commitlint.js.org). If any of scripts seem to fail without a reason, try adjusting encoding to UTF8.
 
-There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type: message`
+There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type(scope): message`
+
+## NX Graph
+
+Visual graph of dependencies within workspace. Open the graph on [http://127.0.0.1:4211/projects](http://127.0.0.1:4211/projects)
+
+Most commonly used:
+
+- `npx nx affected:dep-graph`
+- `npx nx affected:build`
+- `npx nx affected:test`
+- `npx nx affected:lint`
