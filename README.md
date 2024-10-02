@@ -54,7 +54,22 @@ Read more on [Commitlint conventions](https://www.npmjs.com/package/@commitlint/
 
 There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type(scope): message` or `type: message`.
 
-To bypass pre-commit hook add environment variable when commiting via terminal `SKIP_PRE_COMMIT=true git commit -m "type(scope):Your commit message"`.
+To bypass pre-commit hook add environment variable when commiting via terminal
+
+Bash:
+
+```bash
+SKIP_PRE_COMMIT=true git commit -m "type(scope):Your commit message"
+```
+
+Or set variable before with powershell and then commit:
+
+```powershell
+$env:SKIP_PRE_COMMIT="true"
+git commit -m "type(scope):Your commit message"
+```
+
+Use `--no-verify` flag to skip all hooks for a specific commit.
 
 ## NX Graph
 
