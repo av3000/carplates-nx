@@ -15,7 +15,12 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject, Subscription, debounceTime } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subscription,
+  debounceTime,
+  ReplaySubject,
+} from 'rxjs';
 
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';

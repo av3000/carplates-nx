@@ -24,6 +24,14 @@
     "postinstall": "ngcc --properties es2015 browser module main",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix --max-warnings=0"
+    ],
+    "*.{ts,html,scss}": [
+      "prettier --write"
+    ]
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~15.2.0",
@@ -97,6 +105,7 @@
     "jest-environment-node": "^29.4.1",
     "jest-marbles": "^3.1.0",
     "jest-preset-angular": "~13.0.0",
+    "lint-staged": "^15.2.10",
     "nx": "15.8.6",
     "postcss": "^8.4.5",
     "prettier": "^2.6.2",

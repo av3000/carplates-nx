@@ -1,1 +1,7 @@
-npx nx affected:lint
+if [ "$SKIP_PRE_COMMIT" = "true" ]; then
+  echo "Skipping pre-commit hook"
+  exit 0
+fi
+
+echo "Running lint-staged"
+npx lint-staged

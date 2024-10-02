@@ -52,7 +52,9 @@ npx nx test frontend-angular-carplate-carplate-data-access
 
 Read more on [Commitlint conventions](https://www.npmjs.com/package/@commitlint/config-conventional) or [conventions configuration](https://commitlint.js.org). If any of scripts seem to fail without a reason, try adjusting encoding to UTF8.
 
-There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type(scope): message`
+There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type(scope): message` or `type: message`.
+
+To bypass pre-commit hook add environment variable when commiting via terminal `SKIP_PRE_COMMIT=true git commit -m "type(scope):Your commit message"`.
 
 ## NX Graph
 
