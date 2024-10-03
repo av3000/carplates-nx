@@ -15,7 +15,12 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription, debounceTime } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subscription,
+  debounceTime,
+  ReplaySubject,
+} from 'rxjs';
 
 import { DynamicModalService } from '@frontend-angular/shared/ui/modal';
 import { CarplateFacade } from '@frontend-angular/carplate/carplate-data-access';
@@ -33,6 +38,7 @@ import { DEFAULT_PAGE } from '@shared/common/constants';
 export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
   implements OnInit, OnDestroy
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ViewChild('modalView') deleteModal!: TemplateRef<any>;
   @ViewChild('modalView', { static: true, read: ViewContainerRef })
   vcr!: ViewContainerRef;
@@ -180,7 +186,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
     this.facade.deleteCarplate(id);
   }
 
-  applyFilters(filters: any) {
+  applyFilters(filters: CarplateFilters) {
     this.activeFilters = {
       ...this.activeFilters,
       ...filters,
@@ -193,7 +199,7 @@ export class FrontendAngularCarplateCarplateFeatureCarplateListComponent
     this.refreshUrl(this.activeFilters);
   }
 
-  refreshUrl(queryParams: any) {
+  refreshUrl(queryParams: CarplateFilters) {
     this.router.navigate([], {
       queryParams: queryParams,
       queryParamsHandling: 'merge',

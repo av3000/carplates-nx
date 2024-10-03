@@ -43,3 +43,41 @@ Run `npx nx test <LIBRARY-NAME>`. Library name can be found in jest.config.ts of
 ```bash
 npx nx test frontend-angular-carplate-carplate-data-access
 ```
+
+## Developemnt Experience
+
+### Husky git hooks with Commitlint conventions
+
+[Husky](https://typicode.github.io/husky/) for git hooks to standartize good practices and code documenting.
+
+Read more on [Commitlint conventions](https://www.npmjs.com/package/@commitlint/config-conventional) or [conventions configuration](https://commitlint.js.org). If any of scripts seem to fail without a reason, try adjusting encoding to UTF8.
+
+There is a default commit convention enforcing one of [`build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`] types, for ex: `type(scope): message` or `type: message`.
+
+To bypass pre-commit hook add environment variable when commiting via terminal
+
+Bash:
+
+```bash
+SKIP_PRE_COMMIT=true git commit -m "type(scope):Your commit message"
+```
+
+Or set variable before with powershell and then commit:
+
+```powershell
+$env:SKIP_PRE_COMMIT="true"
+git commit -m "type(scope):Your commit message"
+```
+
+Use `--no-verify` flag to skip all hooks for a specific commit.
+
+## NX Graph
+
+Visual graph of dependencies within workspace. Open the graph on [http://127.0.0.1:4211/projects](http://127.0.0.1:4211/projects)
+
+Most commonly used:
+
+- `npx nx affected:dep-graph`
+- `npx nx affected:build`
+- `npx nx affected:test`
+- `npx nx affected:lint`

@@ -4,8 +4,9 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { BASE_API_TOKEN } from '@carplates/frontend-angular/shared/config';
+
 import { CarplateService } from './frontend-angular-carplate-carplate.service';
-import { BASE_API_TOKEN } from '@shared/common/constants';
 
 describe('CarplateService', () => {
   let service: CarplateService;

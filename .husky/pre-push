@@ -1,0 +1,11 @@
+echo "Running pre-push checks..."
+
+# Run lint on affected projects
+echo "Running lint..."
+npx nx affected --target=lint --base=origin/main --parallel || exit 1
+
+# Run unit tests on affected projects
+echo "Running unit tests..."
+npx nx affected --target=test --base=origin/main --parallel || exit 1
+
+echo "Pre-push checks passed. Proceeding with push."

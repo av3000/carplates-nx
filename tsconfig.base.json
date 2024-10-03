@@ -1,6 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "strict": true,
+    "useDefineForClassFields": true,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -9,9 +11,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2020",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -26,6 +28,9 @@
         "libs/backend-express/carplate/schema/src/index.ts"
       ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
+      "@carplates/frontend-angular/shared/config": [
+        "libs/frontend-angular/shared/config/src/index.ts"
+      ],
       "@frontend-angular/carplate/carplate-data-access": [
         "libs/frontend-angular/carplate/carplate-data-access/src/index.ts"
       ],

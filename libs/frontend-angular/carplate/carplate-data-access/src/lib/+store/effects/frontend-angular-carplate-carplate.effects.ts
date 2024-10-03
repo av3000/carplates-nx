@@ -6,6 +6,7 @@ import { fetch, pessimisticUpdate } from '@nrwl/angular';
 import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
+import { ErrorResponse } from '@shared/common/types';
 import {
   updateCarplate,
   updateCarplateSuccess,
@@ -25,7 +26,6 @@ import {
 } from '../actions/frontend-angular-carplate-carplate.actions';
 import { selectPagination } from '../selectors/frontend-angular-carplate-carplate.selectors';
 import { CarplateService } from '../../frontend-angular-carplate-carplate.service';
-import { ErrorResponse } from '@shared/common/types';
 
 @Injectable()
 export class CarplateEffects {
@@ -36,8 +36,6 @@ export class CarplateEffects {
         run: ({ filters }: ReturnType<typeof fetchAllCarplates>) =>
           this.carplateService.getCarplatesList(filters).pipe(
             map((carplatesListPaginated) => {
-              const { rows } = carplatesListPaginated;
-
               return fetchAllCarplatesSuccess({
                 carplatesList: carplatesListPaginated,
               });
@@ -56,6 +54,7 @@ export class CarplateEffects {
         createCarplateSuccess
       ),
       withLatestFrom(this.store.select(selectPagination)),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mergeMap(([{ filters }, pagination]: any): Observable<Action> => {
         return this.carplateService
           .getCarplatesList({ ...filters, size: pagination.perPage })

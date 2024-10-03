@@ -1,6 +1,8 @@
+import { NextFunction, Request, Response } from 'express';
 import { Op } from 'sequelize';
 
 import { PaginatedData, PaginatedList } from '@shared/common/types';
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from '@shared/common/constants';
 import {
   Carplate,
   CarplateParameters,
@@ -9,11 +11,12 @@ import {
 import { StatusCode } from '@shared/common/enums';
 import { Pagination } from '@shared/common/utils';
 import { db } from '@backend-express/utils';
+
 import * as Helpers from './helpers';
 
 const CarplateSchema = db.CarplateSchema;
 
-export async function create(req, res, next) {
+export async function create(req: Request, res: Response, next: NextFunction) {
   try {
     const isValidationFailed = Helpers.validateCarplateCreate(req.body);
     if (isValidationFailed) {
@@ -46,7 +49,7 @@ export async function create(req, res, next) {
   }
 }
 
-export async function update(req, res, next) {
+export async function update(req: Request, res: Response, next: NextFunction) {
   try {
     const isValidationFailed = Helpers.validateCarplateUpdate(req.body);
     if (isValidationFailed) {
@@ -99,13 +102,14 @@ export async function update(req, res, next) {
   }
 }
 
-export async function findAll(req, res, next) {
+export async function findAll(req: Request, res: Response, next: NextFunction) {
   try {
     // TODO: validate if filters are valid to query
-    const page: number = req.query.page;
-    const size: number = req.query.size;
-    const plate_name: string = req.query.plate_name;
-    const owner: string = req.query.owner;
+    const page: number = parseInt(req.query.page as string) ?? DEFAULT_PAGE;
+    const size: number =
+      parseInt(req.query.size as string) ?? DEFAULT_ITEMS_PER_PAGE;
+    const plate_name: string = (req.query.plate_name as string) ?? '';
+    const owner: string = (req.query.owner as string) ?? '';
 
     const plate_nameLookup = plate_name
       ? { [Op.like]: `%${plate_name}%` }
@@ -142,7 +146,7 @@ export async function findAll(req, res, next) {
   }
 }
 
-export async function findOne(req, res, next) {
+export async function findOne(req: Request, res: Response, next: NextFunction) {
   try {
     const { id } = req.params;
 
@@ -158,7 +162,7 @@ export async function findOne(req, res, next) {
   }
 }
 
-export async function decomm(req, res, next) {
+export async function decomm(req: Request, res: Response, next: NextFunction) {
   try {
     const { id } = req.params;
     const idFormatError = Helpers.validateIdFormat(id);

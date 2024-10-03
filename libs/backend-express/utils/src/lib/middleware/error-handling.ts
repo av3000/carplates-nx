@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 
 import { StatusCode } from '@shared/common/enums';
 import { ErrorResponse } from '@shared/common/types';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export const errorMiddleware = (
-  err: any,
+  err: HttpErrorResponse,
   req: Request,
   res: Response,
   next: NextFunction

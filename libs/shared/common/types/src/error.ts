@@ -3,5 +3,5 @@ export interface ErrorResponse {
     name: string;
     message: string;
   };
-  body: any;
+  body: unknown;
 }

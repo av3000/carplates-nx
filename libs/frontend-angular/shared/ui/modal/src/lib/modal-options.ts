@@ -18,5 +18,13 @@ export interface Options {
     maxHeight?: string;
   };
   closeRouteCallback?: () => void;
-  configData?: any;
+  configData?: DeleteModalConfigData;
+}
+
+export interface DeleteModalConfigData {
+  instanceId: string;
+  instanceName: string;
+  instanceOwner: string;
+  instanceType: string;
+  onDelete: () => void;
 }

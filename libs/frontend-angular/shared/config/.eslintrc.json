@@ -1,5 +1,5 @@
 {
-  "extends": ["../../../../../.eslintrc.json"],
+  "extends": ["../../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
@@ -11,6 +11,14 @@
             "type": "attribute",
             "prefix": "carplates",
             "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "carplates",
+            "style": "kebab-case"
           }
         ]
       },

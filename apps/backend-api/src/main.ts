@@ -48,12 +48,13 @@ app.get('/', (req, res) => {
   res.send({ message: 'Welcome to backend-api root page!' });
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!');
 });
 
 // Swagger Init
-swaggerDocs(app, process.env.NODE_PORT);
+swaggerDocs(app, process.env.NODE_PORT || 8080);
 
 // API Routes
 app.use('/api', indexRoutes);

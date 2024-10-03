@@ -33,6 +33,7 @@ import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   implements OnInit, OnDestroy
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @ViewChild('view', { static: true }) modalTemplate!: TemplateRef<any>;
   @ViewChild('view', { static: true, read: ViewContainerRef })
   vcr!: ViewContainerRef;
@@ -67,6 +68,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   });
 
   valueChanged = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialCarplate!: any;
 
   constructor(
