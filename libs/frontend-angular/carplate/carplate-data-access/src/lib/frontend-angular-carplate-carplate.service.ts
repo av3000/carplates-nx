@@ -9,7 +9,7 @@ import {
   CarplateParameters,
 } from '@shared/carplate/types';
 import { PaginatedList } from '@shared/common/types';
-import { BASE_API_TOKEN } from '@shared/common/constants';
+import { BASE_API_TOKEN } from '@carplates/frontend-angular/shared/config';
 
 @Injectable({
   providedIn: 'root',

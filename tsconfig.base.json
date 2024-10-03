@@ -28,6 +28,9 @@
         "libs/backend-express/carplate/schema/src/index.ts"
       ],
       "@backend-express/utils": ["libs/backend-express/utils/src/index.ts"],
+      "@carplates/frontend-angular/shared/config": [
+        "libs/frontend-angular/shared/config/src/index.ts"
+      ],
       "@frontend-angular/carplate/carplate-data-access": [
         "libs/frontend-angular/carplate/carplate-data-access/src/index.ts"
       ],

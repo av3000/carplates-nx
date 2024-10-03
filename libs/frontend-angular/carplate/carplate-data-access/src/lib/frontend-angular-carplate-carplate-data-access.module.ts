@@ -4,7 +4,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
-import { API_URL, BASE_API_TOKEN } from '@shared/common/constants';
+import {
+  API_URL,
+  BASE_API_TOKEN,
+} from '@carplates/frontend-angular/shared/config';
 
 import { CarplateService } from './frontend-angular-carplate-carplate.service';
 import { carplateReducer } from './+store/reducer/frontend-angular-carplate-carplate.reducer';
