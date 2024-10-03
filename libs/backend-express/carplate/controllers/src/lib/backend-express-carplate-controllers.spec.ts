@@ -48,7 +48,8 @@ const mockCarplatesPaginated = {
 };
 
 describe('/api/carplates/', () => {
-  let mockResponse, next, mockRequestWithFilters;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockResponse, next, mockRequestWithFilters, mockRequest: any;
 
   beforeEach(() => {
     mockResponse = {
@@ -159,7 +160,7 @@ describe('/api/carplates/', () => {
   describe(':id', () => {
     it('should return carplate by id and 200 success', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
       };
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
@@ -176,7 +177,7 @@ describe('/api/carplates/', () => {
     it('should return 400 if id is invalid', async () => {
       // GIVEN
       const invalidId = 'invalidId';
-      const mockRequest = {
+      mockRequest = {
         params: { id: invalidId },
       };
       const errResp = {
@@ -203,7 +204,7 @@ describe('/api/carplates/', () => {
     it('should return 200 with empty object if carplate id doesnt exist', async () => {
       // GIVEN
       const validButDoesntExistId = '22223333-1111-4444-6666-423bbe7ec8a1';
-      const mockRequest = {
+      mockRequest = {
         params: { id: validButDoesntExistId },
       };
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
@@ -221,7 +222,7 @@ describe('/api/carplates/', () => {
 
     it('should call next with an error if something goes wrong', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
       };
 
@@ -242,12 +243,8 @@ describe('/api/carplates/', () => {
     it('should return 404 if the carplate does not exist', async () => {
       // GIVEN
       const validNonExistentId = '11111111-1111-1111-1111-111111111111';
-      const mockRequest = {
+      mockRequest = {
         params: { id: validNonExistentId },
-      };
-      const mockResponse = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
       };
 
       jest.spyOn(ValidationHelpers, 'validateIdFormat').mockReturnValue(null);
@@ -267,7 +264,7 @@ describe('/api/carplates/', () => {
 
     it('should return 200 and delete the carplate successfully', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
       };
 
@@ -293,7 +290,7 @@ describe('/api/carplates/', () => {
 
     it('should call next with an error if an exception occurs', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
       };
 
@@ -314,7 +311,7 @@ describe('/api/carplates/', () => {
     it('should return 400 if validation fails', async () => {
       // GIVEN
       const invalidPayload = { plate_name: '', owner: 'John Doe' };
-      const mockRequest = {
+      mockRequest = {
         body: invalidPayload,
       };
 
@@ -339,7 +336,7 @@ describe('/api/carplates/', () => {
     it('should call next with an error if carplate with same name already exists', async () => {
       // GIVEN
       const existingPlateName = 'ABC123';
-      const mockRequest = {
+      mockRequest = {
         body: { plate_name: existingPlateName, owner: 'John Doe' },
       };
 
@@ -367,7 +364,7 @@ describe('/api/carplates/', () => {
 
     it('should return 200 and create a new carplate successfully', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         body: mockCarplate,
       };
 
@@ -401,13 +398,10 @@ describe('/api/carplates/', () => {
 
     it('should call next with an error if something goes wrong', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         body: mockCarplate,
       };
-      const mockResponse = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      };
+
       const error = new Error('Database error');
 
       jest
@@ -426,7 +420,7 @@ describe('/api/carplates/', () => {
   describe('update', () => {
     it('should return 400 if validation fails for request body', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
         body: { plate_name: '' },
       };
@@ -452,7 +446,7 @@ describe('/api/carplates/', () => {
 
     it('should call next with an error if carplate with same plate name already exists', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
         body: { plate_name: mockCarplate.plate_name },
       };
@@ -474,7 +468,7 @@ describe('/api/carplates/', () => {
 
     it('should return 200 and update carplate successfully', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: mockCarplate.id },
         body: {
           plate_name: 'DEF456',
@@ -512,7 +506,7 @@ describe('/api/carplates/', () => {
     it('should return 400 if format is invalid', async () => {
       // GIVEN
       const invalidId = 'invalid-id';
-      const mockRequest = {
+      mockRequest = {
         params: { id: 'invalid-id' },
       };
       const errResp = {
@@ -538,7 +532,7 @@ describe('/api/carplates/', () => {
 
     it('should call next with an error if something goes wrong', async () => {
       // GIVEN
-      const mockRequest = {
+      mockRequest = {
         params: { id: '11111111-2222-3333-4444-423bbe7ec8a1' },
         body: { plate_name: 'NEW123', owner: 'John Doe' },
       };

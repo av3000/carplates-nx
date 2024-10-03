@@ -54,7 +54,7 @@ app.get('/debug-sentry', function mainHandler(req, res) {
 });
 
 // Swagger Init
-swaggerDocs(app, process.env.NODE_PORT);
+swaggerDocs(app, process.env.NODE_PORT || 8080);
 
 // API Routes
 app.use('/api', indexRoutes);

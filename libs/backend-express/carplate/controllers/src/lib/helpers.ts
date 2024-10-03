@@ -99,7 +99,7 @@ const validatePlate = (plate_name: string): ErrorResponse | null => {
 const validateIfAnyFieldsMissing = (
   carplateCreateParameters: CarplateParameters
 ): ErrorResponse | null => {
-  const missingFields = [];
+  const missingFields: string[] = [];
 
   if (!carplateCreateParameters.plate_name) {
     missingFields.push('plate_name');
