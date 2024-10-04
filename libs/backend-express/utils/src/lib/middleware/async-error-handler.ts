@@ -5,7 +5,7 @@ type AsyncEndpointHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void>;
+) => Promise<Response | void | undefined>;
 
 export const asyncErrorHandler =
   (fn: AsyncEndpointHandler) =>
