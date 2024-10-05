@@ -1,6 +1,11 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import { Carplate, CarplateParameters } from '@shared/carplate/types';
 
-export default (sequelize) => {
+export interface CarplateInstance
+  extends Model<Carplate, CarplateParameters>,
+    Carplate {}
+
+export const CarplateModel = (sequelize: Sequelize) => {
   /**
    * @openapi
    * components:
@@ -110,7 +115,7 @@ export default (sequelize) => {
    *         ]
    */
 
-  const Carplate = sequelize.define('carplate', {
+  const Carplate = sequelize.define<CarplateInstance>('carplate', {
     id: {
       primaryKey: true,
       type: DataTypes.UUID,
@@ -130,6 +135,12 @@ export default (sequelize) => {
       validate: {
         len: [3, 30],
       },
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
     },
   });
 
