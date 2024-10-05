@@ -16,7 +16,11 @@ import * as Helpers from './helpers';
 
 const CarplateSchema = db.CarplateSchema;
 
-export async function create(req: Request, res: Response, next: NextFunction) {
+export async function create(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void | undefined> {
   try {
     const isValidationFailed = Helpers.validateCarplateCreate(req.body);
     if (isValidationFailed) {
@@ -24,7 +28,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
       return;
     }
 
-    const foundCarplate: Carplate = await CarplateSchema.findOne({
+    const foundCarplate = await CarplateSchema.findOne({
       where: { plate_name: req.body.plate_name.toUpperCase() },
     });
 
@@ -41,15 +45,19 @@ export async function create(req: Request, res: Response, next: NextFunction) {
       owner: req.body.owner,
     };
 
-    const newCarplate: Carplate = await CarplateSchema.create(payload);
+    const newCarplateInstance = await CarplateSchema.create(payload);
 
-    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplate);
+    res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplateInstance);
   } catch (err) {
     next(err);
   }
 }
 
-export async function update(req: Request, res: Response, next: NextFunction) {
+export async function update(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void | undefined> {
   try {
     const isValidationFailed = Helpers.validateCarplateUpdate(req.body);
     if (isValidationFailed) {
@@ -64,7 +72,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
       return res.status(StatusCode.HTTP_400_BAD_REQUEST).json(idFormatError);
     }
 
-    const foundCarplate: Carplate = await CarplateSchema.findOne({
+    const foundCarplate = await CarplateSchema.findOne({
       where: { id: id },
     });
 
@@ -102,14 +110,17 @@ export async function update(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function findAll(req: Request, res: Response, next: NextFunction) {
+export async function findAll(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void | undefined> {
   try {
-    // TODO: validate if filters are valid to query
-    const page: number = parseInt(req.query.page as string) ?? DEFAULT_PAGE;
+    const page: number = parseInt(req.query.page as string) || DEFAULT_PAGE;
     const size: number =
-      parseInt(req.query.size as string) ?? DEFAULT_ITEMS_PER_PAGE;
-    const plate_name: string = (req.query.plate_name as string) ?? '';
-    const owner: string = (req.query.owner as string) ?? '';
+      parseInt(req.query.size as string) || DEFAULT_ITEMS_PER_PAGE;
+    const plate_name: string = (req.query.plate_name as string) || '';
+    const owner: string = (req.query.owner as string) || '';
 
     const plate_nameLookup = plate_name
       ? { [Op.like]: `%${plate_name}%` }
@@ -146,7 +157,11 @@ export async function findAll(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function findOne(req: Request, res: Response, next: NextFunction) {
+export async function findOne(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void | undefined> {
   try {
     const { id } = req.params;
 
@@ -162,7 +177,11 @@ export async function findOne(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function decomm(req: Request, res: Response, next: NextFunction) {
+export async function decomm(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void | undefined> {
   try {
     const { id } = req.params;
     const idFormatError = Helpers.validateIdFormat(id);

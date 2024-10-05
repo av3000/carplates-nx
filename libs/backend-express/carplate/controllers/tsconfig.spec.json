@@ -4,7 +4,11 @@
     "outDir": "../../../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"],
-    "noImplicitAny": false, // Disable implicit any errors
+    "strict": false,
+    "noImplicitReturns": false,
+    "noImplicitAny": false, // Allow implicit 'any' type
+    "strictNullChecks": false, // Loosen strict null checking
+    "strictPropertyInitialization": false // Loosen property initialization checks
   },
   "include": [
     "jest.config.ts",

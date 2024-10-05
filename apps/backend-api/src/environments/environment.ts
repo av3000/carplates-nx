@@ -5,7 +5,7 @@ import { ExpressEnvironment } from '@shared/common/types';
 
 export const environment: ExpressEnvironment = {
   production: false,
-  apiUrl: process.env.API_URL,
-  port: process.env.NODE_PORT,
-  sentryDsn: process.env.SENTRY_EXPRESS_DSN,
+  apiUrl: process.env.API_URL || 'http://localhost',
+  port: process.env.NODE_PORT || '8080',
+  sentryDsn: process.env.SENTRY_EXPRESS_DSN || '',
 };

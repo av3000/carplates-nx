@@ -1,7 +1,8 @@
-import { Op } from 'sequelize';
+import { GroupedCountResultItem, Op } from 'sequelize';
 
 import { StatusCode } from '@shared/common/enums';
 import { Pagination } from '@shared/common/utils';
+import { CarplateInstance } from '@backend-express/carplate/schema';
 import { db } from '@backend-express/utils';
 
 import {
@@ -15,28 +16,28 @@ import {
 import * as ValidationHelpers from './helpers';
 import * as Helpers from './helpers';
 
-const mockCarplates = [
+const mockCarplates: CarplateInstance[] = [
   {
     id: '69afb3b6-871f-48c4-a372-423bbe7ec8a1',
     plate_name: 'ABC123',
     owner: 'John Doe',
     createdAt: '2024-09-09T14:44:39.000Z',
     updatedAt: '2024-09-09T14:44:39.000Z',
-  },
+  } as CarplateInstance,
   {
     id: '69afb3b6-871f-48c4-a372-423bbe7ec8a1',
     plate_name: 'XXX123',
     owner: 'greg johnsen',
     createdAt: '2024-09-08T14:44:39.000Z',
     updatedAt: '2024-09-08T14:44:39.000Z',
-  },
+  } as CarplateInstance,
   {
     id: 'ea4f1111-19ac-4ec0-b094-ff3b40e549c7',
     plate_name: 'ABC321',
     owner: 'John Doetwo',
     createdAt: '2024-09-07T14:40:34.000Z',
     updatedAt: '2024-09-07T14:40:34.000Z',
-  },
+  } as CarplateInstance,
 ];
 const mockCarplate = mockCarplates[0];
 const mockCarplatesPaginated = {
@@ -76,7 +77,7 @@ describe('/api/carplates/', () => {
       jest.spyOn(db.CarplateSchema, 'findAndCountAll').mockResolvedValue({
         count: mockCarplates.length,
         rows: mockCarplates,
-      });
+      } as unknown as { count: GroupedCountResultItem[]; rows: CarplateInstance[] });
 
       // WHEN
       await findAll(mockRequestWithFilters, mockResponse, next);
@@ -116,6 +117,9 @@ describe('/api/carplates/', () => {
         const mockDBResponse = {
           count: [mockCarplates[0]].length,
           rows: [mockCarplates[0]],
+        } as unknown as {
+          count: GroupedCountResultItem[];
+          rows: CarplateInstance[];
         };
 
         jest
@@ -344,7 +348,7 @@ describe('/api/carplates/', () => {
         id: '123',
         plate_name: existingPlateName,
         owner: 'John Doe',
-      };
+      } as CarplateInstance;
 
       jest
         .spyOn(ValidationHelpers, 'validateCarplateCreate')
@@ -516,9 +520,7 @@ describe('/api/carplates/', () => {
       jest
         .spyOn(ValidationHelpers, 'validateIdFormat')
         .mockReturnValue(errResp);
-      jest
-        .spyOn(db.CarplateSchema, 'findByPk')
-        .mockResolvedValue(ValidationHelpers.errorResponses.carplateIdFormat);
+      jest.spyOn(db.CarplateSchema, 'findByPk').mockResolvedValue(null);
 
       // WHEN
       await update(mockRequest, mockResponse, next);

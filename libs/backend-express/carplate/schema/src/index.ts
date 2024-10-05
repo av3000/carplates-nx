@@ -1,1 +1,1 @@
-export { default as CarplateModel } from './carplate.models';
+export { CarplateModel, CarplateInstance } from './carplate.models';
