@@ -71,6 +71,12 @@ git commit -m "type(scope):Your commit message"
 
 Use `--no-verify` flag to skip all hooks for a specific commit.
 
+For `pre-push` hook best experience use terminal rather than plugins like git graph.
+
+```bash
+git push --set-upstream origin <branch-name>
+```
+
 ## NX Graph
 
 Visual graph of dependencies within workspace. Open the graph on [http://127.0.0.1:4211/projects](http://127.0.0.1:4211/projects)

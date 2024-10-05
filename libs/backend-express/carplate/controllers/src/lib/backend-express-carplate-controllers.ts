@@ -28,7 +28,7 @@ export async function create(
       return;
     }
 
-    const foundCarplate = await db.CarplateSchema.findOne({
+    const foundCarplate = await CarplateSchema.findOne({
       where: { plate_name: req.body.plate_name.toUpperCase() },
     });
 
@@ -45,7 +45,7 @@ export async function create(
       owner: req.body.owner,
     };
 
-    const newCarplateInstance = await db.CarplateSchema.create(payload);
+    const newCarplateInstance = await CarplateSchema.create(payload);
 
     res.status(StatusCode.HTTP_200_SUCCESS_REQUEST).json(newCarplateInstance);
   } catch (err) {
