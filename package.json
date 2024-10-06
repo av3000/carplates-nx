@@ -6,7 +6,7 @@
     "angular-app:dev": "nx serve carplates-app",
     "backend-api:dev": "nx serve backend-api",
     "angular-app:dev:docker": "nx serve carplates-app --host=0.0.0.0",
-    "backend-api:dev:docker": "nx serve backend-api --host=0.0.0.0",
+    "backend-api:dev:docker": "nx serve backend-api --configuration=development --host=0.0.0.0",
     "dep-graph": "nx dep-graph",
     "affected:apps": "nx affected:apps",
     "affected:libs": "nx affected:libs",
