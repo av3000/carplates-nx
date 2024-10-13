@@ -1,4 +1,8 @@
-# Carplates App - Carplate numbers CRUD App.
+# Carplates App
+
+Car plates number CRUD application with Angular and Express
+
+![Application Screenshot](./docs/assets/carplates-crud.gif)
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
