@@ -22,9 +22,17 @@ Unit testing written in [Jest](https://jestjs.io/).
 
 [Tailwindcss](https://tailwindcss.com/) utility classes for component styling.
 
-## Features
+## Project features
 
-- REST API endpoints for carplate Creation, Updating, Reading, and Deleting.
+- [NX monorepo](https://nx.dev/ci/features) based libraries for advanced CI to build, lint or test only affected
+- Express REST CRUD API endpoints (Swagger for visual interaction)
+- MySQL with sequelize ORM
+- Data access with NgRx (Facade design pattern for simplified interface and single point access)
+- Unit testing with Jest
+- Lazy loadable modules and routable modal components
+- Multiple shared reusable common(constants, types, utilities for pagination/validators, types) and UI libraries/components to use across Angular and Express apps
+- Docker setup
+- Git hooks with husky and commitlint
 
 ## Understand this workspace
 

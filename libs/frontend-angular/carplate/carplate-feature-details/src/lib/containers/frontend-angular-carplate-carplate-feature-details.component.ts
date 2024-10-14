@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -29,6 +30,7 @@ import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
   selector: 'carplates-frontend-angular-carplate-carplate-feature-details',
   templateUrl:
     './frontend-angular-carplate-carplate-feature-details.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   implements OnInit, OnDestroy
