@@ -14,7 +14,7 @@ Built with [Angular](https://angular.dev/) and [Express](https://expressjs.com/)
 
 [NgRx](https://ngrx.io/) state management.
 
-[RxJS](https://rxjs.dev/) reactive programming library for asynchronous or callback-based code.
+[RxJS](https://rxjs.dev/) reactive programming library for asynchronous requests, events and data streams handling.
 
 [Sentry](https://docs.sentry.io/) tracing and error monitoring.
 

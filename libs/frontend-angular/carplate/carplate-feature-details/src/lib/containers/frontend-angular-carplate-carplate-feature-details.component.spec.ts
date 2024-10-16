@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
-  ChangeDetectionStrategy,
   DebugElement,
   TemplateRef,
   Type,
@@ -94,12 +93,13 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
       ],
       imports: [ReactiveFormsModule],
     })
-      .overrideComponent(
-        FrontendAngularCarplateCarplateFeatureDetailsComponent,
-        {
-          set: { changeDetection: ChangeDetectionStrategy.Default },
-        }
-      )
+      // Workaround avoiding changeDetection.OnPush nuances
+      // .overrideComponent(
+      //   FrontendAngularCarplateCarplateFeatureDetailsComponent,
+      //   {
+      //     set: { changeDetection: ChangeDetectionStrategy.Default },
+      //   }
+      // )
       .compileComponents();
 
     fixture = TestBed.createComponent(
@@ -195,14 +195,17 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
 
           it(testTemplateDescription, () => {
             // GIVEN
-            const ownerControl = component.carplateForm.get('owner');
-            ownerControl?.patchValue(test.value);
-            ownerControl?.markAsDirty();
+            const ownerInput = de.query(
+              By.css('input[name="owner"]')
+            ).nativeElement;
+            ownerInput.value = test.value;
+            ownerInput.dispatchEvent(new Event('input'));
+
             // WHEN
             fixture.detectChanges();
 
             // THEN
-            if (ownerControl?.errors && !test.valid) {
+            if (test.errorTest) {
               const renderedErrHint = de.query(
                 By.css(`[data-testid="${test.errorTest?.errorTestId}"]`)
               ).nativeElement.textContent;
@@ -278,13 +281,16 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
 
           it(testTemplateDescription, () => {
             // GIVEN
-            const plateNameControl = component.carplateForm.get('plate_name');
-            plateNameControl?.patchValue(test.value);
-            plateNameControl?.markAsDirty();
+            const plateNameInput = de.query(
+              By.css('input[name="plate_name"]')
+            ).nativeElement;
+            plateNameInput.value = test.value;
+            plateNameInput.dispatchEvent(new Event('input'));
+
             // WHEN
             fixture.detectChanges();
             // THEN
-            if (plateNameControl?.errors && !test.valid) {
+            if (test.errorTest) {
               const renderedErrHint = de.query(
                 By.css(`[data-testid="${test.errorTest?.errorTestId}"]`)
               );
