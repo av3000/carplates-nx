@@ -38,7 +38,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "backend-api:build:development"
+          "buildTarget": "backend-api:build:development",
+          "watch": true
         },
         "production": {
           "buildTarget": "backend-api:build:production"

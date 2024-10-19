@@ -143,26 +143,28 @@
               </div>
             </div>
 
-            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
-              <label
-                for="createdAt"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Created At</label
-              >
-              <div class="dark:text-white">
-                {{ createdAtValue | date : 'short' }}
+            <ng-container *ngIf="!isNew && (isLoaded$ | async)">
+              <div class="col-span-2 sm:col-span-1">
+                <label
+                  for="createdAt"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Created At</label
+                >
+                <div class="dark:text-white">
+                  {{ createdAtValue | date : 'short' }}
+                </div>
               </div>
-            </div>
-            <div *ngIf="!isNew" class="col-span-2 sm:col-span-1">
-              <label
-                for="updatedAt"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Updated At</label
-              >
-              <div class="dark:text-white">
-                {{ updatedAtValue | date : 'short' }}
+              <div class="col-span-2 sm:col-span-1">
+                <label
+                  for="updatedAt"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Updated At</label
+                >
+                <div class="dark:text-white">
+                  {{ updatedAtValue | date : 'short' }}
+                </div>
               </div>
-            </div>
+            </ng-container>
           </div>
         </form>
         <div class="footer">

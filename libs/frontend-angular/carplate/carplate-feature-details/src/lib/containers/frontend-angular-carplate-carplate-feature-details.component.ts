@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -29,6 +30,7 @@ import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
   selector: 'carplates-frontend-angular-carplate-carplate-feature-details',
   templateUrl:
     './frontend-angular-carplate-carplate-feature-details.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FrontendAngularCarplateCarplateFeatureDetailsComponent
   implements OnInit, OnDestroy
@@ -69,7 +71,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
 
   valueChanged = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialCarplate!: any;
+  currentCarplate!: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -133,11 +135,11 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
         this.ownerControl.valueChanges.pipe(startWith(this.ownerControl.value)),
       ])
         .pipe(
-          filter(() => !!this.initialCarplate),
+          filter(() => !!this.currentCarplate),
           map(([plateName, owner]) => {
             return (
-              plateName !== this.initialCarplate.plate_name ||
-              owner !== this.initialCarplate.owner
+              plateName !== this.currentCarplate.plate_name ||
+              owner !== this.currentCarplate.owner
             );
           })
         )
@@ -173,7 +175,7 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
               updatedAt: carplate?.updatedAt,
             });
 
-            this.initialCarplate = this.carplateForm.value;
+            this.currentCarplate = this.carplateForm.value;
           })
       );
     }
@@ -193,10 +195,10 @@ export class FrontendAngularCarplateCarplateFeatureDetailsComponent
       } else {
         this.facade.updateCarplate(this.id ?? '', {
           plate_name:
-            plate_name !== this.initialCarplate.plate_name
+            plate_name !== this.currentCarplate.plate_name
               ? plate_name ?? ''
               : '',
-          owner: owner !== this.initialCarplate.owner ? owner ?? '' : '',
+          owner: owner !== this.currentCarplate.owner ? owner ?? '' : '',
         });
       }
 

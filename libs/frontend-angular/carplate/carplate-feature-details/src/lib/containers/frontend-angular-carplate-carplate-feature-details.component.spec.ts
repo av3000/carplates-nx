@@ -1,6 +1,6 @@
 import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   DebugElement,
@@ -18,7 +18,7 @@ import {
 } from '@frontend-angular/shared/ui/modal';
 import { defaultSmallModalOptions } from '@shared/common/constants';
 import { FrontendAngularCarplateCarplateFeatureDetailsComponent } from './frontend-angular-carplate-carplate-feature-details.component';
-import { MAX_OWNER_LENGTH, MIN_OWNER_LENGTH, textFields } from '../..';
+import { textFields } from '../..';
 
 describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
   let component: FrontendAngularCarplateCarplateFeatureDetailsComponent;
@@ -55,7 +55,6 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [FrontendAngularCarplateCarplateFeatureDetailsComponent],
       providers: [
-        FormBuilder,
         {
           provide: ActivatedRoute,
           useValue: {
@@ -93,7 +92,15 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
         },
       ],
       imports: [ReactiveFormsModule],
-    }).compileComponents();
+    })
+      // Workaround avoiding changeDetection.OnPush nuances
+      // .overrideComponent(
+      //   FrontendAngularCarplateCarplateFeatureDetailsComponent,
+      //   {
+      //     set: { changeDetection: ChangeDetectionStrategy.Default },
+      //   }
+      // )
+      .compileComponents();
 
     fixture = TestBed.createComponent(
       FrontendAngularCarplateCarplateFeatureDetailsComponent
@@ -112,7 +119,6 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
     it('should open the modal on initialization', () => {
       // GIVEN
       const containerDiv = de.query(By.css('.container'));
-      console.log('');
       const header = de.query(By.css('.header')).nativeElement.innerHTML;
       // WHEN
       fixture.detectChanges();
@@ -144,25 +150,25 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
       describe('owner', () => {
         const ownerValidationCases = [
           {
-            description: 'cannot contain numbers',
+            description: textFields.owner.errors.pattern.errorMessage,
             value: 'alanas2',
             valid: false,
             errorTest: textFields.owner.errors.pattern,
           },
           {
-            description: 'cannot contain special symbols',
+            description: textFields.owner.errors.pattern.errorMessage,
             value: 'alanas#',
             valid: false,
             errorTest: textFields.owner.errors.pattern,
           },
           {
-            description: `minimum ${MIN_OWNER_LENGTH} symbols`,
+            description: textFields.owner.errors.minLength.errorMessage,
             value: 'al',
             valid: false,
             errorTest: textFields.owner.errors.minLength,
           },
           {
-            description: `minimum ${MIN_OWNER_LENGTH} symbols and maximum ${MAX_OWNER_LENGTH}`,
+            description: textFields.owner.errors.minLength.errorMessage,
             value: 'alanas',
             valid: true,
             errorTest: null,
@@ -170,23 +176,36 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
         ];
 
         ownerValidationCases.forEach((test) => {
-          it(`${test.description}: ${test.value} - valid: ${test.valid}`, () => {
+          const testDescription = `${test.description}: ${test.value} is ${
+            test.valid ? 'valid' : 'invalid'
+          }`;
+          it(testDescription, () => {
+            // GIVEN
             const ownerControl = component.carplateForm.get('owner');
             ownerControl?.patchValue(test.value);
-            ownerControl?.markAsDirty();
-            fixture.detectChanges();
+            // THEN
             expect(ownerControl?.valid).toBe(test.valid);
           });
 
-          it(`should ${test.valid ? '' : 'not'} render error message for '${
-            test.description
-          }'`, () => {
-            const ownerControl = component.carplateForm.get('owner');
-            ownerControl?.patchValue(test.value);
-            ownerControl?.markAsDirty();
+          const testTemplateDescription = `should${
+            test.valid ? ' not' : ''
+          } render error message for '${test.description}' when value is ${
+            test.value
+          }`;
+
+          it(testTemplateDescription, () => {
+            // GIVEN
+            const ownerInput = de.query(
+              By.css('input[name="owner"]')
+            ).nativeElement;
+            ownerInput.value = test.value;
+            ownerInput.dispatchEvent(new Event('input'));
+
+            // WHEN
             fixture.detectChanges();
 
-            if (ownerControl?.errors && !test.valid) {
+            // THEN
+            if (test.errorTest) {
               const renderedErrHint = de.query(
                 By.css(`[data-testid="${test.errorTest?.errorTestId}"]`)
               ).nativeElement.textContent;
@@ -199,43 +218,43 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
       describe('plate_name', () => {
         const plateNameValidationCases = [
           {
-            description: 'cannot contain special symbols',
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'abc12#',
             valid: false,
             errorTest: textFields.plateName.errors.pattern,
           },
           {
-            description: `must be 6 symbols length`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'abc123',
             valid: true,
             errorTest: null,
           },
           {
-            description: `must be 6 symbols length`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'abc12',
             valid: false,
             errorTest: textFields.plateName.errors.pattern,
           },
           {
-            description: `must be 6 symbols length`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'abc1232',
             valid: false,
             errorTest: textFields.plateName.errors.pattern,
           },
           {
-            description: `first 3 symbols must be letters and remaining 3 symbols numbers`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'ABC123',
             valid: true,
             errorTest: null,
           },
           {
-            description: `first 3 symbols must be letters and remaining 3 symbols numbers`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'AB1123',
             valid: false,
             errorTest: textFields.plateName.errors.pattern,
           },
           {
-            description: `first 3 symbols must be letters and remaining 3 symbols numbers`,
+            description: textFields.plateName.errors.pattern.errorMessage,
             value: 'ABAA23',
             valid: false,
             errorTest: textFields.plateName.errors.pattern,
@@ -243,28 +262,35 @@ describe('FrontendAngularCarplateCarplateFeatureDetailsComponent', () => {
         ];
 
         plateNameValidationCases.forEach((test) => {
-          it(`${test.description}: ${test.value} - valid: ${test.valid}`, () => {
+          const testDescription = `${test.description}: ${test.value} is ${
+            test.valid ? 'valid' : 'invalid'
+          }`;
+          it(testDescription, () => {
             // GIVEN
             const plateNameControl = component.carplateForm.get('plate_name');
             plateNameControl?.patchValue(test.value);
-            plateNameControl?.markAsDirty();
-            // WHEN
-            fixture.detectChanges();
             // THEN
             expect(plateNameControl?.valid).toBe(test.valid);
           });
 
-          it(`should ${test.valid ? '' : 'not'} render error message for '${
-            test.description
-          }'`, () => {
+          const testTemplateDescription = `should${
+            test.valid ? ' not' : ''
+          } render error message for '${test.description} when value is ${
+            test.value
+          }'`;
+
+          it(testTemplateDescription, () => {
             // GIVEN
-            const plateNameControl = component.carplateForm.get('plate_name');
-            plateNameControl?.patchValue(test.value);
-            plateNameControl?.markAsDirty();
+            const plateNameInput = de.query(
+              By.css('input[name="plate_name"]')
+            ).nativeElement;
+            plateNameInput.value = test.value;
+            plateNameInput.dispatchEvent(new Event('input'));
+
             // WHEN
             fixture.detectChanges();
-
-            if (plateNameControl?.errors && !test.valid) {
+            // THEN
+            if (test.errorTest) {
               const renderedErrHint = de.query(
                 By.css(`[data-testid="${test.errorTest?.errorTestId}"]`)
               );
