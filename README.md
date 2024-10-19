@@ -3,6 +3,8 @@
 Car plates number CRUD application with Angular and Express
 
 ![Application Screenshot](./docs/assets/images/carplates-crud.gif)
+![Application Screenshot2](./docs/assets/images/carplates-dev-short.gif)
+![Application Screenshot3](./docs/assets/images/v4.gif)
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
