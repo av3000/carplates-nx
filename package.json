@@ -21,6 +21,8 @@
     "test": "nx test --verbose",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
+    "carplates-e2e": "DISABLE_SENTRY=true nx e2e carplates-app-e2e",
+    "backend-api-e2e": "nx e2e backend-api-e2e",
     "nx": "nx",
     "update": "nx migrate latest",
     "format:check": "nx format:check",
