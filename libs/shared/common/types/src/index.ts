@@ -15,17 +15,3 @@ export {
   Pagination,
 };
 export { ErrorResponse };
-
-export interface ExpressEnvironment {
-  production: boolean;
-  apiUrl: string;
-  port: string;
-  sentryDsn: string;
-}
-
-export interface AngularEnvironment {
-  production: boolean;
-  apiUrl: string;
-  port: string;
-  sentryDsn: string;
-}

@@ -1,8 +1,11 @@
-import { AngularEnvironment } from '@shared/common/types';
+import { Environment } from '@shared/common/environment';
 
-export const environment: AngularEnvironment = {
+const isSentryEnabled = process.env['SENTRY_ENABLED'] === 'true';
+
+export const environment: Environment = {
   production: true,
   apiUrl: process.env['API_URL'] || 'https://localhost',
   port: process.env['ANGULAR_PORT'] || '4200',
   sentryDsn: process.env['SENTRY_ANGULAR_DSN'] || '',
+  sentryEnabled: isSentryEnabled,
 };

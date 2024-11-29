@@ -1,13 +1,12 @@
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
-require('dotenv').config();
-
-const isSentryEnabled = process.env.SENTRY_ENABLED === 'true';
+import { logger } from './logger';
+import { environment } from './environments/environment';
 
 // Ensure to call this before importing any other modules!
-if (isSentryEnabled) {
+if (environment.sentryEnabled) {
   Sentry.init({
-    dsn: process.env.SENTRY_EXPRESS_DSN,
+    dsn: environment.sentryDsn,
 
     integrations: [
       // Add our Profiling integration
@@ -21,6 +20,8 @@ if (isSentryEnabled) {
     // This is relative to tracesSampleRate
     profilesSampleRate: 1.0,
   });
+
+  logger.info('Sentry is enabled. DSN: ' + environment.sentryDsn);
 } else {
-  console.log('Sentry is disabled for this environment.');
+  logger.warn('Sentry is disabled for this environment.');
 }
