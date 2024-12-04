@@ -85,12 +85,14 @@
                 <td
                   class="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.id }}</div>
+                  <div data-cy="carplate-list-item-id">{{ carplate.id }}</div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.plate_name }}</div>
+                  <div data-cy="carplate-list-item-plate-name">
+                    {{ carplate.plate_name }}
+                  </div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
@@ -110,14 +112,19 @@
                 <td
                   class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <carplates-menu-dropdown #menuDropdown>
+                  <carplates-menu-dropdown
+                    #menuDropdown
+                    data-cy="carplates-list-item-actions-open-button"
+                  >
                     <a
+                      data-cy="carplates-list-item-details-open-button"
                       [routerLink]="'/carplates/' + carplate.id"
                       (click)="menuDropdown.closeDropdown()"
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >View Details</a
                     >
                     <a
+                      data-cy="carplates-list-item-delete-open-button"
                       (click)="
                         menuDropdown.closeDropdown();
                         openDeleteCarplateModal(carplate)
