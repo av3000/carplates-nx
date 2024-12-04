@@ -126,8 +126,3 @@ Most commonly used:
 - `npm run affected:build`
 - `npm run affected:test`
 - `npm run affected:lint`
-
-<!-- TODO: Use injectionToken to inject environment variables, stumbled while fixing sentry requests issue -->
-
-https://medium.com/shopstyle-engineering/angular-injection-token-for-sharing-environment-across-nx-libraries-applications-befb9d3c6c67
-https://github.com/amakhrov/angular-sentry-example/blob/master/src/app/app.module.ts
