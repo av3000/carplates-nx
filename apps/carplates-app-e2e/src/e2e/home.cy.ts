@@ -11,6 +11,16 @@ describe('Carplates Page', () => {
     getGreeting().contains('CarPlates App');
   });
 
+  it('should have carplates loaded', () => {
+    cy.intercept(
+      'GET',
+      `${Cypress.env('backendApiUrl')}/api/carplates?page=1&size=3`,
+      { fixture: 'carplates.json' }
+    ).as('getCarplatesList');
+    cy.wait('@getCarplatesList');
+    cy.get('[data-cy="carplates-list-item"]').should('have.length', 3);
+  });
+
   it('should display create carplate button, filters form, carplates list and pagination', () => {
     cy.get('[data-cy="create-carplate-modal-button"]').should('exist');
     cy.get('[data-cy="carplate-list-filters-form"]').should('exist');
