@@ -20,6 +20,8 @@ Built with [Angular](https://angular.dev/) and [Express](https://expressjs.com/)
 
 Unit testing written in [Jest](https://jestjs.io/).
 
+E2E testing written in [Cypress](https://docs.cypress.io/)
+
 [Tailwindcss](https://tailwindcss.com/) utility classes for component styling.
 
 ## Project features
@@ -70,7 +72,7 @@ Run `npx nx test <LIBRARY-NAME>`. Library name can be found in jest.config.ts of
 npx nx test frontend-angular-carplate-carplate-data-access
 ```
 
-## Developemnt Experience
+## Development Experience
 
 ### Husky git hooks with Commitlint conventions
 
@@ -103,13 +105,24 @@ For `pre-push` hook best experience use terminal rather than plugins like git gr
 git push --set-upstream origin <branch-name>
 ```
 
+### Testing
+
+- `npm run affected:test` Unit testing for all affected libraries.
+- `npm run test <LIBRARY_NAME>` Unit testing for specific library.
+- `npm run affected:e2e` E2E testing for all affected projects.
+- `npm run carplates-e2e:watch` E2E testing angular carplates project.
+
+#### Cypress e2e
+
+[NX way of running cypress](https://nx.dev/nx-api/cypress#e2e-testing)
+
 ## NX Graph
 
 Visual graph of dependencies within workspace. Open the graph on [http://127.0.0.1:4211/projects](http://127.0.0.1:4211/projects)
 
 Most commonly used:
 
-- `npx nx affected:dep-graph`
-- `npx nx affected:build`
-- `npx nx affected:test`
-- `npx nx affected:lint`
+- `npm run affected:dep-graph`
+- `npm run affected:build`
+- `npm run affected:test`
+- `npm run affected:lint`

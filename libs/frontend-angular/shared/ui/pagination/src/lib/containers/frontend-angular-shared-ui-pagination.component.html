@@ -1,7 +1,8 @@
-<div [formGroup]="formGroup">
+<div [formGroup]="formGroup" data-cy="pagination">
   <div class="flex justify-between mb-1 sm:mb-0 pt-2">
     <div class="pr-4 py-2">
-      Total Items: <strong>{{ totalCount }}</strong>
+      Total Items:
+      <strong data-cy="pagination-total-items">{{ totalCount }}</strong>
     </div>
     <div class="flex">
       <label class="pr-4 py-2" for="display">Display</label>

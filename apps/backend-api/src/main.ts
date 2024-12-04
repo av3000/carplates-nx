@@ -4,7 +4,6 @@ import express, { Express } from 'express';
 import * as Sentry from '@sentry/node';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 
@@ -12,6 +11,7 @@ import { db, errorMiddleware, swaggerDocs } from '@backend-express/utils';
 import { carplateRoutes } from '@backend-express/carplate/routes';
 import indexRoutes from './app/routes/index';
 import { environment } from './environments/environment';
+import { logger, morganMiddleware } from './logger';
 
 const FLUSH_DB: boolean = process.env.FLUSH_DB === 'true';
 
@@ -37,7 +37,7 @@ app.use(
   })
 );
 
-app.use(logger('dev'));
+app.use(morganMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -62,7 +62,8 @@ swaggerDocs(app, process.env.NODE_PORT || 8080);
 app.use('/api', indexRoutes);
 app.use('/api/carplates', carplateRoutes);
 
-console.log('Connecting to database...');
+logger.info('Connecting to database...');
+logger.info(`Allowed Origins: ${allowedOrigins.join(', ')}`);
 
 Sentry.setupExpressErrorHandler(app);
 app.use(errorMiddleware);
@@ -75,14 +76,14 @@ app.use(errorMiddleware);
 db.sequelize
   .sync({ force: FLUSH_DB })
   .then(() => {
-    console.log('Synched db.');
+    logger.info('Synched db.');
     const server = app.listen(process.env.NODE_PORT, () => {
-      console.log(
+      logger.info(
         `Listening at ${process.env.API_URL}:${process.env.NODE_PORT}`
       );
     });
-    server.on('error', console.error);
+    server.on('error', (err) => logger.error('Server error occurred:', err));
   })
   .catch((err) => {
-    console.log('Failed to sync db: ' + err.message);
+    logger.error('Failed to sync database:', err);
   });

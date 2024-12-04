@@ -6,9 +6,11 @@ import { RouterModule, Router } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ENVIRONMENT } from '@shared/common/environment';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +25,10 @@ import { routes } from './app.routes';
     RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
   ],
   providers: [
+    {
+      provide: ENVIRONMENT,
+      useValue: environment,
+    },
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({

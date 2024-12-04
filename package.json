@@ -21,6 +21,9 @@
     "test": "nx test --verbose",
     "lint": "nx workspace-lint && nx lint",
     "e2e": "nx e2e",
+    "carplates-e2e": "cross-env SENTRY_ENABLED=false nx e2e carplates-app-e2e",
+    "carplates-e2e:watch": "cross-env SENTRY_ENABLED=false nx e2e carplates-app-e2e --watch",
+    "backend-api-e2e": "nx e2e backend-api-e2e",
     "nx": "nx",
     "update": "nx migrate latest",
     "format:check": "nx format:check",
@@ -30,7 +33,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint --fix --max-warnings=0"
+      "eslint --fix --cache --max-warnings=0"
     ],
     "*.{ts,html,scss}": [
       "prettier --write"
@@ -101,6 +104,7 @@
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "autoprefixer": "^10.4.0",
+    "cross-env": "^7.0.3",
     "cypress": "^12.2.0",
     "dotenv-webpack": "^8.1.0",
     "eslint": "~8.15.0",

@@ -2,11 +2,13 @@
   <h3>Filters</h3>
   <div class="flex items-center justify-between">
     <div
+      data-cy="carplate-list-filters-form"
       [formGroup]="carplateListFiltersForm"
       class="my-2 flex sm:flex-row flex-col"
     >
       <div>
         <input
+          data-cy="carplate-list-filters-form-plate-name"
           placeholder="Plate Name"
           formControlName="plate_name"
           class="rounded-l border border-slate-900 border-b block pl-8 py-2 w-full"
@@ -14,6 +16,7 @@
       </div>
       <div>
         <input
+          data-cy="carplate-list-filters-form-owner"
           placeholder="Owner"
           formControlName="owner"
           class="rounded-r border border-slate-900 border-b block pl-8 py-2 w-full"
@@ -23,6 +26,7 @@
     <a
       class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       routerLink="/carplates/new"
+      data-cy="create-carplate-modal-button"
     >
       Create Carplate
     </a>
@@ -31,7 +35,7 @@
   <div class="flex flex-wrap -mx-4">
     <div class="w-full px-4">
       <div class="max-w-full overflow-x-auto">
-        <table class="w-full table-auto">
+        <table class="w-full table-auto" data-cy="carplate-list">
           <thead>
             <tr class="text-center bg-slate-900">
               <th
@@ -74,21 +78,28 @@
               Loading...
             </div>
             <ng-template #contentLoaded>
-              <tr *ngFor="let carplate of carplatesList.rows">
+              <tr
+                data-cy="carplate-list-item"
+                *ngFor="let carplate of carplatesList.rows"
+              >
                 <td
                   class="text-dark border-b border-l border-[#E8E8E8] bg-[#F3F6FF] dark:bg-dark-3 dark:border-dark dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.id }}</div>
+                  <div data-cy="carplate-list-item-id">{{ carplate.id }}</div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.plate_name }}</div>
+                  <div data-cy="carplate-list-item-plate-name">
+                    {{ carplate.plate_name }}
+                  </div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.owner }}</div>
+                  <div data-cy="carplate-list-item-owner">
+                    {{ carplate.owner }}
+                  </div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
@@ -103,14 +114,19 @@
                 <td
                   class="text-dark border-b border-r border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <carplates-menu-dropdown #menuDropdown>
+                  <carplates-menu-dropdown
+                    #menuDropdown
+                    data-cy="carplate-list-item-actions-open-button"
+                  >
                     <a
+                      data-cy="carplate-list-item-details-open-button"
                       [routerLink]="'/carplates/' + carplate.id"
                       (click)="menuDropdown.closeDropdown()"
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >View Details</a
                     >
                     <a
+                      data-cy="carplate-list-item-delete-open-button"
                       (click)="
                         menuDropdown.closeDropdown();
                         openDeleteCarplateModal(carplate)

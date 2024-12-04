@@ -1,0 +1,29 @@
+{
+  "count": 3,
+  "perPage": 3,
+  "totalPages": 1,
+  "currentPage": 1,
+  "rows": [
+    {
+      "id": "562dbb1f-bcfc-4e6c-994d-66e43441b27c",
+      "plate_name": "TOM777",
+      "owner": "Tom Cruz",
+      "createdAt": "2024-10-16T15:56:30.000Z",
+      "updatedAt": "2024-11-23T14:37:32.000Z"
+    },
+    {
+      "id": "57655baa-2651-4d52-a6e7-50df8ed8dcc5",
+      "plate_name": "AAA111",
+      "owner": "Johny Doe",
+      "createdAt": "2024-10-13T14:28:50.000Z",
+      "updatedAt": "2024-10-13T14:28:50.000Z"
+    },
+    {
+      "id": "f0f00207-af7b-481d-8179-0237fb867906",
+      "plate_name": "QQQ474",
+      "owner": "Thunder Shook",
+      "createdAt": "2024-10-13T13:47:37.000Z",
+      "updatedAt": "2024-10-13T13:47:37.000Z"
+    }
+  ]
+}
