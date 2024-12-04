@@ -42,4 +42,40 @@ describe('Carplate', () => {
       );
     });
   });
+
+  it('should edit and update carplates owner', () => {
+    cy.visit('/carplates');
+
+    cy.get('[data-cy="carplate-list-item-id"]')
+      .first()
+      .invoke('text')
+      .then((carplateId) => {
+        cy.get('[data-cy="carplate-list-item-actions-open-button"]')
+          .first()
+          .click();
+        cy.get('[data-cy="carplate-list-item-details-open-button"]')
+          .first()
+          .click();
+
+        const newOwner = 'Neil Armstrong';
+
+        cy.get('[data-cy="carplate-form-owner-input"]').clear();
+        cy.get('[data-cy="carplate-form-owner-input"]').type(newOwner);
+
+        cy.intercept(
+          'PUT',
+          `${Cypress.env('backendApiUrl')}/api/carplates/${carplateId}`
+        ).as('updateCarplate');
+
+        cy.get('[data-cy="carplate-form-save-button"]').click();
+
+        cy.wait('@updateCarplate').then((interception) => {
+          expect(interception.response?.statusCode).to.equal(200);
+        });
+
+        cy.get('[data-cy="carplate-list-item-owner"]')
+          .first()
+          .should('contain', newOwner);
+      });
+  });
 });

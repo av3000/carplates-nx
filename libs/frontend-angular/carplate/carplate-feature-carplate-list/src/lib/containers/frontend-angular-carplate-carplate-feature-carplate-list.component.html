@@ -79,7 +79,7 @@
             </div>
             <ng-template #contentLoaded>
               <tr
-                data-cy="carplates-list-item"
+                data-cy="carplate-list-item"
                 *ngFor="let carplate of carplatesList.rows"
               >
                 <td
@@ -97,7 +97,9 @@
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
                 >
-                  <div>{{ carplate.owner }}</div>
+                  <div data-cy="carplate-list-item-owner">
+                    {{ carplate.owner }}
+                  </div>
                 </td>
                 <td
                   class="text-dark border-b border-[#E8E8E8] bg-white dark:border-dark dark:bg-dark-2 dark:text-dark-7 py-5 px-2 text-center text-base font-medium"
@@ -114,17 +116,17 @@
                 >
                   <carplates-menu-dropdown
                     #menuDropdown
-                    data-cy="carplates-list-item-actions-open-button"
+                    data-cy="carplate-list-item-actions-open-button"
                   >
                     <a
-                      data-cy="carplates-list-item-details-open-button"
+                      data-cy="carplate-list-item-details-open-button"
                       [routerLink]="'/carplates/' + carplate.id"
                       (click)="menuDropdown.closeDropdown()"
                       class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >View Details</a
                     >
                     <a
-                      data-cy="carplates-list-item-delete-open-button"
+                      data-cy="carplate-list-item-delete-open-button"
                       (click)="
                         menuDropdown.closeDropdown();
                         openDeleteCarplateModal(carplate)
